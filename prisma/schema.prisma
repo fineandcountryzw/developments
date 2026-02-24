@@ -219,6 +219,7 @@ model Development {
   // New Ledger Relations
   paymentTransactions PaymentTransaction[]
   sales               Sale[]
+  statements          ClientStatement[]
 }
 
 model Stand {
@@ -258,6 +259,7 @@ model Stand {
   // New Ledger Relations
   paymentTransactions PaymentTransaction[]
   sales               Sale[]
+  statements          ClientStatement[]
 }
 
 model StandActionLog {
@@ -903,6 +905,7 @@ model OfflineSale {
   generatedContracts  GeneratedContract[]
   importBatch         ImportBatch? @relation(fields: [importBatchId], references: [id])
   payments            OfflinePayment[]
+  statements          ClientStatement[]
   
   @@index([clientId])
   @@index([standId])
@@ -2413,4 +2416,48 @@ enum InvoiceStatus {
   PAID
   VOID
   OUTSTANDING
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Client Statement & Import Sync Models (Added for Legacy Import System)
+// ─────────────────────────────────────────────────────────────────────────────
+
+model ClientStatement {
+  id            String   @id @default(cuid())
+  clientId      String   @map("client_id")
+  standId       String   @map("stand_id")
+  saleId        String   @map("sale_id")
+  pdfData       Bytes    @map("pdf_data")
+  generatedAt   DateTime @default(now()) @map("generated_at")
+  periodStart   DateTime @map("period_start")
+  periodEnd     DateTime @map("period_end")
+  
+  // Relations
+  client        Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  stand         Stand    @relation(fields: [standId], references: [id], onDelete: Cascade)
+  sale          OfflineSale @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  
+  @@index([clientId])
+  @@index([standId])
+  @@index([saleId])
+  @@index([generatedAt])
+  @@map("client_statements")
+}
+
+model SyncQueue {
+  id              String    @id @default(cuid())
+  entityType      String    @map("entity_type")
+  entityId        String    @map("entity_id")
+  status          String    @default("PENDING") // PENDING, PROCESSING, COMPLETED, FAILED
+  targetPlatform  String    @map("target_platform")
+  processedAt     DateTime? @map("processed_at")
+  error           String?
+  retryCount      Int       @default(0) @map("retry_count")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  
+  @@unique([entityId, targetPlatform])
+  @@index([status])
+  @@index([targetPlatform])
+  @@index([createdAt])
+  @@map("sync_queue")
 }
