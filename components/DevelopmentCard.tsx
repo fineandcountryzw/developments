@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, useCallback, useMemo, memo } from 'react';
+import React, { useState, useCallback, useMemo, memo, useRef, useEffect } from 'react';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 import { 
   Droplets, Route, Zap, Wifi, MapPin, Home, TrendingUp, Heart,
   Share2, Info, Clock, CheckCircle2, AlertCircle, Building2, Truck, Waves, ShieldCheck
@@ -168,7 +169,7 @@ const StatusBadge = ({ phase, servicing_progress }: { phase: string; servicing_p
         isReady ? 'bg-emerald-500' : servicingComplete ? 'bg-amber-500' : 'bg-gray-500'
       }`}></span>
       {isReady ? 'Ready to Build' : servicingComplete ? 'Nearly Ready' : 'Servicing'}
-    </div>
+    </motion.div>
   );
 };
 
@@ -232,6 +233,36 @@ const DevelopmentCardComponent: React.FC<DevelopmentCardProps> = ({
   const [isImageLoading, setIsImageLoading] = useState(true);
   const [imageError, setImageError] = useState(false);
   const [showTooltip, setShowTooltip] = useState<string | null>(null);
+  const [isHovered, setIsHovered] = useState(false);
+  
+  // 3D Tilt effect refs
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [tiltStyle, setTiltStyle] = useState({ transform: '' });
+  
+  // Handle 3D tilt on mouse move
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const card = cardRef.current;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = (y - centerY) / 20;
+    const rotateY = (centerX - x) / 20;
+    setTiltStyle({
+      transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`,
+    });
+  }, []);
+  
+  const handleMouseLeave = useCallback(() => {
+    setIsHovered(false);
+    setTiltStyle({ transform: '' });
+  }, []);
+  
+  const handleMouseEnter = useCallback(() => {
+    setIsHovered(true);
+  }, []);
 
   // Safe field extraction with type guards
   const imageUrls = useMemo(() => safeArray<string>(dev.image_urls), [dev.image_urls]);
@@ -296,8 +327,9 @@ const DevelopmentCardComponent: React.FC<DevelopmentCardProps> = ({
   }, [dev, onCardClick]);
 
   return (
-    <div
-      className="group h-full flex flex-col bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden hover:shadow-xl hover:border-gray-300 transition-all duration-300 cursor-pointer"
+    <motion.div
+      ref={cardRef}
+      className="group h-full flex flex-col bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden hover:shadow-2xl hover:border-gray-300 cursor-pointer"
       onClick={handleCardClick}
       role="button"
       tabIndex={0}
@@ -306,13 +338,35 @@ const DevelopmentCardComponent: React.FC<DevelopmentCardProps> = ({
           handleCardClick();
         }
       }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      onMouseEnter={handleMouseEnter}
+      style={tiltStyle}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: index * 0.1 }}
+      whileHover={{ y: -8 }}
     >
       {/* Image Section with Lazy Loading */}
       <div className="aspect-[16/10] overflow-hidden relative bg-gray-100">
         {imageUrl && imageUrl.startsWith('http') ? (
           <>
             {isImageLoading && (
-              <div className="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-100 animate-pulse" />
+              <div className="absolute inset-0 overflow-hidden">
+                {/* Premium Shimmer Loading Effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200" />
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent"
+                  animate={{ x: ['-100%', '100%'] }}
+                  transition={{ 
+                    repeat: Infinity, 
+                    duration: 1.5, 
+                    ease: 'linear',
+                    repeatDelay: 0.5 
+                  }}
+                  style={{ width: '50%' }}
+                />
+              </div>
             )}
             <img
               src={imageUrl}
@@ -340,12 +394,53 @@ const DevelopmentCardComponent: React.FC<DevelopmentCardProps> = ({
         {/* Subtle gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
 
-        {/* Top-left: Featured Tag */}
-        {((dev as any).featuredTag === 'promo' || (dev as any).featuredTag === 'hot') && (
-          <div className="absolute top-4 left-4 z-20">
-            <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-red-600 text-white shadow-lg">
-              {(dev as any).featuredTag === 'hot' ? '🔥 Hot' : '⚡ Promo'}
-            </span>
+        {/* Premium Ribbon Badges */}
+        {(dev as any).featuredTag === 'hot' && (
+          <div className="absolute -top-px -left-px z-20">
+            <div className="relative">
+              <div className="bg-gradient-to-br from-red-500 to-red-600 text-white text-xs font-bold uppercase tracking-wider py-1.5 px-8 shadow-lg"
+                   style={{ 
+                     clipPath: 'polygon(0 0, 100% 0, 85% 100%, 0% 100%)',
+                     transform: 'rotate(-45deg) translate(-22px, -8px)',
+                     transformOrigin: 'top left',
+                     width: '120px',
+                     textAlign: 'center'
+                   }}>
+                🔥 Hot
+              </div>
+            </div>
+          </div>
+        )}
+        {(dev as any).featuredTag === 'promo' && (
+          <div className="absolute -top-px -left-px z-20">
+            <div className="relative">
+              <div className="bg-gradient-to-br from-fcGold to-amber-500 text-white text-xs font-bold uppercase tracking-wider py-1.5 px-8 shadow-lg"
+                   style={{ 
+                     clipPath: 'polygon(0 0, 100% 0, 85% 100%, 0% 100%)',
+                     transform: 'rotate(-45deg) translate(-22px, -8px)',
+                     transformOrigin: 'top left',
+                     width: '120px',
+                     textAlign: 'center'
+                   }}>
+                ⚡ Promo
+              </div>
+            </div>
+          </div>
+        )}
+        {(dev as any).featuredTag === 'new' && (
+          <div className="absolute -top-px -left-px z-20">
+            <div className="relative">
+              <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white text-xs font-bold uppercase tracking-wider py-1.5 px-8 shadow-lg"
+                   style={{ 
+                     clipPath: 'polygon(0 0, 100% 0, 85% 100%, 0% 100%)',
+                     transform: 'rotate(-45deg) translate(-22px, -8px)',
+                     transformOrigin: 'top left',
+                     width: '120px',
+                     textAlign: 'center'
+                   }}>
+                ✨ New
+              </div>
+            </div>
           </div>
         )}
 
