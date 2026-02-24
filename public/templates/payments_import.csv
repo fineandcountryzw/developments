@@ -1,0 +1,3 @@
+clientEmail,standNumber,developmentName,paymentDate,amount,paymentMethod,reference,notes
+john@example.com,100,2024-01-15,5000,BANK_TRANSFER,REF123456,Deposit
+jane@example.com,101,2024-01-20,1000,CASH,, monthly installment

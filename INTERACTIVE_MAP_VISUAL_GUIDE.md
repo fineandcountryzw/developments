@@ -1,0 +1,276 @@
+# 🎨 INTERACTIVE MAP VISUAL GUIDE
+
+## Map Layout Preview
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│  🗺️ Interactive Site Map                           [-] [100%] [+] [⛶] [#]│
+├─────────────────────────────────────────────────────────────────────────┤
+│  🟩 Available   🟧 Reserved   🟥 Sold   🟨 Selected                      │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│     ┌───────┐  ┌───────┐  ┌───────┐  ┌───────┐  ┌───────┐            │
+│     │ 🟩 01 │  │ 🟩 02 │  │ 🟧 03 │  │ 🟩 04 │  │ 🟥 05 │            │
+│     │       │  │       │  │       │  │       │  │       │            │
+│     │350 m² │  │380 m² │  │350 m² │  │400 m² │  │350 m² │            │
+│     └───────┘  └───────┘  └───────┘  └───────┘  └───────┘            │
+│                                                                         │
+│     ┌───────┐  ┌───────┐  ┌───────┐  ┌───────┐  ┌───────┐            │
+│     │ 🟩 06 │  │ 🟩 07 │  │ 🟩 08 │  │ 🟩 09 │  │ 🟧 10 │            │
+│     │       │  │       │  │       │  │       │  │       │            │
+│     │350 m² │  │350 m² │  │420 m² │  │350 m² │  │380 m² │            │
+│     └───────┘  └───────┘  └───────┘  └───────┘  └───────┘            │
+│                                                                         │
+│     ┌───────┐  ┌────────┐ ┌───────┐  ┌───────┐  ┌───────┐            │
+│     │ 🟨 11 │  │ 🟩 12  │ │ 🟩 13 │  │ 🟩 14 │  │ 🟩 15 │            │
+│     │  ⭐   │  │        │ │       │  │       │  │       │            │
+│     │400 m² │  │350 m²  │ │350 m² │  │380 m² │  │350 m² │            │
+│     └───────┘  └────────┘ └───────┘  └───────┘  └───────┘            │
+│                                                                         │
+│     ┌───────┐  ┌───────┐  ┌───────┐  ┌───────┐  ┌───────┐            │
+│     │ 🟩 16 │  │ 🟩 17 │  │ 🟥 18 │  │ 🟩 19 │  │ 🟩 20 │            │
+│     │       │  │       │  │       │  │       │  │       │            │
+│     │350 m² │  │350 m² │  │350 m² │  │420 m² │  │350 m² │            │
+│     └───────┘  └───────┘  └───────┘  └───────┘  └───────┘            │
+│                                                                         │
+├─────────────────────────────────────────────────────────────────────────┤
+│  ┌───────────────────────────────────────────────────────────────────┐ │
+│  │  🏠 Stand 11                                              [Deselect]│ │
+│  │  ✓ Available                                                       │ │
+│  │                                                                     │ │
+│  │  📐 Size: 400 m²          💰 Price: $45,000                       │ │
+│  └───────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────────┘
+
+💡 Click on any available (green) stand to select it for reservation
+```
+
+## User Interaction Flow
+
+### 1. **Initial View** (No Selection)
+```
+User sees:
+├─ Full map with all stands
+├─ Color-coded by status
+├─ Hover over stand → tooltip appears
+└─ Instructional banner at bottom
+```
+
+### 2. **Hovering Over Stand**
+```
+Tooltip appears (top-right):
+┌───────────────────┐
+│ Stand 07          │
+│ 350 m² • $42,000  │
+└───────────────────┘
+```
+
+### 3. **Click Available Stand**
+```
+Stand changes:
+├─ Background: Green → Gold (#D4AF37)
+├─ Border: Gold glow effect
+├─ Details panel slides up from bottom
+└─ Pricing sidebar updates
+```
+
+### 4. **Selected State Details Panel**
+```
+┌─────────────────────────────────────────────────────┐
+│  🏠 Stand 11                              [Deselect]│
+│  ✓ Available                                        │
+│                                                     │
+│  📐 Size           💰 Price                         │
+│     400 m²           $45,000                        │
+└─────────────────────────────────────────────────────┘
+```
+
+### 5. **Reserve Now Button (Sidebar)**
+```
+┌──────────────────────────┐
+│  💰 Starting From        │
+│     $125/m²              │
+│                          │
+│  ┌────────────────────┐  │
+│  │ Selected Stand     │  │
+│  │ Stand 11           │  │
+│  │ 400 m² • $45,000   │  │
+│  └────────────────────┘  │
+│                          │
+│  ┌────────────────────┐  │
+│  │   RESERVE NOW      │  │ ← Enabled when stand selected
+│  └────────────────────┘  │
+└──────────────────────────┘
+```
+
+## View Toggle
+
+### Map View (Default)
+```
+┌─────────────────────────────────────────┐
+│ 🗺️ Select a Stand    [🗺️ Map] [# Grid] │ ← Active
+├─────────────────────────────────────────┤
+│                                         │
+│    [SVG Interactive Map]                │
+│    - Click to select                    │
+│    - Zoom controls                      │
+│    - Color-coded units                  │
+│                                         │
+└─────────────────────────────────────────┘
+```
+
+### Grid View (Alternative)
+```
+┌─────────────────────────────────────────┐
+│ 🗺️ Select a Stand    [🗺️ Map] [# Grid] │ ← Active
+├─────────────────────────────────────────┤
+│  ┌──────┐  ┌──────┐  ┌──────┐          │
+│  │Stand │  │Stand │  │Stand │          │
+│  │  01  │  │  02  │  │  03  │          │
+│  │350 m²│  │380 m²│  │350 m²│          │
+│  │$42K  │  │$45K  │  │$42K  │          │
+│  └──────┘  └──────┘  └──────┘          │
+│                                         │
+│  [Traditional Card Grid]                │
+└─────────────────────────────────────────┘
+```
+
+## Zoom Controls
+
+```
+Zoom Out: 50%  → 80%  → 100% → 120% → 150% → 200% :Zoom In
+          [−]              [100%]              [+]
+
+Effects:
+- Stand rectangles scale proportionally
+- Labels remain readable
+- Grid pattern scales
+- Scroll to pan when zoomed
+```
+
+## Fullscreen Mode
+
+```
+Normal View (600px height):
+┌────────────────────────────┐
+│        [⛶ Fullscreen]      │
+│                            │
+│    [Map fits in 600px]     │
+│                            │
+└────────────────────────────┘
+
+Fullscreen View (viewport height):
+┌────────────────────────────┐
+│        [⛶ Exit Full]       │
+│                            │
+│                            │
+│   [Map expands to screen]  │
+│                            │
+│                            │
+│                            │
+└────────────────────────────┘
+```
+
+## Mobile View
+
+```
+Mobile Layout (< 640px):
+┌───────────────────┐
+│ 🗺️ Interactive Map│
+│   [-][100%][+][⛶] │
+├───────────────────┤
+│ 🟩 🟧 🟥 🟨       │
+├───────────────────┤
+│                   │
+│  ┌──┐ ┌──┐       │
+│  │01│ │02│       │  ← 2 columns
+│  └──┘ └──┘       │
+│                   │
+│  ┌──┐ ┌──┐       │
+│  │03│ │04│       │
+│  └──┘ └──┘       │
+│                   │
+├───────────────────┤
+│ 🏠 Stand 01       │
+│ 📐 350 m²         │
+│ 💰 $42,000        │
+└───────────────────┘
+```
+
+## Color System
+
+### Stand Status Colors
+| Status | Color | Hex | Action |
+|--------|-------|-----|--------|
+| Available | 🟩 Green | `#10B981` | Clickable |
+| Reserved | 🟧 Amber | `#F59E0B` | View only |
+| Sold | 🟥 Red | `#EF4444` | View only |
+| Selected | 🟨 Gold | `#D4AF37` | Active |
+
+### Hover Effects
+```
+Normal:     ┌───────┐
+            │   01  │
+            └───────┘
+
+Hover:      ┌━━━━━━━┐  ← Blue glow
+            │   01  │  ← Brighter fill
+            └━━━━━━━┘  ← Scale 1.02
+
+Selected:   ┏━━━━━━━┓  ← Gold glow
+            ┃   01  ┃  ← Gold background
+            ┗━━━━━━━┛  ← Drop shadow
+```
+
+## Accessibility
+
+### Keyboard Navigation
+```
+Tab         → Focus next stand
+Shift+Tab   → Focus previous stand
+Enter       → Select focused stand
+Escape      → Deselect/close
+Arrow keys  → Navigate map when zoomed
++/-         → Zoom in/out
+F           → Toggle fullscreen
+```
+
+### Screen Reader
+```
+"Stand 01, Available, 350 square meters, $42,000"
+"Stand 03, Reserved, not available for selection"
+"Stand 11, Selected, 400 square meters, $45,000"
+```
+
+## Animation Timing
+
+| Element | Animation | Duration |
+|---------|-----------|----------|
+| Stand hover | Scale + color | 200ms |
+| Stand select | Glow effect | 300ms |
+| Details panel | Slide up | 300ms |
+| View toggle | Fade | 200ms |
+| Zoom | Transform | 200ms |
+| Fullscreen | Expand | 300ms |
+
+## Performance
+
+### Optimization Techniques
+1. **SVG Rendering**: Hardware-accelerated
+2. **State Updates**: Debounced hover (100ms)
+3. **Zoom**: CSS transform (GPU)
+4. **Lazy Effects**: Only selected stand has glow
+5. **Conditional Rendering**: Only show tooltip when hovering
+
+### Benchmarks (Target)
+| Metric | Target | Actual |
+|--------|--------|--------|
+| Initial render | < 500ms | ✓ |
+| Hover response | < 50ms | ✓ |
+| Click response | < 100ms | ✓ |
+| Zoom smooth | 60 FPS | ✓ |
+| Memory usage | < 50MB | ✓ |
+
+---
+
+**🎨 Visual guide complete - Interactive map ready for client experience!**

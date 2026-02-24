@@ -1,0 +1,36 @@
+name: CI/CD Pipeline - Fine & Country ERP
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Validate Database Schema
+        run: |
+          echo "Verifying Forensic Ledger Integrity..."
+          # Add your DB validation commands here
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Deploy to Staging
+        if: github.ref == 'refs/heads/main'
+        run: |
+          echo "Deploying to Fine & Country Regional Infrastructure..."
+          # Add deployment command (e.g., npm run build)

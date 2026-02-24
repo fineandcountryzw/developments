@@ -1,0 +1,2416 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                 String        @id @default(cuid())
+  name               String?
+  email              String        @unique
+  emailVerified      DateTime?     @map("email_verified")
+  image              String?
+  password           String?
+  role               UserRole      @default(CLIENT)
+  branch             String?
+  isActive           Boolean       @default(true) @map("is_active")
+  lastLogin          DateTime?     @map("last_login")
+  accessRevokedAt    DateTime?     @map("access_revoked_at")
+  accessRevokedBy    String?       @map("access_revoked_by")
+  revokeReason       String?       @map("revoke_reason")
+  resetToken         String?       @map("reset_token")
+  resetTokenExpiry   DateTime?     @map("reset_token_expiry")
+  passwordChangedAt  DateTime?     @map("password_changed_at")
+  createdAt          DateTime      @default(now()) @map("created_at")
+  updatedAt          DateTime      @updatedAt @map("updated_at")
+  accounts           Account[]
+  activities         Activity[]
+  developmentsEdited Development[] @relation("DevelopmentLastUpdatedBy")
+  reservations       Reservation[]
+  sessions           Session[]
+  passwordHistory    PasswordHistory[]
+
+  // Notification relations
+  receivedNotifications Notification[] @relation("ReceivedNotifications")
+  actorNotifications    Notification[] @relation("ActorNotifications")
+
+  @@map("users")
+}
+
+// Agent model for sales/reservation tracking
+model Agent {
+  id          String       @id @default(cuid())
+  code       String?      @unique @map("agent_code") @db.VarChar(4)
+  name       String
+  phone      String?      @db.VarChar(20)
+  email      String?      @unique @db.VarChar(255)
+  status     AgentStatus @default(ACTIVE)
+  branch     String?      @db.VarChar(100)
+  createdAt  DateTime     @default(now()) @map("created_at")
+  updatedAt  DateTime     @updatedAt @map("updated_at")
+
+  // Relations
+  reservations Reservation[]
+  commissions  Commission[]
+
+  @@index([phone])
+  @@index([status])
+  @@index([branch])
+  @@map("agents")
+}
+
+model PasswordHistory {
+  id           String   @id @default(cuid())
+  userId       String   @map("user_id")
+  passwordHash String   @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt(sort: Desc)])
+  @@map("password_history")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refreshToken      String? @map("refresh_token")
+  accessToken       String? @map("access_token")
+  expiresAt         Int?    @map("expires_at")
+  tokenType         String? @map("token_type")
+  scope             String?
+  idToken           String? @map("id_token")
+  sessionState      String? @map("session_state")
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+model Development {
+  id                 String           @id @default(cuid())
+  name               String
+  location           String
+  description        String?
+  overview           String?
+  phase              DevelopmentPhase @default(SERVICING)
+  servicingProgress  Decimal          @default(0) @map("servicing_progress") @db.Decimal(5, 2)
+  status             String           @default("Active")
+  basePrice          Decimal          @map("base_price") @db.Decimal(12, 2)
+  pricePerSqm        Decimal?         @map("price_per_sqm") @db.Decimal(10, 2)
+  vatPercentage      Decimal          @default(15) @map("vat_percentage") @db.Decimal(5, 2)
+  endowmentFee       Decimal          @default(0) @map("endowment_fee") @db.Decimal(10, 2)
+  totalAreaSqm       Decimal?         @map("total_area_sqm") @db.Decimal(10, 2)
+  totalStands        Int?             @map("total_stands")
+  availableStands    Int?             @map("available_stands")
+  mainImage          String?          @map("main_image")
+  // Map center coordinates (calculated from GeoJSON)
+  latitude           Decimal?         @map("latitude") @db.Decimal(10, 6)
+  longitude          Decimal?         @map("longitude") @db.Decimal(10, 6)
+  gallery            String[]         @map("gallery")
+  geoJsonUrl         String?          @map("geo_json_url")
+  geoJsonData        Json?            @map("geo_json_data")
+  hasGeoJsonMap      Boolean          @default(false) @map("has_geo_json_map")
+  disableMapView     Boolean          @default(false) @map("disable_map_view")
+  imageUrls          String[]         @map("image_urls")
+  logoUrl            String?          @map("logo_url")
+  documentUrls       String[]         @map("document_urls")
+  termsPdfUrl       String?          @map("terms_pdf_url")
+  refundPdfUrl      String?          @map("refund_pdf_url")
+  standSizes         Json?            @map("stand_sizes")
+  standTypes         String[]         @map("stand_types")
+  features           String[]         @default([]) @map("features")
+  installmentPeriods Int[]            @default([12, 24, 48]) @map("installment_periods")
+  depositPercentage  Decimal          @default(30) @map("deposit_percentage") @db.Decimal(5, 2)
+  commissionModel    Json?            @map("commission_model")
+  vatEnabled         Boolean          @default(true) @map("vat_enabled")
+  endowmentEnabled   Boolean          @default(false) @map("endowment_enabled")
+  aosEnabled         Boolean          @default(false) @map("aos_enabled")
+  aosFee             Decimal          @default(500) @map("aos_fee") @db.Decimal(10, 2)
+  cessionsEnabled    Boolean          @default(false) @map("cessions_enabled")
+  cessionFee         Decimal          @default(250) @map("cession_fee") @db.Decimal(10, 2)
+  adminFeeEnabled    Boolean          @default(false) @map("admin_fee_enabled")
+  adminFee           Decimal          @default(0) @map("admin_fee") @db.Decimal(10, 2)
+  featuredTag        String           @default("none") @map("featured_tag")
+  developerName      String?          @map("developer_name")
+  developerEmail     String?          @map("developer_email")
+  developerPhone     String?          @map("developer_phone")
+  lawyerName         String?          @map("lawyer_name")
+  lawyerEmail        String?          @map("lawyer_email")
+  lawyerPhone        String?          @map("lawyer_phone")
+  estateProgress     Json?            @map("estate_progress")
+  
+  // NEW: Service Station Configuration
+  hasServiceStation    Boolean          @default(false) @map("has_service_station")
+  serviceStationType   String?         @map("service_station_type")
+  fuelBrands           String[]         @default([]) @map("fuel_brands")
+  serviceStationHoursOpen String?       @map("service_station_hours_open")
+  serviceStationHoursClose String?      @map("service_station_hours_close")
+  serviceStationIs24Hour Boolean        @default(false) @map("service_station_is_24_hour")
+  serviceStationNotes   String?         @map("service_station_notes")
+  
+  // NEW: Bio Digester Configuration
+  hasBioDigester       Boolean          @default(false) @map("has_bio_digester")
+  bioDigesterType      String?         @map("bio_digester_type")
+  bioDigesterCapacityLiters Int?        @map("bio_digester_capacity_liters")
+  bioDigesterInstallDate String?        @map("bio_digester_install_date")
+  bioDigesterIsCertified Boolean        @default(false) @map("bio_digester_is_certified")
+  bioDigesterIsMunicipalApproved Boolean @default(false) @map("bio_digester_is_municipal_approved")
+  bioDigesterIsEPARegistered Boolean    @default(false) @map("bio_digester_is_epa_registered")
+  bioDigesterHasMaintenanceContract Boolean @default(false) @map("bio_digester_has_maintenance_contract")
+  bioDigesterMaintenanceExpiry String?   @map("bio_digester_maintenance_expiry")
+  
+  // NEW: Build Compliance Tracking
+  buildComplianceStatus String          @default("pending_review") @map("build_compliance_status")
+  compliancePlansSubmittedDate String?   @map("compliance_plans_submitted_date")
+  complianceEnvironmentalDate String?    @map("compliance_environmental_date")
+  complianceWaterSewerageDate String?   @map("compliance_water_sewerage_date")
+  complianceElectricalDate String?      @map("compliance_electrical_date")
+  complianceFireSafetyDate String?     @map("compliance_fire_safety_date")
+  complianceStructuralDate String?      @map("compliance_structural_date")
+  complianceApprovalRefNumber String?   @map("compliance_approval_ref_number")
+  complianceFinalApprovalDate String?   @map("compliance_final_approval_date")
+  
+  branch             String           @default("Harare")
+  lastUpdatedById    String?          @map("last_updated_by_id")
+  createdAt          DateTime         @default(now()) @map("created_at")
+  updatedAt          DateTime         @updatedAt @map("updated_at")
+  
+  // NEW: Public visibility and ordering fields
+  isPublic           Boolean          @default(true) @map("is_public")
+  featuredRank       Int?             @map("featured_rank")
+  displayRank        Int?             @map("display_rank")
+  
+  lastUpdatedBy      User?            @relation("DevelopmentLastUpdatedBy", fields: [lastUpdatedById], references: [id], onDelete: SetNull)
+  stands             Stand[]
+  installmentPlans   InstallmentPlan[]
+  contractTemplates  ContractTemplate[]
+  clientPurchases    ClientPurchase[]
+
+  @@index([developerEmail])
+  @@index([branch])
+  @@map("developments")
+
+  // New Ledger Relations
+  paymentTransactions PaymentTransaction[]
+  sales               Sale[]
+}
+
+model Stand {
+  id              String        @id @default(cuid())
+  standNumber     String        @map("stand_number")
+  developmentId   String        @map("development_id")
+  branch          String        @default("Harare")
+  price           Decimal       @db.Decimal(12, 2)
+  pricePerSqm     Decimal?      @map("price_per_sqm") @db.Decimal(10, 2)
+  sizeSqm         Decimal?      @map("size_sqm") @db.Decimal(10, 2)
+  status          StandStatus   @default(AVAILABLE)
+  reservedBy      String?       @map("reserved_by")
+  discountPercent Decimal?      @map("discount_percent") @db.Decimal(5, 2)
+  discountAmount  Decimal?      @map("discount_amount") @db.Decimal(12, 2)
+  discountedPrice Decimal?      @map("discounted_price") @db.Decimal(12, 2)
+  discountActive  Boolean       @default(true) @map("discount_active")
+  soldAt          DateTime?     @map("sold_at")
+  soldReason      String?       @map("sold_reason")
+  soldBy          String?       @map("sold_by")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+  reservations       Reservation[]
+  payments           Payment[]
+  installmentPlans   InstallmentPlan[]
+  generatedContracts GeneratedContract[]
+  offlineSales       OfflineSale[]
+  actionLogs         StandActionLog[]
+  clientPurchases    ClientPurchase[]
+  development        Development   @relation(fields: [developmentId], references: [id], onDelete: Cascade)
+
+  @@unique([developmentId, standNumber])
+  @@index([branch])
+  @@index([reservedBy])
+  @@index([status])
+  @@map("stands")
+
+  // New Ledger Relations
+  paymentTransactions PaymentTransaction[]
+  sales               Sale[]
+}
+
+model StandActionLog {
+  id          String   @id @default(cuid())
+  standId     String   @map("stand_id")
+  actionType  String   @map("action_type")
+  payload     Json?
+  reason      String
+  oldValues   Json?    @map("old_values")
+  newValues   Json?    @map("new_values")
+  createdBy   String   @map("created_by")
+  createdByEmail String? @map("created_by_email")
+  createdAt   DateTime @default(now()) @map("created_at")
+  stand       Stand    @relation(fields: [standId], references: [id], onDelete: Cascade)
+
+  @@index([standId])
+  @@index([actionType])
+  @@index([createdAt])
+  @@map("stand_action_logs")
+}
+
+model Reservation {
+  id               String            @id @default(cuid())
+  standId          String            @map("stand_id")
+  userId           String?           @map("user_id")
+  agentId          String?           @map("agent_id")
+  isCompanyLead    Boolean           @default(false) @map("is_company_lead")
+  assignedLeadType String?           @map("assigned_lead_type")
+  termsAcceptedAt  DateTime          @map("terms_accepted_at")
+  expiresAt        DateTime          @map("expires_at")
+  status           ReservationStatus @default(PENDING)
+  timerActive      Boolean           @default(true) @map("timer_active")
+  popUrl           String?           @map("pop_url")
+  basePriceAtReservation Decimal?    @map("base_price_at_reservation") @db.Decimal(12, 2)
+  discountPercentAtReservation Decimal? @map("discount_percent_at_reservation") @db.Decimal(5, 2)
+  finalPriceAtReservation Decimal?   @map("final_price_at_reservation") @db.Decimal(12, 2)
+  createdAt        DateTime          @default(now()) @map("created_at")
+  updatedAt        DateTime          @updatedAt @map("updated_at")
+  clientId         String?
+  agent            Agent?            @relation(fields: [agentId], references: [id])
+  client           Client?           @relation(fields: [clientId], references: [id])
+  stand            Stand             @relation(fields: [standId], references: [id], onDelete: Cascade)
+  user             User?             @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([standId])
+  @@index([userId])
+  @@index([agentId])
+  @@index([expiresAt])
+  @@map("reservations")
+}
+
+model Activity {
+  id          String       @id @default(cuid())
+  type        ActivityType
+  description String
+  metadata    Json?
+  userId      String       @map("user_id")
+  createdAt   DateTime     @default(now()) @map("created_at")
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([type])
+  @@index([createdAt(sort: Desc)])
+  @@map("activities")
+}
+
+/// *
+///  * Invitation
+///  * Email invitations for new users
+///  * Tracks invitation lifecycle and tokens
+model Invitation {
+  id         String           @id @default(cuid())
+  email      String
+  fullName   String?          @map("full_name")
+  role       UserRole
+  branch     String
+  token      String           @unique
+  status     InvitationStatus @default(PENDING)
+  invitedBy  String           @map("invited_by")
+  expiresAt  DateTime         @map("expires_at")
+  acceptedAt DateTime?        @map("accepted_at")
+  revokedAt  DateTime?        @map("revoked_at")
+  createdAt  DateTime         @default(now()) @map("created_at")
+  updatedAt  DateTime         @updatedAt @map("updated_at")
+  
+  // Email tracking fields
+  emailSentAt       DateTime? @map("email_sent_at")
+  emailFailedAt     DateTime? @map("email_failed_at")
+  emailFailureReason String?  @map("email_failure_reason")
+  emailAttempts     Int       @default(0) @map("email_attempts")
+  lastEmailAttempt  DateTime? @map("last_email_attempt")
+
+  @@index([email])
+  @@index([token])
+  @@index([status])
+  @@index([invitedBy])
+  @@map("invitations")
+}
+
+/// *
+///  * Audit Trail
+///  * Comprehensive audit logging for all system actions
+///  * Tracks user actions, resource changes, and compliance events
+model AuditTrail {
+  id           String   @id @default(cuid())
+  action       String
+  resourceType String   @map("resource_type")
+  resourceId   String   @map("resource_id")
+  userId       String?  @map("user_id")
+  details      Json?
+  ipAddress    String?  @map("ip_address")
+  userAgent    String?  @map("user_agent")
+  branch       String?
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@index([action])
+  @@index([resourceType, resourceId])
+  @@index([userId])
+  @@index([createdAt])
+  @@map("audit_trails")
+}
+
+model DevelopmentEdit {
+  id            String   @id @default(cuid())
+  developmentId String   @map("development_id")
+  fieldName     String   @map("field_name")
+  oldValue      String?  @map("old_value")
+  newValue      String?  @map("new_value")
+  editedBy      String   @map("edited_by")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@index([developmentId])
+  @@index([createdAt(sort: Desc)])
+  @@map("development_edits")
+}
+
+model Client {
+  id               String            @id @default(cuid())
+  name             String
+  firstName        String?           @map("first_name")
+  lastName         String?           @map("last_name")
+  email            String
+  phone            String?
+  nationalId       String?           @map("national_id")
+  branch           String            @default("Harare")
+  isPortalUser     Boolean           @default(false) @map("is_portal_user")
+  kyc              Json[]            @default([])
+  ownedStands      String[]          @map("owned_stands")
+  budget           Decimal?          @map("budget") @db.Decimal(12, 2)
+  lookingFor       String?           @map("looking_for")
+  preferences      Json?             @map("preferences")
+  createdAt        DateTime          @default(now()) @map("created_at")
+  updatedAt        DateTime          @updatedAt @map("updated_at")
+  agentId          String?           @map("agent_id")
+  isProspect       Boolean           @default(false) @map("is_prospect")
+  reservations     Reservation[]
+  payments         Payment[]
+  installmentPlans InstallmentPlan[]
+  generatedContracts GeneratedContract[]
+  offlineSales     OfflineSale[]
+  purchases        ClientPurchase[]
+
+  @@unique([email, branch])
+  @@index([branch])
+  @@index([agentId])
+  @@map("clients")
+
+  // New Ledger Relations
+  paymentTransactions PaymentTransaction[]
+  sales               Sale[]
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// CLIENT PURCHASE MODULE - Links Client ↔ Development ↔ Stand
+// One stand cannot have two active purchases
+// ═══════════════════════════════════════════════════════════════════════════
+
+model ClientPurchase {
+  id              String          @id @default(cuid())
+  clientId        String          @map("client_id")
+  developmentId   String          @map("development_id")
+  standId         String          @map("stand_id")
+  purchasePrice   Decimal         @map("purchase_price") @db.Decimal(12, 2)
+  depositAmount   Decimal         @default(0) @map("deposit_amount") @db.Decimal(12, 2)
+  periodMonths    Int             @default(12) @map("period_months")
+  monthlyAmount   Decimal         @default(0) @map("monthly_amount") @db.Decimal(12, 2)
+  startDate       DateTime        @map("start_date")
+  status          PurchaseStatus  @default(ACTIVE)
+  notes           String?
+  branch          String          @default("Harare")
+  createdAt       DateTime        @default(now()) @map("created_at")
+  updatedAt       DateTime        @updatedAt @map("updated_at")
+
+  // Relations
+  client          Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  development     Development     @relation(fields: [developmentId], references: [id], onDelete: Cascade)
+  stand           Stand           @relation(fields: [standId], references: [id], onDelete: Cascade)
+  purchasePayments PurchasePayment[]
+
+  // One stand cannot have two active purchases (enforced via unique partial index in migration)
+  @@index([clientId])
+  @@index([developmentId])
+  @@index([standId])
+  @@index([status])
+  @@index([branch])
+  @@map("client_purchases")
+}
+
+model PurchasePayment {
+  id                String          @id @default(cuid())
+  clientPurchaseId  String          @map("client_purchase_id")
+  amount            Decimal         @db.Decimal(12, 2)
+  paymentDate       DateTime        @map("payment_date")
+  method            String          @default("CASH")
+  reference         String?
+  description       String?
+  receiptNo         String?         @unique @map("receipt_no")
+  status            String          @default("CONFIRMED")
+  createdBy         String?         @map("created_by")
+  createdAt         DateTime        @default(now()) @map("created_at")
+  updatedAt         DateTime        @updatedAt @map("updated_at")
+
+  // Relations
+  clientPurchase    ClientPurchase  @relation(fields: [clientPurchaseId], references: [id], onDelete: Cascade)
+
+  @@index([clientPurchaseId])
+  @@index([paymentDate])
+  @@index([status])
+  @@map("purchase_payments")
+}
+
+enum PurchaseStatus {
+  ACTIVE
+  COMPLETED
+  CANCELLED
+  SUSPENDED
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// DEPRECATED: Legacy Payment table - DO NOT WRITE TO THIS TABLE
+// All new payments must use PaymentTransaction (the canonical ledger)
+// This table is kept for backward compatibility and historical data
+// ═══════════════════════════════════════════════════════════════════════════
+model Payment {
+  id                  String    @id @default(cuid())
+  clientId            String    @map("client_id")
+  clientName          String    @map("client_name")
+  amount              Decimal   @db.Decimal(12, 2)
+  surchargeAmount     Decimal   @default(0) @map("surcharge_amount") @db.Decimal(12, 2)
+  standId             String?   @map("stand_id")
+  description         String    @default("Payment")
+  status              String    @default("PENDING")
+  method              String
+  paymentType         String    @map("payment_type")
+  officeLocation      String    @map("office_location")
+  reference           String    @unique
+  confirmedAt         DateTime? @map("confirmed_at")
+  receivedByName      String?   @map("received_by_name")
+  manualReceiptNo     String    @map("manual_receipt_no")
+  verificationStatus  String    @default("Pending") @map("verification_status")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+  installmentId       String?   @map("installment_id")
+  aosAmount           Decimal?  @map("aos_amount") @db.Decimal(12, 2)
+  cessionAmount       Decimal?  @map("cession_amount") @db.Decimal(12, 2)
+  developmentId       String?   @map("development_id")
+  endowmentAmount     Decimal?  @map("endowment_amount") @db.Decimal(12, 2)
+  feeCalculation      Json?     @map("fee_calculation")
+  settlementStatus    String?   @default("PENDING") @map("settlement_status")
+  standPricePortion   Decimal?  @map("stand_price_portion") @db.Decimal(12, 2)
+  vatAmount           Decimal?  @map("vat_amount") @db.Decimal(12, 2)
+
+  // Relations
+  client              Client?   @relation(fields: [clientId], references: [id])
+  stand               Stand?    @relation(fields: [standId], references: [id])
+  receipt             Receipt?
+  allocations         PaymentAllocation[]
+
+  @@index([officeLocation])
+  @@index([clientId])
+  @@index([status])
+  @@index([paymentType])
+  @@index([installmentId])
+  @@index([settlementStatus])
+  @@index([developmentId])
+  @@index([standId], map: "idx_payments_stand_id")
+  @@map("payments")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// DEPRECATED: Legacy InstallmentPlan - DO NOT CREATE NEW PLANS
+// Use Sale + Invoice + PaymentTransaction for new transactions
+// ═══════════════════════════════════════════════════════════════════════════
+model InstallmentPlan {
+  id               String    @id @default(cuid())
+  clientId         String    @map("client_id")
+  standId          String    @map("stand_id")
+  developmentId    String    @map("development_id")
+  totalAmount      Decimal   @map("total_amount") @db.Decimal(12, 2)
+  depositAmount    Decimal   @map("deposit_amount") @db.Decimal(12, 2)
+  depositPaid      Boolean   @default(false) @map("deposit_paid")
+  balanceAmount    Decimal   @map("balance_amount") @db.Decimal(12, 2)
+  periodMonths     Int       @map("period_months")
+  monthlyAmount    Decimal   @map("monthly_amount") @db.Decimal(12, 2)
+  totalPaid        Decimal   @default(0) @map("total_paid") @db.Decimal(12, 2)
+  remainingBalance Decimal   @map("remaining_balance") @db.Decimal(12, 2)
+  paidInstallments Int       @default(0) @map("paid_installments")
+  nextDueDate      DateTime? @map("next_due_date")
+  status           String    @default("ACTIVE")
+  startDate        DateTime  @map("start_date")
+  endDate          DateTime  @map("end_date")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  client           Client      @relation(fields: [clientId], references: [id])
+  stand            Stand       @relation(fields: [standId], references: [id])
+  development      Development @relation(fields: [developmentId], references: [id])
+  installments     Installment[]
+  allocations      PaymentAllocation[]
+
+  @@index([clientId])
+  @@index([developmentId])
+  @@index([status])
+  @@map("installment_plans")
+}
+
+model Installment {
+  id            String    @id @default(cuid())
+  planId        String    @map("plan_id")
+  installmentNo Int       @map("installment_no")
+  amountDue     Decimal   @map("amount_due") @db.Decimal(12, 2)
+  amountPaid    Decimal   @default(0) @map("amount_paid") @db.Decimal(12, 2)
+  dueDate       DateTime  @map("due_date")
+  paidDate      DateTime? @map("paid_date")
+  status        String    @default("PENDING")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  plan          InstallmentPlan @relation(fields: [planId], references: [id])
+  receipt       Receipt?
+  allocations   PaymentAllocation[]
+
+  @@index([planId])
+  @@index([dueDate])
+  @@index([status])
+  @@map("installments")
+}
+
+model Receipt {
+  id              String    @id @default(cuid())
+  receiptNumber   String    @unique @map("receipt_number")
+  paymentId       String?   @unique @map("payment_id")
+  installmentId   String?   @unique @map("installment_id")
+  clientId        String    @map("client_id")
+  clientName      String    @map("client_name")
+  clientEmail     String?   @map("client_email")
+  amount          Decimal   @db.Decimal(12, 2)
+  paymentMethod   String    @map("payment_method")
+  paymentType     String    @map("payment_type")
+  description     String?
+  standNumber     String?   @map("stand_number")
+  developmentName String?   @map("development_name")
+  branch          String    @default("Harare")
+  receivedBy      String?   @map("received_by")
+  pdfUrl          String?   @map("pdf_url")
+  pdfData         Bytes?    @map("pdf_data")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  status          String    @default("ACTIVE")
+  voidedAt        DateTime? @map("voided_at")
+  voidedBy        String?   @map("voided_by")
+  voidReason      String?   @map("void_reason")
+
+  // Relations
+  payment         Payment?     @relation(fields: [paymentId], references: [id])
+  installment     Installment? @relation(fields: [installmentId], references: [id])
+
+  @@index([clientId])
+  @@index([branch])
+  @@index([createdAt(sort: Desc)])
+  @@map("receipts")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// BILLING MODULE - Payment Allocation Ledger
+// Tracks how payments are allocated to installments/deposits
+// ═══════════════════════════════════════════════════════════════════════════
+// DEPRECATED: Legacy PaymentAllocation - DO NOT WRITE TO THIS TABLE
+// Use LedgerAllocation for new payments (PaymentTransaction)
+// ═══════════════════════════════════════════════════════════════════════════
+model PaymentAllocation {
+  id                String           @id @default(cuid())
+  paymentId         String           @map("payment_id")
+  installmentId     String?          @map("installment_id")
+  installmentPlanId String?          @map("installment_plan_id")
+  amount            Decimal          @db.Decimal(12, 2)
+  allocationType    String           @default("MANUAL") @map("allocation_type") // DEPOSIT, INSTALLMENT, OVERPAYMENT, MANUAL, AUTO
+  allocationStatus  String           @default("APPLIED") @map("allocation_status") // APPLIED, REVERSED, PENDING
+  allocatedAt       DateTime         @default(now()) @map("allocated_at")
+  allocatedBy       String?          @map("allocated_by")
+  reversedAt        DateTime?        @map("reversed_at")
+  reversedBy        String?          @map("reversed_by")
+  reversalReason    String?          @map("reversal_reason")
+  notes             String?
+  createdAt         DateTime         @default(now()) @map("created_at")
+  updatedAt         DateTime         @updatedAt @map("updated_at")
+
+  // Relations
+  payment           Payment          @relation(fields: [paymentId], references: [id])
+  installment       Installment?     @relation(fields: [installmentId], references: [id])
+  installmentPlan   InstallmentPlan? @relation(fields: [installmentPlanId], references: [id])
+
+  @@index([paymentId])
+  @@index([installmentId])
+  @@index([installmentPlanId])
+  @@index([allocationType])
+  @@index([allocationStatus])
+  @@index([allocatedAt])
+  @@map("payment_allocations")
+}
+
+model ActivityLog {
+  id          String   @id @default(cuid())
+  branch      String
+  userId      String?  @map("user_id")
+  action      String
+  module      String
+  recordId    String   @map("record_id")
+  description String
+  changes     Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([branch])
+  @@index([createdAt(sort: Desc)])
+  @@index([module])
+  @@index([userId])
+  @@map("activity_logs")
+}
+
+model Notification {
+  id              String           @id @default(cuid())
+  type            NotificationType
+  severity        SeverityLevel    @default(INFO)
+  title           String
+  message         String
+  
+  // Actor tracking
+  actorUserId     String?          @map("actor_user_id")
+  actorRole       UserRole?        @map("actor_role")
+  
+  // Recipient
+  recipientUserId String           @map("recipient_user_id")
+  recipientRole   UserRole?        @map("recipient_role")
+  
+  // Entity reference
+  entityType      EntityType       @map("entity_type")
+  entityId        String           @map("entity_id")
+  developmentId   String?          @map("development_id")
+  
+  // Metadata
+  metadata        Json?
+  
+  // Read tracking
+  isRead          Boolean          @default(false) @map("is_read")
+  readAt          DateTime?        @map("read_at")
+  
+  // Timestamps
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+  
+  // Relations
+  recipient       User             @relation("ReceivedNotifications", fields: [recipientUserId], references: [id], onDelete: Cascade)
+  actor           User?            @relation("ActorNotifications", fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([recipientUserId, isRead, createdAt])
+  @@index([entityType, entityId])
+  @@index([developmentId])
+  @@index([type, createdAt])
+  @@map("notifications")
+}
+
+enum NotificationType {
+  CONTRACT_CREATED
+  CONTRACT_SENT
+  CONTRACT_SIGNED
+  CONTRACT_RESENT
+  CONTRACT_APPROVED
+  CONTRACT_REJECTED
+  PAYMENT_RECORDED
+  PAYMENT_VERIFIED
+  PAYMENT_REJECTED
+  RECEIPT_ISSUED
+  RECEIPT_VOIDED
+  INSTALLMENT_PAID
+  INSTALLMENT_OVERDUE
+  STAND_RESERVED
+  STAND_SOLD
+  STAND_RELEASED
+  PAYOUT_INITIATED
+  PAYOUT_APPROVED
+  PAYOUT_COMPLETED
+  USER_INVITED
+  USER_ROLE_CHANGED
+  ACCESS_DENIED
+}
+
+enum SeverityLevel {
+  INFO
+  WARN
+  CRITICAL
+}
+
+enum EntityType {
+  CONTRACT
+  STAND
+  PAYMENT
+  RECEIPT
+  INSTALLMENT
+  PAYOUT
+  DEVELOPMENT
+  USER
+}
+
+model ContractTemplate {
+  id            String   @id @default(cuid())
+  name          String
+  description   String?
+  type          String   @default("STANDARD")
+  content       String
+  htmlContent   String?  @map("html_content")
+  
+  // DOCX Template Support
+  templateType       String   @default("html") @map("template_type")   // 'html' | 'docx'
+  templateFileUrl    String?  @map("template_file_url")                   // DOCX file URL in UploadThing
+  templateFileKey    String?  @map("template_file_key")                   // UploadThing storage key
+  templateVariables  Json     @default("[]") @map("template_variables")   // Detected variables from DOCX
+  
+  variables     Json     @default("[]")
+  branch        String   @default("Harare")
+  status        String   @default("ACTIVE")
+  developmentId String?  @map("development_id")
+  isGlobal      Boolean  @default(false) @map("is_global")
+  isActive      Boolean  @default(true) @map("is_active")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  generatedContracts GeneratedContract[]
+  development   Development? @relation(fields: [developmentId], references: [id], onDelete: SetNull)
+  versions      ContractTemplateVersion[]
+  documentVersions ContractDocumentVersion[]
+
+  @@index([branch])
+  @@index([status])
+  @@index([developmentId])
+  @@index([isGlobal])
+  @@index([isActive])
+  @@index([templateType])
+  @@map("contract_templates")
+}
+
+model GeneratedContract {
+  id           String    @id @default(cuid())
+  clientId     String    @map("client_id")
+  templateId   String    @map("template_id")
+  standId      String    @map("stand_id")
+  templateName String    @map("template_name")
+  content      String
+  htmlContent  String?   @map("html_content")
+  status       String    @default("DRAFT")
+  signedAt     DateTime? @map("signed_at")
+  signedBy     String?   @map("signed_by")
+  branch       String
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  // Template snapshot for versioning - stores template state at generation time
+  templateSnapshot Json?   @map("template_snapshot")
+
+  // Generated contract data snapshot
+  contractData Json?      @map("contract_data")
+
+  // Offline Contract Fields
+  isOffline      Boolean   @default(false) @map("is_offline")
+  offlineSaleId  String?   @map("offline_sale_id")
+  contractDate   DateTime? @map("contract_date")
+  
+  // Developer info (for contracts)
+  developerEmail String?   @map("developer_email")
+  developerName String?   @map("developer_name")
+
+  // DocuSeal integration fields
+  docusealSubmissionId String? @map("docuseal_submission_id")
+  docusealStatus       String? @map("docuseal_status")
+  docusealSignerClientId String? @map("docuseal_signer_client_id")
+  docusealSignerClientStatus String? @map("docuseal_signer_client_status")
+  docusealSignerDevId String? @map("docuseal_signer_dev_id")
+  docusealSignerDevStatus String? @map("docuseal_signer_dev_status")
+  docusealSignerLawyerId String? @map("docuseal_signer_lawyer_id")
+  docusealSignerLawyerStatus String? @map("docuseal_signer_lawyer_status")
+  docusealSignerPrincipalAgentId String? @map("docuseal_signer_principal_agent_id")
+  docusealSignerPrincipalAgentStatus String? @map("docuseal_signer_principal_agent_status")
+  sentForSignatureAt DateTime? @map("sent_for_signature_at")
+
+  // Relations
+  client   Client?  @relation(fields: [clientId], references: [id])
+  template ContractTemplate? @relation(fields: [templateId], references: [id])
+  stand    Stand?   @relation(fields: [standId], references: [id])
+  offlineSale OfflineSale? @relation(fields: [offlineSaleId], references: [id])
+  signers  GeneratedContractSigner[]
+  documentVersions ContractDocumentVersion[]
+
+  @@unique([clientId, standId, templateId])
+  @@index([clientId])
+  @@index([standId])
+  @@index([status])
+  @@index([branch])
+  @@index([createdAt(sort: Desc)])
+  @@index([isOffline])
+  @@map("generated_contracts")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PAST SALES IMPORT MODULE
+// ═══════════════════════════════════════════════════════════════════════════
+
+model OfflineSale {
+  id                  String    @id @default(cuid())
+  clientId            String    @map("client_id")
+  standId             String?   @map("stand_id")
+  developmentId       String?   @map("development_id")
+  saleDate            DateTime  @map("sale_date")
+  salePrice           Decimal   @map("sale_price") @db.Decimal(12, 2)
+  depositAmount       Decimal   @map("deposit_amount") @db.Decimal(12, 2)
+  paymentMethod       String    @map("payment_method")
+  referenceNumber     String?   @map("reference_number")
+  notes               String?
+  importBatchId       String?   @map("import_batch_id")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  
+  // Relations
+  client              Client?   @relation(fields: [clientId], references: [id])
+  stand               Stand?    @relation(fields: [standId], references: [id])
+  generatedContracts  GeneratedContract[]
+  importBatch         ImportBatch? @relation(fields: [importBatchId], references: [id])
+  payments            OfflinePayment[]
+  
+  @@index([clientId])
+  @@index([standId])
+  @@index([saleDate])
+  @@index([importBatchId])
+  @@map("offline_sales")
+}
+
+model ImportBatch {
+  id                String    @id @default(cuid())
+  fileName          String    @map("file_name")
+  importType        String    @map("import_type") // 'past_sales', 'clients', 'payments'
+  status            String    @default("PENDING") // PENDING, PROCESSING, COMPLETED, FAILED
+  totalRecords      Int       @default(0) @map("total_records")
+  processedRecords  Int       @default(0) @map("processed_records")
+  failedRecords     Int       @default(0) @map("failed_records")
+  errorLog          Json?     @map("error_log")
+  importedBy        String    @map("imported_by")
+  branch            String    @default("Harare")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  completedAt       DateTime? @map("completed_at")
+  
+  // Relations
+  offlineSales      OfflineSale[]
+  
+  @@index([status])
+  @@index([createdAt])
+  @@index([importType])
+  @@map("import_batches")
+}
+
+model OfflinePayment {
+  id              String    @id @default(cuid())
+  offlineSaleId   String    @map("offline_sale_id")
+  paymentDate     DateTime  @map("payment_date")
+  amount          Decimal   @map("amount") @db.Decimal(12, 2)
+  paymentMethod   String    @map("payment_method")
+  reference       String?
+  notes           String?
+  createdAt       DateTime  @default(now()) @map("created_at")
+  
+  // Relations
+  offlineSale     OfflineSale @relation(fields: [offlineSaleId], references: [id], onDelete: Cascade)
+  
+  @@index([offlineSaleId])
+  @@index([paymentDate])
+  @@map("offline_payments")
+}
+
+model BankStatement {
+  id        String   @id @default(cuid())
+  branch    String   @default("Harare")
+  date      DateTime
+  reference String
+  amount    Decimal  @db.Decimal(12, 2)
+  matched   Boolean  @default(false)
+  matchedTo String?  @map("matched_to")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([matched])
+  @@index([branch])
+  @@index([date(sort: Desc)])
+  @@map("bank_statements")
+}
+
+model ReconRecord {
+  id        String   @id @default(cuid())
+  status    String   @default("PENDING")
+  items     String[] @default([])
+  branch    String   @default("Harare")
+  notes     String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([status])
+  @@index([branch])
+  @@map("recon_records")
+}
+
+model PipelineStage {
+  id        String    @id @default(cuid())
+  clientId  String    @map("client_id")
+  stage     String    @default("LEAD")
+  enteredAt DateTime  @default(now()) @map("entered_at")
+  exitedAt  DateTime? @map("exited_at")
+  branch    String    @default("Harare")
+  notes     String?
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  @@index([clientId])
+  @@index([stage])
+  @@index([branch])
+  @@map("pipeline_stages")
+}
+
+model PipelineMetrics {
+  id          String   @id @default(cuid())
+  month       String
+  branch      String   @default("Harare")
+  leads       Int      @default(0)
+  interested  Int      @default(0)
+  negotiating Int      @default(0)
+  reserved    Int      @default(0)
+  sold        Int      @default(0)
+  converted   Int      @default(0)
+  rate        Float    @default(0.0)
+  revenue     Decimal  @default(0) @db.Decimal(15, 2)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@unique([month, branch])
+  @@index([branch])
+  @@map("pipeline_metrics")
+}
+
+model Commission {
+  id         String   @id @default(cuid())
+  agentId    String   @map("agent_id")
+  paymentId  String   @map("payment_id")
+  percentage Float    @default(2.5)
+  amount     Decimal  @db.Decimal(12, 2)
+  status     String   @default("CALCULATED")
+  month      String
+  branch     String   @default("Harare")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  // Relation
+  agent      Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@unique([agentId, paymentId, month])
+  @@index([status])
+  @@index([branch])
+  @@index([month])
+  @@map("commissions")
+}
+
+model CommissionPayout {
+  id        String    @id @default(cuid())
+  agentId   String    @map("agent_id")
+  month     String
+  total     Decimal   @db.Decimal(12, 2)
+  status    String    @default("CALCULATED")
+  paidAt    DateTime? @map("paid_at")
+  branch    String    @default("Harare")
+  notes     String?
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  @@unique([agentId, month])
+  @@index([status])
+  @@index([branch])
+  @@map("commission_payouts")
+}
+
+model Invoice {
+  id              String    @id @default(cuid())
+  clientId        String    @map("client_id")
+  standId         String?   @map("stand_id")
+  invoiceNumber   String    @unique @map("invoice_number")
+  invoiceDate     DateTime  @map("invoice_date")
+  dueDate         DateTime  @map("due_date")
+  totalAmount     Decimal   @map("total_amount") @db.Decimal(12, 2)
+  paidAmount      Decimal   @default(0) @map("paid_amount") @db.Decimal(12, 2)
+  status          InvoiceStatus    @default(OUTSTANDING)
+  description     String?
+  branch          String    @default("Harare")
+  reminderSentAt  DateTime? @map("reminder_sent_at")
+  reminderStatus  String?   @map("reminder_status")
+  escalatedAt     DateTime? @map("escalated_at")
+  followupSentAt  DateTime? @map("followup_sent_at")
+  followupCount   Int       @default(0) @map("followup_count")
+  lastEmailSentAt DateTime? @map("last_email_sent_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  // New Ledger Relations
+  saleId             String?            @map("sale_id")
+  sale               Sale?              @relation(fields: [saleId], references: [id])
+  paymentTransactions PaymentTransaction[]
+  ledgerAllocations  LedgerAllocation[]
+
+  @@unique([invoiceNumber, branch])
+  @@index([clientId])
+  @@index([status])
+  @@index([dueDate])
+  @@index([branch])
+  @@index([createdAt(sort: Desc)])
+  @@map("invoices")
+}
+
+model PaymentAutomationLog {
+  id             String   @id @default(cuid())
+  invoiceId      String   @map("invoice_id")
+  clientId       String   @map("client_id")
+  action         String
+  emailStatus    String?
+  subject        String?
+  recipientEmail String   @map("recipient_email")
+  metadata       Json?
+  branch         String   @default("Harare")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  @@index([invoiceId])
+  @@index([clientId])
+  @@index([action])
+  @@index([branch])
+  @@index([createdAt(sort: Desc)])
+  @@map("payment_automation_logs")
+}
+
+model PaymentAutomationSettings {
+  id                    String   @id @default(cuid())
+  branch                String   @unique @default("Harare")
+  enableReminders       Boolean  @default(true) @map("enable_reminders")
+  enableEscalation      Boolean  @default(true) @map("enable_escalation")
+  enableFollowups       Boolean  @default(true) @map("enable_followups")
+  reminderDaysAfterDue  Int      @default(0) @map("reminder_days_after_due")
+  escalationDaysOverdue Int      @default(30) @map("escalation_days_overdue")
+  followupFrequencyDays Int      @default(15) @map("followup_frequency_days")
+  maxFollowups          Int      @default(3) @map("max_followups")
+  customEmailTemplate   String?  @map("custom_email_template")
+  notificationEmails    String[] @map("notification_emails")
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  @@map("payment_automation_settings")
+}
+
+/// *
+///  * Email Open Tracking
+///  * Records when recipients open emails via tracking pixel
+///  * Allows tracking opens, open count, last open time, device info
+model EmailOpen {
+  id             String   @id @default(cuid())
+  paymentLogId   String   @map("payment_log_id")
+  recipientEmail String   @map("recipient_email")
+  clientId       String   @map("client_id")
+  invoiceId      String?  @map("invoice_id")
+  action         String
+  openCount      Int      @default(1) @map("open_count")
+  deviceType     String?  @map("device_type")
+  clientName     String?  @map("client_name")
+  userAgent      String?  @map("user_agent")
+  ipAddress      String?  @map("ip_address")
+  location       String?
+  branch         String   @default("Harare")
+  firstOpenedAt  DateTime @map("first_opened_at")
+  lastOpenedAt   DateTime @map("last_opened_at")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  @@index([paymentLogId])
+  @@index([recipientEmail])
+  @@index([clientId])
+  @@index([invoiceId])
+  @@index([action])
+  @@index([branch])
+  @@index([firstOpenedAt(sort: Desc)])
+  @@map("email_opens")
+}
+
+/// *
+///  * Email Click Tracking
+///  * Records when recipients click links in emails
+///  * Allows tracking click count, link target, device info
+model EmailClick {
+  id             String   @id @default(cuid())
+  paymentLogId   String   @map("payment_log_id")
+  recipientEmail String   @map("recipient_email")
+  clientId       String   @map("client_id")
+  invoiceId      String?  @map("invoice_id")
+  action         String
+  linkUrl        String   @map("link_url")
+  linkText       String?  @map("link_text")
+  clickCount     Int      @default(1) @map("click_count")
+  deviceType     String?  @map("device_type")
+  clientName     String?  @map("client_name")
+  userAgent      String?  @map("user_agent")
+  ipAddress      String?  @map("ip_address")
+  location       String?
+  branch         String   @default("Harare")
+  firstClickedAt DateTime @map("first_clicked_at")
+  lastClickedAt  DateTime @map("last_clicked_at")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  @@index([paymentLogId])
+  @@index([recipientEmail])
+  @@index([clientId])
+  @@index([invoiceId])
+  @@index([action])
+  @@index([linkUrl])
+  @@index([branch])
+  @@index([firstClickedAt(sort: Desc)])
+  @@map("email_clicks")
+}
+
+/// *
+///  * Email Bounce Tracking
+///  * Records email bounces, unsubscribes, and delivery failures
+///  * Allows managing suppression lists and email validity
+model EmailBounce {
+  id             String   @id @default(cuid())
+  paymentLogId   String?  @map("payment_log_id")
+  recipientEmail String   @map("recipient_email")
+  clientId       String?  @map("client_id")
+  bounceType     String
+  bounceCode     String?  @map("bounce_code")
+  bounceMessage  String?  @map("bounce_message")
+  action         String?
+  branch         String   @default("Harare")
+  bouncedAt      DateTime @map("bounced_at")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  @@unique([recipientEmail, bounceType])
+  @@index([recipientEmail])
+  @@index([clientId])
+  @@index([bounceType])
+  @@index([branch])
+  @@index([bouncedAt(sort: Desc)])
+  @@map("email_bounces")
+}
+
+/// *
+///  * Email Analytics Summary
+///  * Pre-computed aggregate data for performance
+///  * Refreshed hourly or on-demand to avoid expensive queries
+model EmailAnalyticsSummary {
+  id                String   @id @default(cuid())
+  action            String
+  period            String   @map("period")
+  periodDate        DateTime @map("period_date")
+  branch            String   @default("Harare")
+  totalSent         Int      @default(0) @map("total_sent")
+  totalOpened       Int      @default(0) @map("total_opened")
+  totalClicked      Int      @default(0) @map("total_clicked")
+  totalBounced      Int      @default(0) @map("total_bounced")
+  uniqueOpens       Int      @default(0) @map("unique_opens")
+  uniqueClicks      Int      @default(0) @map("unique_clicks")
+  openRate          Decimal  @default(0) @map("open_rate") @db.Decimal(5, 2)
+  clickRate         Decimal  @default(0) @map("click_rate") @db.Decimal(5, 2)
+  bounceRate        Decimal  @default(0) @map("bounce_rate") @db.Decimal(5, 2)
+  avgOpensPerEmail  Decimal  @default(0) @map("avg_opens_per_email") @db.Decimal(5, 2)
+  avgClicksPerEmail Decimal  @default(0) @map("avg_clicks_per_email") @db.Decimal(5, 2)
+  refreshedAt       DateTime @default(now()) @map("refreshed_at")
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  @@unique([action, period, periodDate, branch])
+  @@index([action])
+  @@index([period])
+  @@index([periodDate(sort: Desc)])
+  @@index([branch])
+  @@map("email_analytics_summaries")
+}
+
+/// *
+///  * Audit Log Model
+///  * Tracks all data changes for compliance and forensics
+///  * Uses RLS to ensure users see only their branch's audit trail
+model AuditLog {
+  id          String   @id @default(cuid())
+  userId      String?  @map("user_id")
+  tableName   String   @map("table_name")
+  recordId    String   @map("record_id")
+  action      String
+  branch      String   @default("Harare")
+  oldValues   Json?
+  newValues   Json?
+  description String?
+  ipAddress   String?  @map("ip_address")
+  userAgent   String?  @map("user_agent")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([tableName])
+  @@index([recordId])
+  @@index([branch])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+/// *
+///  * Access Control List (ACL)
+///  * Define granular permissions per user/role/resource
+///  * Enables fine-grained access control beyond simple role checks
+model AccessControl {
+  id        String    @id @default(cuid())
+  userId    String    @map("user_id")
+  resource  String
+  action    String
+  branch    String    @default("Harare")
+  grantedBy String?   @map("granted_by")
+  grantedAt DateTime  @default(now()) @map("granted_at")
+  expiresAt DateTime? @map("expires_at")
+
+  @@unique([userId, resource, action, branch])
+  @@index([userId])
+  @@index([resource])
+  @@index([branch])
+  @@map("access_controls")
+}
+
+/// *
+///  * Compliance Checklist
+///  * Track compliance requirements and certifications
+model ComplianceCheck {
+  id         String    @id @default(cuid())
+  recordId   String    @map("record_id")
+  recordType String    @map("record_type")
+  checkType  String    @map("check_type")
+  status     String    @default("PENDING")
+  branch     String    @default("Harare")
+  checkedBy  String?   @map("checked_by")
+  checkedAt  DateTime? @map("checked_at")
+  notes      String?
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+
+  @@index([recordId])
+  @@index([recordType])
+  @@index([status])
+  @@index([branch])
+  @@map("compliance_checks")
+}
+
+/// *
+///  * Data Retention Policy
+///  * Defines how long different types of data are retained
+model DataRetentionPolicy {
+  id            String   @id @default(cuid())
+  dataType      String   @unique @map("data_type")
+  retentionDays Int      @map("retention_days")
+  archiveAfter  Boolean  @default(false) @map("archive_after")
+  deleteAfter   Boolean  @default(false) @map("delete_after")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@map("data_retention_policies")
+}
+
+/// *
+///  * Unsubscribe List
+///  * Tracks recipients who have unsubscribed, bounced hard, or marked as spam
+///  * Used to suppress future sends to these addresses (GDPR/CAN-SPAM compliant)
+model UnsubscribeList {
+  id                   String    @id @default(cuid())
+  recipientEmail       String    @map("recipient_email")
+  clientId             String    @map("client_id")
+  reason               String
+  description          String?
+  unsubscribedAt       DateTime  @map("unsubscribed_at")
+  resubscribeAttemptAt DateTime? @map("resubscribe_attempt_at")
+  unsubscribedBy       String?   @map("unsubscribed_by")
+  branch               String    @default("Harare")
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
+
+  @@unique([recipientEmail, clientId])
+  @@index([recipientEmail])
+  @@index([clientId])
+  @@index([reason])
+  @@index([unsubscribedAt])
+  @@index([branch])
+  @@map("unsubscribe_lists")
+}
+
+/// *
+///  * Bounce Pattern
+///  * Tracks bounce history and determines if recipient should be suppressed
+///  * Categorizes bounces as soft (temporary) or hard (permanent)
+model BouncePattern {
+  id                 String    @id @default(cuid())
+  recipientEmail     String    @map("recipient_email")
+  clientId           String    @map("client_id")
+  bounceType         String
+  lastBounceAt       DateTime  @map("last_bounce_at")
+  consecutiveBounces Int       @default(1) @map("consecutive_bounces")
+  totalBounceCount   Int       @default(1) @map("total_bounce_count")
+  bounceReason       String?   @map("bounce_reason")
+  smtpCode           String?   @map("smtp_code")
+  shouldSuppress     Boolean   @default(false) @map("should_suppress")
+  suppressedAt       DateTime? @map("suppressed_at")
+  suppressedReason   String?   @map("suppressed_reason")
+  branch             String    @default("Harare")
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+
+  @@unique([recipientEmail, clientId])
+  @@index([recipientEmail])
+  @@index([clientId])
+  @@index([bounceType])
+  @@index([shouldSuppress])
+  @@index([lastBounceAt])
+  @@index([branch])
+  @@map("bounce_patterns")
+}
+
+/// *
+///  * Email Engagement Score
+///  * Calculates recipient engagement on 0-100 scale
+///  * Predicts payment probability based on email engagement patterns
+model EmailEngagementScore {
+  id                          String    @id @default(cuid())
+  recipientEmail              String    @map("recipient_email")
+  clientId                    String    @map("client_id")
+  clientName                  String?   @map("client_name")
+  engagementScore             Float     @default(0) @map("engagement_score")
+  engagementTier              String    @default("cold") @map("engagement_tier")
+  openCount                   Int       @default(0) @map("open_count")
+  clickCount                  Int       @default(0) @map("click_count")
+  bounceCount                 Int       @default(0) @map("bounce_count")
+  unsubscribeCount            Int       @default(0) @map("unsubscribe_count")
+  totalEmailsSent             Int       @default(0) @map("total_emails_sent")
+  uniqueEmailsSent            Int       @default(0) @map("unique_emails_sent")
+  lastEngagementAt            DateTime? @map("last_engagement_at")
+  lastOpenAt                  DateTime? @map("last_open_at")
+  lastClickAt                 DateTime? @map("last_click_at")
+  predictedPaymentProbability Float     @default(0) @map("predicted_payment_probability")
+  paymentHistoryDaysAgo       Int?      @map("payment_history_days_ago")
+  branch                      String    @default("Harare")
+  createdAt                   DateTime  @default(now()) @map("created_at")
+  updatedAt                   DateTime  @updatedAt @map("updated_at")
+
+  @@unique([recipientEmail, clientId])
+  @@index([recipientEmail])
+  @@index([clientId])
+  @@index([engagementScore])
+  @@index([engagementTier])
+  @@index([predictedPaymentProbability])
+  @@index([lastEngagementAt])
+  @@index([branch])
+  @@map("email_engagement_scores")
+}
+
+/// *
+///  * Campaign Performance
+///  * Tracks ROI and effectiveness of each campaign type
+///  * Compares Reminder vs Escalation vs Follow-up performance
+model CampaignPerformance {
+  id                    String   @id @default(cuid())
+  campaignType          String   @map("campaign_type")
+  dateRange             DateTime @map("date_range")
+  branch                String   @default("Harare")
+  sentCount             Int      @default(0) @map("sent_count")
+  deliveredCount        Int      @default(0) @map("delivered_count")
+  openCount             Int      @default(0) @map("open_count")
+  clickCount            Int      @default(0) @map("click_count")
+  bounceCount           Int      @default(0) @map("bounce_count")
+  unsubscribeCount      Int      @default(0) @map("unsubscribe_count")
+  conversionCount       Int      @default(0) @map("conversion_count")
+  conversion30DayCount  Int      @default(0) @map("conversion_30day_count")
+  totalRevenueGenerated Decimal  @default(0) @map("total_revenue_generated") @db.Decimal(12, 2)
+  campaignCost          Decimal  @default(0) @map("campaign_cost") @db.Decimal(12, 2)
+  roi                   Float    @default(0) @map("roi")
+  openRate              Float    @default(0) @map("open_rate")
+  clickRate             Float    @default(0) @map("click_rate")
+  bounceRate            Float    @default(0) @map("bounce_rate")
+  conversionRate        Float    @default(0) @map("conversion_rate")
+  lastRefreshedAt       DateTime @default(now()) @updatedAt @map("last_refreshed_at")
+  createdAt             DateTime @default(now()) @map("created_at")
+
+  @@unique([campaignType, dateRange, branch])
+  @@index([campaignType])
+  @@index([dateRange])
+  @@index([branch])
+  @@index([roi])
+  @@index([conversionRate])
+  @@map("campaign_performances")
+}
+
+/// *
+///  * Send Time Optimization
+///  * Tracks best send times per recipient for maximum open rates
+///  * Uses data-driven analysis to determine optimal send window
+model SendTimeOptimization {
+  id                String   @id @default(cuid())
+  recipientEmail    String   @map("recipient_email")
+  clientId          String   @map("client_id")
+  clientName        String?  @map("client_name")
+  bestSendHour      Int?     @map("best_send_hour")
+  bestSendDayOfWeek Int?     @map("best_send_day_of_week")
+  openRateByHour    String   @map("open_rate_by_hour")
+  openRateByDay     String   @map("open_rate_by_day")
+  totalOpens        Int      @default(0) @map("total_opens")
+  totalSends        Int      @default(0) @map("total_sends")
+  sampleSize        Int      @default(0) @map("sample_size")
+  confidence        Float    @default(0) @map("confidence")
+  lastUpdatedAt     DateTime @default(now()) @updatedAt @map("last_updated_at")
+  branch            String   @default("Harare")
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  @@unique([recipientEmail, clientId])
+  @@index([recipientEmail])
+  @@index([clientId])
+  @@index([bestSendHour])
+  @@index([bestSendDayOfWeek])
+  @@index([confidence])
+  @@index([branch])
+  @@map("send_time_optimizations")
+}
+
+/// *
+///  * Kanban Board
+///  * Main container for pipeline management
+///  * Supports custom stages, deals, rules, and collaboration
+model KanbanBoard {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  branchId    String?
+  isArchived  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([branchId])
+  @@index([isArchived])
+  @@map("kanban_boards")
+}
+
+/// *
+///  * Stage
+///  * Pipeline stages (Lead, Negotiation, Proposal, Closing, etc.)
+///  * Supports WIP limits and custom colors
+model Stage {
+  id          String   @id @default(cuid())
+  boardId     String
+  name        String
+  description String?
+  color       String   @default("#3b82f6")
+  orderIndex  Int
+  wipLimit    Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([boardId])
+  @@index([orderIndex])
+  @@map("stages")
+}
+
+/// *
+///  * Deal
+///  * Individual sales opportunities tracked through pipeline
+///  * Includes intelligent metrics and collaboration features
+model Deal {
+  id                String    @id @default(cuid())
+  boardId           String
+  stageId           String
+  clientId          String
+  ownerId           String
+  title             String
+  description       String?
+  value             Decimal   @db.Decimal(12, 2)
+  probability       Float     @default(50)
+  expectedCloseDate DateTime?
+  healthScore       Int?
+  riskLevel         String?
+  winProbability    Float?
+  customValues      Json?
+  isArchived        Boolean   @default(false)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  standId           String?   @unique @map("stand_id")
+
+  @@index([boardId])
+  @@index([stageId])
+  @@index([clientId])
+  @@index([ownerId])
+  @@index([probability])
+  @@index([healthScore])
+  @@index([riskLevel])
+  @@index([isArchived])
+  @@index([standId])
+  @@map("deals")
+}
+
+/// *
+///  * Pipeline Rule
+///  * Automated actions based on deal conditions
+///  * Rules trigger notifications, moves, assignments, escalations
+model PipelineRule {
+  id            String    @id @default(cuid())
+  boardId       String
+  name          String
+  description   String?
+  condition     Json
+  action        Json
+  enabled       Boolean   @default(true)
+  lastTriggered DateTime?
+  triggerCount  Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([boardId])
+  @@index([enabled])
+  @@index([lastTriggered])
+  @@map("pipeline_rules")
+}
+
+/// *
+///  * Custom Field
+///  * Board-level custom fields for deal tracking
+///  * Supports text, number, date, select, multiselect types
+model CustomField {
+  id         String   @id @default(cuid())
+  boardId    String
+  name       String
+  type       String
+  options    String[] @default([])
+  required   Boolean  @default(false)
+  orderIndex Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([boardId])
+  @@map("custom_fields")
+}
+
+/// *
+///  * Deal Activity
+///  * Audit trail for deal changes
+///  * Tracks all modifications, moves, comments
+model DealActivity {
+  id        String   @id @default(cuid())
+  dealId    String
+  userId    String
+  type      String
+  changes   Json?
+  createdAt DateTime @default(now())
+
+  @@index([dealId])
+  @@index([userId])
+  @@index([type])
+  @@index([createdAt])
+  @@map("deal_activities")
+}
+
+/// *
+///  * Comment
+///  * Deal collaboration and discussion
+///  * Supports @mentions and file attachments
+model Comment {
+  id          String   @id @default(cuid())
+  dealId      String
+  userId      String
+  content     String
+  attachments String[] @default([])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([dealId])
+  @@index([userId])
+  @@index([createdAt])
+  @@map("comments")
+}
+
+/// *
+///  * Template Version
+///  * Version history for contract templates
+///  * Track changes and allow rollback
+model ContractTemplateVersion {
+  id                 String   @id @default(cuid())
+  templateId         String   @map("template_id")
+  version            Int
+  content            String
+  htmlContent        String?  @map("html_content")
+  
+  // DOCX Template Support
+  templateType       String   @default("html") @map("template_type")
+  templateFileUrl    String?  @map("template_file_url")
+  templateFileKey    String?  @map("template_file_key")
+  templateVariables  Json     @default("[]") @map("template_variables")
+  
+  variables          Json     @default("[]")
+  changedBy          String?  @map("changed_by")
+  changeNotes        String?  @map("change_notes")
+  createdAt          DateTime @default(now()) @map("created_at")
+
+  // Relations
+  template ContractTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+  @@index([templateId])
+  @@index([version])
+  @@unique([templateId, version])
+  @@map("contract_template_versions")
+}
+
+/// *
+///  * Template Variable
+///  * Variable definitions within a template
+///  * Supports text, number, date, select types
+model TemplateVariable {
+  id           String   @id @default(cuid())
+  templateId   String   @map("template_id")
+  name         String
+  placeholder  String
+  dataType     String   @map("data_type")
+  required     Boolean  @default(false)
+  defaultValue String?  @map("default_value")
+  options      String[] @default([])
+  mappedField  String?  @map("mapped_field")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@index([templateId])
+  @@map("template_variables")
+}
+
+/// *
+///  * Template Section
+///  * Content sections within a template
+///  * Supports conditional rendering
+model TemplateSection {
+  id          String   @id @default(cuid())
+  templateId  String   @map("template_id")
+  name        String
+  content     String
+  orderIndex  Int      @map("order_index")
+  conditional String?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([templateId])
+  @@index([orderIndex])
+  @@map("template_sections")
+}
+
+/// *
+///  * Contract
+///  * Generated contract instances from templates
+///  * Tracks status, signatures, and lifecycle
+model Contract {
+  id                 String    @id @default(cuid())
+  templateId         String    @map("template_id")
+  dealId             String?   @map("deal_id")
+  clientId           String    @map("client_id")
+  title              String
+  content            String
+  status             String    @default("draft")
+  startDate          DateTime? @map("start_date")
+  endDate            DateTime? @map("end_date")
+  renewalDate        DateTime? @map("renewal_date")
+  requiredSignatures Int       @default(1) @map("required_signatures")
+  signedCount        Int       @default(0) @map("signed_count")
+  variables          Json?
+  branch             String    @default("Harare")
+  createdBy          String?   @map("created_by")
+  pdfUrl             String?   @map("pdf_url")
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+
+  // DocuSeal E-Signature Integration Fields
+  docusealSubmissionId       Int?      @map("docuseal_submission_id")
+  docusealStatus             String?   @map("docuseal_status")
+  docusealSignerClientId     Int?      @map("docuseal_signer_client_id")
+  docusealSignerClientStatus String?   @map("docuseal_signer_client_status")
+  docusealSignerDevId        Int?      @map("docuseal_signer_dev_id")
+  docusealSignerDevStatus    String?   @map("docuseal_signer_dev_status")
+  signedPdfUrl               String?   @map("signed_pdf_url")
+  sentForSignatureAt         DateTime? @map("sent_for_signature_at")
+  fullySignedAt              DateTime? @map("fully_signed_at")
+  developerEmail             String?   @map("developer_email")
+  developerName              String?   @map("developer_name")
+
+  @@index([clientId])
+  @@index([status])
+  @@index([dealId])
+  @@index([branch])
+  @@index([signedCount])
+  @@index([createdAt])
+  @@index([docusealSubmissionId])
+  @@map("contracts")
+}
+
+/// *
+///  * Contract Signature
+///  * Signature requests and tracking
+///  * Handles multiple signers with roles
+model ContractSignature {
+  id             String    @id @default(cuid())
+  contractId     String    @map("contract_id")
+  signerName     String    @map("signer_name")
+  signerEmail    String    @map("signer_email")
+  signerRole     String    @map("signer_role")
+  signatureData  String?   @map("signature_data")
+  ipAddress      String?   @map("ip_address")
+  userAgent      String?   @map("user_agent")
+  status         String    @default("pending")
+  sentAt         DateTime? @map("sent_at")
+  signedAt       DateTime? @map("signed_at")
+  expiresAt      DateTime? @map("expires_at")
+  reminderSentAt DateTime? @map("reminder_sent_at")
+  signedByUserId String?   @map("signed_by_user_id")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  @@index([contractId])
+  @@index([status])
+  @@index([signerEmail])
+  @@index([signedAt])
+  @@map("contract_signatures")
+}
+
+/// *
+///  * Contract Version
+///  * Version history for contracts
+///  * Track amendments and changes
+model ContractVersion {
+  id            String   @id @default(cuid())
+  contractId    String   @map("contract_id")
+  versionNumber Int      @map("version_number")
+  content       String
+  changes       Json?
+  changeNotes   String?  @map("change_notes")
+  changedBy     String?  @map("changed_by")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@index([contractId])
+  @@index([versionNumber])
+  @@map("contract_versions")
+}
+
+/// *
+///  * Contract Amendment
+///  * Tracked amendments to contracts
+///  * Maintains change history and approval workflow
+model ContractAmendment {
+  id          String   @id @default(cuid())
+  contractId  String   @map("contract_id")
+  title       String
+  description String?
+  changes     Json
+  status      String   @default("draft")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([contractId])
+  @@index([status])
+  @@map("contract_amendments")
+}
+
+/// *
+///  * Contract Activity
+///  * Audit trail for contract actions
+///  * Tracks all modifications and workflow changes
+model ContractActivity {
+  id            String   @id @default(cuid())
+  contractId    String   @map("contract_id")
+  action        String
+  actorId       String?  @map("actor_id")
+  actorEmail    String?  @map("actor_email")
+  actorRole     String?  @map("actor_role")
+  details       Json?
+  changesBefore Json?    @map("changes_before")
+  changesAfter  Json?    @map("changes_after")
+  ipAddress     String?  @map("ip_address")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@index([contractId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("contract_activities")
+}
+
+/// *
+///  * Company Settings
+///  * Stores branch-specific settings like logo, contact info
+///  * Persists to database so visible across all browsers/sessions
+model CompanySettings {
+  id           String   @id @default(cuid())
+  branch       String   @unique
+  logo_url     String?  @map("logo_url")
+  company_name String?  @default("Fine & Country Zimbabwe") @map("company_name")
+  phone        String?  @map("phone")
+  email        String?  @map("email")
+  address      String?  @map("address")
+  principalAgentName  String? @map("principal_agent_name")
+  principalAgentEmail String? @map("principal_agent_email")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@index([branch])
+  @@map("company_settings")
+}
+
+/// Signers for a GeneratedContract (DocuSeal + internal tracking)
+/// Keeps signer roles/statuses normalized so we can support 4+ signatories.
+model GeneratedContractSigner {
+  id             String   @id @default(cuid())
+  contractId     String   @map("contract_id")
+  role           String   @map("role") // e.g. client, developer, lawyer, principal_agent
+  name           String?  @map("name")
+  email          String   @map("email")
+  status         String   @default("not_invited") @map("status") // not_invited|pending|opened|signed|declined|expired
+  docusealSignerId Int?   @map("docuseal_signer_id")
+  invitedAt      DateTime? @map("invited_at")
+  openedAt       DateTime? @map("opened_at")
+  signedAt       DateTime? @map("signed_at")
+  declinedAt     DateTime? @map("declined_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  contract GeneratedContract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+
+  @@unique([contractId, role])
+  @@index([contractId])
+  @@index([email])
+  @@index([status])
+  @@map("generated_contract_signers")
+}
+
+/// *
+///  * Automation
+///  * Unified automation system using Trigger → Condition → Action model
+///  * Replaces PaymentAutomationSettings and PipelineRule
+model Automation {
+  id           String          @id @default(cuid())
+  name         String
+  description  String?
+  enabled      Boolean         @default(true)
+  triggerType  String          @map("trigger_type")
+  eventType    String?         @map("event_type")
+  schedule     String?
+  webhookUrl   String?         @map("webhook_url")
+  entityType   String          @map("entity_type")
+  condition    Json?
+  actions      Json
+  branch       String          @default("Harare")
+  retryPolicy  Json?           @map("retry_policy")
+  lastRunAt    DateTime?       @map("last_run_at")
+  runCount     Int             @default(0) @map("run_count")
+  successCount Int             @default(0) @map("success_count")
+  failureCount Int             @default(0) @map("failure_count")
+  createdAt    DateTime        @default(now()) @map("created_at")
+  updatedAt    DateTime        @updatedAt @map("updated_at")
+  runs         AutomationRun[]
+
+  @@index([enabled])
+  @@index([triggerType, eventType])
+  @@index([branch])
+  @@map("automations")
+}
+
+/// *
+///  * AutomationRun
+///  * Tracks every automation execution for observability and retry
+model AutomationRun {
+  id             String     @id @default(cuid())
+  automationId   String     @map("automation_id")
+  eventType      String     @map("event_type")
+  entityType     String     @map("entity_type")
+  entityId       String     @map("entity_id")
+  correlationId  String?    @map("correlation_id")
+  status         String
+  actionType     String     @map("action_type")
+  actionTarget   String     @map("action_target")
+  idempotencyKey String     @unique @map("idempotency_key")
+  retryCount     Int        @default(0) @map("retry_count")
+  maxRetries     Int        @default(3) @map("max_retries")
+  result         Json?
+  errorMessage   String?    @map("error_message")
+  errorStack     String?    @map("error_stack")
+  scheduledAt    DateTime?  @map("scheduled_at")
+  startedAt      DateTime?  @map("started_at")
+  completedAt    DateTime?  @map("completed_at")
+  durationMs     Int?       @map("duration_ms")
+  branch         String     @default("Harare")
+  createdAt      DateTime   @default(now()) @map("created_at")
+  automation     Automation @relation(fields: [automationId], references: [id], onDelete: Cascade)
+
+  @@index([automationId])
+  @@index([entityId])
+  @@index([correlationId])
+  @@index([status])
+  @@index([createdAt(sort: Desc)])
+  @@map("automation_runs")
+}
+
+/// *
+///  * AutomationEventLog
+///  * Logs all events emitted for observability and event replay
+model AutomationEventLog {
+  id                   String   @id @default(cuid())
+  eventType            String   @map("event_type")
+  entityType           String   @map("entity_type")
+  entityId             String   @map("entity_id")
+  payload              Json
+  branch               String   @default("Harare")
+  triggeredAutomations String[] @map("triggered_automations")
+  timestamp            DateTime @default(now())
+
+  @@index([eventType])
+  @@index([entityId])
+  @@index([timestamp(sort: Desc)])
+  @@map("automation_event_logs")
+}
+
+model SalesTarget {
+  id            String   @id @default(cuid())
+  agentId       String   @map("agent_id")
+  developmentId String?  @map("development_id")
+  branch        String   @default("Harare")
+  targetPeriod  String   @map("target_period")
+  targetType    String   @default("MONTHLY") @map("target_type")
+  revenueTarget Decimal? @map("revenue_target") @db.Decimal(12, 2)
+  dealsTarget   Int?     @map("deals_target")
+  setBy         String   @map("set_by")
+  notes         String?
+  status        String   @default("ACTIVE")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@unique([agentId, developmentId, targetPeriod, targetType])
+  @@index([targetPeriod])
+  @@index([branch])
+  @@index([agentId])
+  @@index([status])
+  @@map("sales_targets")
+}
+
+model CommentMentions {
+  A String
+  B String
+
+  @@id([A, B], map: "_CommentMentions_AB_pkey")
+  @@index([B], map: "_CommentMentions_B_index")
+  @@map("_CommentMentions")
+}
+
+model DealCollaborators {
+  A String
+  B String
+
+  @@id([A, B], map: "_DealCollaborators_AB_pkey")
+  @@index([B], map: "_DealCollaborators_B_index")
+  @@map("_DealCollaborators")
+}
+
+model KanbanBoardMembers {
+  A String
+  B String
+
+  @@id([A, B], map: "_KanbanBoardMembers_AB_pkey")
+  @@index([B], map: "_KanbanBoardMembers_B_index")
+  @@map("_KanbanBoardMembers")
+}
+
+enum UserRole {
+  ADMIN
+  MANAGER
+  AGENT
+  ACCOUNT
+  CLIENT
+  DEVELOPER
+}
+
+enum AgentStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  REVOKED
+}
+
+enum DevelopmentPhase {
+  SERVICING
+  READY_TO_BUILD
+  COMPLETED
+}
+
+enum StandStatus {
+  AVAILABLE
+  RESERVED
+  SOLD
+  WITHDRAWN
+  BLOCKED
+  CANCELLED
+}
+
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  EXPIRED
+  PAYMENT_PENDING
+  CANCELLED
+}
+
+enum ActivityType {
+  LOGIN
+  RESERVATION
+  PAYMENT_UPLOAD
+  VERIFICATION
+  STAND_UPDATE
+  USER_CREATED
+  AGENT_ASSIGNED
+}
+
+/// *
+///  * Task Manager
+///  * Personal task management with notes for agents and users
+model Task {
+  id          String      @id @default(cuid())
+  title       String
+  description String?
+  notes       String?     @map("notes")
+  status      TaskStatus  @default(PENDING)
+  priority    TaskPriority @default(MEDIUM)
+  dueDate     DateTime?   @map("due_date")
+  completedAt DateTime?   @map("completed_at")
+  userId      String      @map("user_id")
+  agentId     String?     @map("agent_id")
+  clientId    String?     @map("client_id")
+  dealId      String?     @map("deal_id")
+  branch      String      @default("Harare")
+  tags        String[]     @default([])
+  metadata    Json?       @map("metadata")
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@index([agentId])
+  @@index([status])
+  @@index([dueDate])
+  @@index([branch])
+  @@index([createdAt(sort: Desc)])
+  @@map("tasks")
+}
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+/// *
+///  * EventLog
+///  * Tracks system events for notifications and audit purposes
+///  * Used for notification generation and audit trails
+model EventLog {
+  id          String   @id @default(cuid())
+  eventType   String   @map("event_type")
+  entityType  String   @map("entity_type")
+  entityId    String   @map("entity_id")
+  userId      String?  @map("user_id")
+  userRole    String?  @map("user_role")
+  branch      String   @default("Harare")
+  metadata    Json?
+  severity    String   @default("INFO")
+  processed   Boolean  @default(false)
+  processedAt DateTime? @map("processed_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([eventType])
+  @@index([entityType, entityId])
+  @@index([userId])
+  @@index([branch])
+  @@index([processed])
+  @@index([createdAt(sort: Desc)])
+  @@map("event_logs")
+}
+
+/// *
+///  * BackupJob
+///  * Tracks weekly backup generation jobs
+///  * Ensures idempotency and provides audit trail
+model BackupJob {
+  id             String           @id @default(cuid())
+  scopeType      BackupScopeType  @map("scope_type")
+  scopeId        String           @map("scope_id")      // developer_email or "admin"
+  weekStart      DateTime         @map("week_start")    // ISO 8601 week start (Monday)
+  weekEnd        DateTime         @map("week_end")      // ISO 8601 week end (Sunday)
+  weekLabel      String           @map("week_label")    // e.g., "2026-W06"
+  status         BackupJobStatus  @default(PENDING)
+  artifactUrl    String?          @map("artifact_url")  // UploadThing URL
+  artifactKey    String?          @map("artifact_key")  // UploadThing key for deletion
+  fileSize       BigInt?          @map("file_size")     // bytes
+  errorMessage   String?          @map("error_message") @db.Text
+  startedAt      DateTime?        @map("started_at")
+  completedAt    DateTime?        @map("completed_at")
+  emailSent      Boolean          @default(false) @map("email_sent")
+  emailSentAt    DateTime?        @map("email_sent_at")
+  emailError     String?          @map("email_error") @db.Text
+  retriesCount   Int              @default(0) @map("retries_count")
+  lastRetryAt    DateTime?        @map("last_retry_at")
+  metadata       Json?            // Store CSV row counts, file list, etc.
+  createdAt      DateTime         @default(now()) @map("created_at")
+  updatedAt      DateTime         @updatedAt @map("updated_at")
+
+  downloads      BackupDownload[]
+
+  @@unique([scopeType, scopeId, weekStart])  // Idempotency: one backup per scope per week
+  @@index([scopeType, scopeId])
+  @@index([weekStart])
+  @@index([status])
+  @@index([createdAt(sort: Desc)])
+  @@map("backup_jobs")
+}
+
+/// *
+///  * BackupDownload
+///  * Tracks backup downloads for audit purposes
+///  * Monitors access patterns and compliance
+model BackupDownload {
+  id          String   @id @default(cuid())
+  backupJobId String   @map("backup_job_id")
+  userId      String   @map("user_id")
+  userEmail   String   @map("user_email")
+  userRole    String   @map("user_role")
+  ipAddress   String?  @map("ip_address")
+  userAgent   String?  @map("user_agent") @db.Text
+  downloadedAt DateTime @default(now()) @map("downloaded_at")
+
+  backupJob    BackupJob @relation(fields: [backupJobId], references: [id], onDelete: Cascade)
+
+  @@index([backupJobId])
+  @@index([userId])
+  @@index([downloadedAt(sort: Desc)])
+  @@map("backup_downloads")
+}
+
+enum BackupScopeType {
+  DEVELOPER
+  ADMIN
+}
+
+enum BackupJobStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+}
+
+/// *
+///  * Contract Document Version
+///  * Stores generated contract documents (DOCX, HTML, PDF) for versioning
+///  * Enables download of original format documents
+model ContractDocumentVersion {
+  id            String   @id @default(cuid())
+  contractId    String   @map("contract_id")
+  templateId    String   @map("template_id")
+  version       Int
+  documentType  String   @map("document_type")  // 'html' | 'docx' | 'pdf'
+  storageKey    String   @map("storage_key")    // UploadThing key
+  storageUrl    String   @map("storage_url")    // UploadThing URL
+  fileSize      Int?     @map("file_size")
+  checksum      String?                          // SHA-256 hash
+  generatedAt   DateTime @default(now()) @map("generated_at")
+  generatedBy   String?  @map("generated_by")
+  
+  contract GeneratedContract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  template ContractTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+  @@unique([contractId, version, documentType])
+  @@index([contractId])
+  @@index([templateId])
+  @@map("contract_document_versions")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// NEW UNIFIED LEDGER SYSTEM (2026 Refactor)
+// ═══════════════════════════════════════════════════════════════════════════
+
+model PaymentTransaction {
+  id              String   @id @default(cuid())
+  postedAt        DateTime @map("posted_at")
+  amount          Decimal  @db.Decimal(12, 2)
+  currency        Currency @default(USD)
+  method          PaymentMethod
+  reference       String?
+  externalId      String?  @map("external_id")
+  idempotencyKey  String   @unique @map("idempotency_key")
+  memo            String?
+  
+  // Linkage
+  clientId        String   @map("client_id")
+  saleId          String?  @map("sale_id")
+  invoiceId       String?  @map("invoice_id")
+  developmentId   String?  @map("development_id")
+  standId         String?  @map("stand_id")
+  
+  source          PaymentSource @default(MANUAL)
+  status          TransactionStatus @default(COMPLETED)
+  
+  createdByUserId String?  @map("created_by_user_id")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  client          Client      @relation(fields: [clientId], references: [id])
+  sale            Sale?       @relation(fields: [saleId], references: [id])
+  invoice         Invoice?    @relation(fields: [invoiceId], references: [id])
+  development     Development? @relation(fields: [developmentId], references: [id])
+  stand           Stand?      @relation(fields: [standId], references: [id])
+  allocations     LedgerAllocation[]
+
+  @@index([clientId, postedAt])
+  @@index([saleId, postedAt])
+  @@index([invoiceId, postedAt])
+  @@index([developmentId])
+  @@index([standId])
+  @@map("payment_transactions")
+}
+
+model Sale {
+  id              String   @id @default(cuid())
+  clientId        String   @map("client_id")
+  developmentId   String   @map("development_id")
+  standId         String?  @map("stand_id")
+  
+  saleType        SaleType
+  currency        Currency @default(USD)
+  
+  principalAmount Decimal  @map("principal_amount") @db.Decimal(12, 2)
+  vatAmount       Decimal? @map("vat_amount") @db.Decimal(12, 2)
+  adminFees       Decimal? @map("admin_fees") @db.Decimal(12, 2)
+  totalAmount     Decimal  @map("total_amount") @db.Decimal(12, 2)
+  
+  status          SaleStatus @default(DRAFT)
+  
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  client          Client      @relation(fields: [clientId], references: [id])
+  development     Development @relation(fields: [developmentId], references: [id])
+  stand           Stand?      @relation(fields: [standId], references: [id])
+  invoices        Invoice[]
+  payments        PaymentTransaction[]
+
+  @@index([clientId])
+  @@index([developmentId])
+  @@index([standId])
+  @@map("sales")
+}
+
+model LedgerAllocation {
+  id                   String   @id @default(cuid())
+  paymentTransactionId String   @map("payment_transaction_id")
+  invoiceId            String   @map("invoice_id")
+  amount               Decimal  @db.Decimal(12, 2)
+  
+  createdAt            DateTime @default(now()) @map("created_at")
+
+  paymentTransaction   PaymentTransaction @relation(fields: [paymentTransactionId], references: [id])
+  invoice              Invoice            @relation(fields: [invoiceId], references: [id])
+
+  @@index([paymentTransactionId])
+  @@index([invoiceId])
+  @@map("ledger_allocations")
+}
+
+enum Currency {
+  USD
+  ZWL
+  ZAR
+}
+
+enum PaymentMethod {
+  CASH
+  BANK
+  ECOCASH
+  ZIPIT
+  TRANSFER
+  OTHER
+}
+
+enum PaymentSource {
+  MANUAL
+  IMPORT
+  API
+  MIGRATED
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  VOID
+}
+
+enum SaleType {
+  RESERVATION
+  AOS
+  CESSION
+  CASH
+}
+
+enum SaleStatus {
+  DRAFT
+  ACTIVE
+  CANCELLED
+  COMPLETED
+}
+
+enum InvoiceStatus {
+  DRAFT
+  ISSUED
+  PARTIALLY_PAID
+  PAID
+  VOID
+  OUTSTANDING
+}

@@ -1,0 +1,33 @@
+
+# Fine & Country Zimbabwe ERP - Forensic Protection Manifest
+# Objective: Prevent credential leakage into public version control.
+
+# Dependency Directories
+node_modules/
+jspm_packages/
+
+# Build Artifacts
+dist/
+build/
+.cache/
+
+# Environment / Forensic Secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+environment.prod.ts
+*.pem
+*.key
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Vercel / Cloud Metadata
+.vercel
+.next/
+
+.vercel
+.env*.local

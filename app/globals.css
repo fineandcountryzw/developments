@@ -1,0 +1,195 @@
+/* Tailwind CSS v3 directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Fine & Country - Forensic White Aesthetic */
+:root {
+  /* Brand Colors */
+  --color-brand-white: #FFFFFF;
+  --color-brand-light: #F9FAFB;
+  --color-brand-gold: #C5A059;
+  --color-brand-black: #1A1A1A;
+  --color-brand-grey: #6B7280;
+  
+  /* Legacy support */
+  --color-fc-gold: #C5A059;
+  --color-fc-dark: #1A1A1A;
+  --color-fc-slate: #FFFFFF;
+  --color-fc-divider: #E5E7EB;
+  --color-fc-text: #1A1A1A;
+  --color-fc-bg: #FFFFFF;
+  --color-fc-border: #E5E7EB;
+  --color-fc-cream: #F9FAFB;
+  
+  /* ERP Design System Tokens */
+  --erp-primary: #0B3A6A;
+  --erp-primary-foreground: #FFFFFF;
+  --erp-accent: #3B82F6;
+  --erp-accent-foreground: #FFFFFF;
+  --erp-surface: #F8FAFC;
+  --erp-surface-elevated: #FFFFFF;
+  --erp-border: rgba(15, 23, 42, 0.12);
+  --erp-border-strong: rgba(15, 23, 42, 0.2);
+  --erp-danger: #EF4444;
+  --erp-danger-foreground: #FFFFFF;
+  --erp-success: #10B981;
+  --erp-warning: #F59E0B;
+  
+  /* Font: Inter via next/font (--font-inter on html). Fallback when variable not set. */
+  --font-inter: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+}
+
+/* Dark mode support */
+.dark {
+  --erp-primary: #3B82F6;
+  --erp-primary-foreground: #FFFFFF;
+  --erp-accent: #60A5FA;
+  --erp-accent-foreground: #0F172A;
+  --erp-surface: #0F172A;
+  --erp-surface-elevated: #1E293B;
+  --erp-border: rgba(148, 163, 184, 0.16);
+  --erp-border-strong: rgba(148, 163, 184, 0.3);
+  --erp-danger: #F87171;
+  --erp-danger-foreground: #0F172A;
+}
+
+/* Base typography: Inter system-wide. next/font overrides --font-inter on html. */
+html {
+  font-family: var(--font-inter);
+  font-weight: 400;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+  background: #fff;
+  color: #333;
+  line-height: 1.5;
+}
+
+body {
+  background: #FFFFFF;
+  color: #0a0a0a;
+  font-family: var(--font-inter);
+  line-height: 1.6;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 800;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+
+p, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+}
+
+/* Scrollbar styling */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Main content area responsive spacing */
+.main-content {
+  min-height: 100vh;
+}
+
+/* Ensure main content has proper margin on laptops to account for fixed sidebar */
+@media (min-width: 1024px) {
+  .main-content {
+    margin-left: 256px !important; /* Force margin to match sidebar width (w-64 = 256px) */
+  }
+}
+
+/* Safe area insets for mobile */
+.safe-area-inset-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Leaflet Map Stand Tooltip Styling */
+.stand-tooltip {
+  background: white !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  padding: 0 !important;
+}
+
+.stand-tooltip .leaflet-tooltip-content {
+  margin: 0 !important;
+}
+
+.leaflet-tooltip-left.stand-tooltip::before,
+.leaflet-tooltip-right.stand-tooltip::before,
+.leaflet-tooltip-top.stand-tooltip::before,
+.leaflet-tooltip-bottom.stand-tooltip::before {
+  border-color: transparent !important;
+}
+
+/* Stand label marker styling */
+.stand-label {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Make available stands glow effect */
+.leaflet-interactive[style*="85754E"] {
+  filter: drop-shadow(0 0 3px rgba(133, 117, 78, 0.4));
+}
+
+/* Pointer cursor for clickable polygons */
+.leaflet-interactive:hover {
+  cursor: pointer;
+}
+
+/* Pipeline notification animations */
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.3s ease-out;
+}
+
+/* No scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

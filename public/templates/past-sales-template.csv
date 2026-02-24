@@ -1,0 +1,12 @@
+name,email,phone,address,standNumber,developmentName,saleDate,salePrice,depositAmount,paymentMethod,paymentDate,paymentAmount,paymentReference,notes
+John Smith,john.smith@email.com,+27 82 123 4567,123 Main St Johannesburg,45,Spitzkop Estate,2024-01-15,450000.00,50000.00,eft,2024-01-15,50000.00,EFT001,Deposit payment
+John Smith,john.smith@email.com,,,45,Spitzkop Estate,2024-01-15,450000.00,50000.00,eft,2024-02-15,40000.00,EFT002,First installment
+John Smith,john.smith@email.com,,,45,Spitzkop Estate,2024-01-15,450000.00,50000.00,eft,2024-03-15,360000.00,EFT003,Full payment - stand paid off
+Sarah Johnson,sarah.j@gmail.com,+27 83 987 6543,456 Oak Ave Cape Town,12,Greenfields Development,2024-02-20,320000.00,32000.00,deposit,2024-02-20,32000.00,DEP001,Deposit via EFT
+Michael Brown,m.brown@work.co.za,,,12,Greenfields Development,2024-02-20,320000.00,32000.00,deposit,2024-03-20,72000.00,DEP002,Monthly payment
+Michael Brown,m.brown@work.co.za,,,12,Greenfields Development,2024-02-20,320000.00,32000.00,deposit,2024-04-20,72000.00,DEP003,Monthly payment
+Michael Brown,m.brown@work.co.za,,,12,Greenfields Development,2024-02-20,320000.00,32000.00,deposit,2024-05-20,72000.00,DEP004,Monthly payment
+Michael Brown,m.brown@work.co.za,,,12,Greenfields Development,2024-02-20,320000.00,32000.00,deposit,2024-06-20,72000.00,DEP005,Monthly payment - final payment
+Emily Davis,emily.davis@email.com,+27 72 555 1234,789 Pine Rd Durban,8,Sunset Hills,2024-03-10,550000.00,55000.00,cheque,2024-03-10,55000.00,CHQ001,Cheque deposit
+Emily Davis,emily.davis@email.com,,,8,Sunset Hills,2024-03-10,550000.00,55000.00,cheque,2024-04-10,49500.00,CHQ002,Post-dated cheque
+Robert Wilson,r.wilson@company.com,,,8,Sunset Hills,2024-03-10,550000.00,55000.00,cheque,2024-05-10,445500.00,CHQ003,Final payment

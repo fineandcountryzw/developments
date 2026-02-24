@@ -1,0 +1,27 @@
+{
+  "framework": "nextjs",
+  "installCommand": "npm install",
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "env": {
+    "DATABASE_URL": "postgresql://neondb_owner:npg_hsQdL7KHBX8c@ep-mute-river-a4uai6d1-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+  },
+  "crons": [
+    {
+      "path": "/api/cron/expire-reservations",
+      "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/cron/weekly-developer-report",
+      "schedule": "0 6 * * 1"
+    },
+    {
+      "path": "/api/cron/weekly-developer-backups",
+      "schedule": "0 7 * * 1"
+    },
+    {
+      "path": "/api/cron/weekly-backups",
+      "schedule": "0 7 * * 1"
+    }
+  ]
+}

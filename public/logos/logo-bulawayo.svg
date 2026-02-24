@@ -1,0 +1,18 @@
+<svg viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+  <!-- Background -->
+  <rect width="200" height="50" fill="none"/>
+  
+  <!-- Fine & Country Bulawayo Branch Logo -->
+  <!-- Left accent bar -->
+  <rect x="8" y="10" width="3" height="30" fill="currentColor" opacity="0.8"/>
+  
+  <!-- Main text -->
+  <text x="20" y="32" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="currentColor">
+    Fine & Country
+  </text>
+  
+  <!-- Subtitle -->
+  <text x="20" y="42" font-family="Inter, sans-serif" font-size="8" font-weight="600" fill="currentColor" opacity="0.7">
+    BULAWAYO
+  </text>
+</svg>

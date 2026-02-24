@@ -1,0 +1,12 @@
+clientEmail,standNumber,paymentDate,amount,paymentMethod,reference,notes
+john.smith@email.com,45,2024-01-15,50000.00,eft,EFT001,Deposit payment
+john.smith@email.com,45,2024-02-15,40000.00,eft,EFT002,First installment
+john.smith@email.com,45,2024-03-15,360000.00,eft,EFT003,Full payment - stand paid off
+sarah.j@gmail.com,12,2024-02-20,32000.00,deposit,DEP001,Deposit via EFT
+sarah.j@gmail.com,12,2024-03-20,72000.00,deposit,DEP002,Monthly payment
+sarah.j@gmail.com,12,2024-04-20,72000.00,deposit,DEP003,Monthly payment
+sarah.j@gmail.com,12,2024-05-20,72000.00,deposit,DEP004,Monthly payment
+sarah.j@gmail.com,12,2024-06-20,72000.00,deposit,DEP005,Final payment
+emily.davis@email.com,8,2024-03-10,55000.00,cheque,CHQ001,Cheque deposit
+emily.davis@email.com,8,2024-04-10,49500.00,cheque,CHQ002,Post-dated cheque
+emily.davis@email.com,8,2024-05-10,445500.00,cheque,CHQ003,Final payment

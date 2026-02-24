@@ -1,0 +1,20 @@
+{
+  "name": "Fine & Country Zimbabwe ERP",
+  "short_name": "FC Zim ERP",
+  "description": "High-performance enterprise real estate management for Zimbabwe.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F9F8F6",
+  "theme_color": "#0F172A",
+  "icons": [
+    {
+      "src": "https://images.unsplash.com/photo-1560179707-f14e90ef3623?auto=format&fit=crop&q=80&w=192",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ],
+  "requestFramePermissions": [
+    "geolocation",
+    "camera"
+  ]
+}

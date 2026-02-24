@@ -1,0 +1,33 @@
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="32" cy="32" r="30" fill="#1A1A1A"/>
+  
+  <!-- Gold accent ring -->
+  <circle cx="32" cy="32" r="30" fill="none" stroke="#C5A059" stroke-width="2"/>
+  
+  <!-- Stylized house/property shape -->
+  <g fill="#C5A059">
+    <!-- Roof -->
+    <polygon points="32,16 20,26 44,26" fill="#C5A059"/>
+    
+    <!-- Main house body -->
+    <rect x="20" y="26" width="24" height="20" fill="#C5A059" opacity="0.9"/>
+    
+    <!-- Door -->
+    <rect x="29" y="32" width="6" height="14" fill="#1A1A1A"/>
+    
+    <!-- Door handle -->
+    <circle cx="35" cy="39" r="1" fill="#C5A059"/>
+    
+    <!-- Windows left -->
+    <rect x="22" y="28" width="4" height="4" fill="#1A1A1A"/>
+    <rect x="22" y="34" width="4" height="4" fill="#1A1A1A"/>
+    
+    <!-- Windows right -->
+    <rect x="38" y="28" width="4" height="4" fill="#1A1A1A"/>
+    <rect x="38" y="34" width="4" height="4" fill="#1A1A1A"/>
+  </g>
+  
+  <!-- Location pin indicator -->
+  <circle cx="45" cy="18" r="3" fill="#C5A059" stroke="#1A1A1A" stroke-width="1"/>
+</svg>

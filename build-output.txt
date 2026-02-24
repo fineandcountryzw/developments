@@ -1,0 +1,104 @@
+﻿node.exe :  ΓÜá Invalid next.config.mjs options 
+detected: 
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ( ΓÜá I    
+nvalid ne...ions detected: :String) [], RemoteE    
+xception
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+ ΓÜá     Unrecognized key(s) in object: 'api'
+ ΓÜá See more info here: 
+https://nextjs.org/docs/messages/invalid-next-config
+ ΓÜá Warning: Next.js inferred your workspace root, but 
+it may not be correct.
+ We detected multiple lockfiles and selected the 
+directory of C:\Users\Acer\Documents\package-lock.json 
+as the root directory.
+ To silence this warning, set `outputFileTracingRoot` 
+in your Next.js config, or consider removing one of the 
+lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/
+next-config-js/output#caveats for more information.
+ Detected additional lockfiles: 
+   * C:\Users\Acer\Documents\developmentsfc-main\package
+-lock.json
+
+   Γû▓ Next.js 15.5.9
+   - Environments: .env.local, .env.production, .env
+
+   Creating an optimized production build ...
+ ΓÜá Compiled with warnings in 19.0s
+
+./node_modules/@prisma/instrumentation/node_modules/@ope
+ntelemetry/instrumentation/build/esm/platform/node/instr
+umentation.js
+Critical dependency: the request of a dependency is an 
+expression
+
+Import trace for requested module:
+./node_modules/@prisma/instrumentation/node_modules/@ope
+ntelemetry/instrumentation/build/esm/platform/node/instr
+umentation.js
+./node_modules/@prisma/instrumentation/node_modules/@ope
+ntelemetry/instrumentation/build/esm/platform/node/index
+.js
+./node_modules/@prisma/instrumentation/node_modules/@ope
+ntelemetry/instrumentation/build/esm/platform/index.js
+./node_modules/@prisma/instrumentation/node_modules/@ope
+ntelemetry/instrumentation/build/esm/index.js
+./node_modules/@prisma/instrumentation/dist/index.js
+./node_modules/@sentry/node/build/cjs/integrations/traci
+ng/prisma.js
+./node_modules/@sentry/node/build/cjs/index.js
+./node_modules/@sentry/nextjs/build/cjs/index.server.js
+./app/error.tsx
+
+./node_modules/@prisma/instrumentation/node_modules/@ope
+ntelemetry/instrumentation/build/esm/platform/node/instr
+umentation.js
+Critical dependency: the request of a dependency is an 
+expression
+
+Import trace for requested module:
+./node_modules/@prisma/instrumentation/node_modules/@ope
+ntelemetry/instrumentation/build/esm/platform/node/instr
+umentation.js
+./node_modules/@prisma/instrumentation/node_modules/@ope
+ntelemetry/instrumentation/build/esm/platform/node/index
+.js
+./node_modules/@prisma/instrumentation/node_modules/@ope
+ntelemetry/instrumentation/build/esm/platform/index.js
+./node_modules/@prisma/instrumentation/node_modules/@ope
+ntelemetry/instrumentation/build/esm/index.js
+./node_modules/@prisma/instrumentation/dist/index.js
+./node_modules/@sentry/node/build/cjs/integrations/traci
+ng/prisma.js
+./node_modules/@sentry/node/build/cjs/index.js
+./node_modules/@sentry/nextjs/build/cjs/index.server.js
+./sentry.server.config.ts
+
+   Linting and checking validity of types ...
+Failed to compile.
+
+./app/api/admin/developments/route.ts:1653:18
+Type error: Parameter 's' implicitly has an 'any' type.
+
+[0m [90m 1651 |[39m           sizes [33m=[39m 
+body[33m.[39mmanualStandSizes
+ [90m 1652 |[39m             
+[33m.[39msplit([32m','[39m)
+[31m[1m>[22m[39m[90m 1653 |[39m             
+[33m.[39mmap(s [33m=>[39m 
+parseFloat(s[33m.[39mtrim()))
+ [90m      |[39m                  [31m[1m^[22m[39m
+ [90m 1654 |[39m             [33m.[39mfilter(s 
+[33m=>[39m [33m![39misNaN(s) [33m&&[39m s 
+[33m>[39m [35m0[39m)[33m;[39m
+ [90m 1655 |[39m         }
+ [90m 1656 |[39m         [0m
+Next.js build worker exited with code: 1 and signal: 
+null

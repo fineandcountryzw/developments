@@ -1,0 +1,648 @@
+
+> fine-and-country-zimbabwe-erp@0.0.0 dev
+> next dev -p 6060
+
+[@sentry/nextjs] DEPRECATION WARNING: disableLogger is deprecated and will be removed in a future version. Use webpack.treeshake.removeDebugLogging instead.
+[@sentry/nextjs] DEPRECATION WARNING: automaticVercelMonitors is deprecated and will be removed in a future version. Use webpack.automaticVercelMonitors instead.
+ ⚠ Invalid next.config.mjs options detected: 
+ ⚠     Unrecognized key(s) in object: 'sentry'
+ ⚠ See more info here: https://nextjs.org/docs/messages/invalid-next-config
+[@sentry/nextjs] DEPRECATION WARNING: disableLogger is deprecated and will be removed in a future version. Use webpack.treeshake.removeDebugLogging instead.
+[@sentry/nextjs] DEPRECATION WARNING: automaticVercelMonitors is deprecated and will be removed in a future version. Use webpack.automaticVercelMonitors instead.
+   ▲ Next.js 15.5.9
+   - Local:        http://localhost:6060
+   - Network:      http://192.168.10.111:6060
+   - Environments: .env.local, .env
+   - Experiments (use with caution):
+     · clientTraceMetadata
+     · optimizePackageImports
+
+ ✓ Starting...
+[@sentry/nextjs] Could not find `onRequestError` hook in instrumentation file. This indicates outdated configuration of the Sentry SDK. Use `Sentry.captureRequestError` to instrument the `onRequestError` hook: https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#errors-from-nested-react-server-components
+[@sentry/nextjs] It seems like you don't have a global error handler set up. It is recommended that you add a 'global-error.js' file with Sentry instrumentation so that React rendering errors are reported to Sentry. Read more: https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#react-render-errors-in-app-router (you can suppress this warning by setting SENTRY_SUPPRESS_GLOBAL_ERROR_HANDLER_FILE_WARNING=1 as environment variable)
+[@sentry/nextjs] DEPRECATION WARNING: It is recommended renaming your `sentry.client.config.ts` file, or moving its content to `instrumentation-client.ts`. When using Turbopack `sentry.client.config.ts` will no longer work. Read more about the `instrumentation-client.ts` file: https://nextjs.org/docs/app/api-reference/file-conventions/instrumentation-client
+ ○ Compiling /instrumentation ...
+ ✓ Compiled /instrumentation in 6.2s (1087 modules)
+[@sentry/nextjs] You have enabled `debug: true`, but Sentry debug logging was removed from your bundle (likely via `withSentryConfig({ disableLogger: true })` / `webpack.treeshake.removeDebugLogging: true`). Set that option to `false` to see Sentry debug output.
+[Sentry] Cannot initialize SDK with `debug` option using a non-debug bundle.
+ ✓ Ready in 15.2s
+ ○ Compiling /middleware ...
+ ⨯ upstream image response timed out for https://p95t08lhll.ufs.sh/f/I5VkKRpIwc8jJwmr1gbkDVm5eta1ozsOGc6nEPXf7uJvxpIH
+ ⨯ upstream image response timed out for https://p95t08lhll.ufs.sh/f/I5VkKRpIwc8jJwmr1gbkDVm5eta1ozsOGc6nEPXf7uJvxpIH
+[Error: "url" parameter is valid but upstream response timed out] {
+  statusCode: 504
+}
+[Error: "url" parameter is valid but upstream response timed out] {
+  statusCode: 504
+}
+ ✓ Compiled /middleware in 18.6s (884 modules)
+(node:25240) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ○ Compiling /api/admin/developments ...
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (189kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (139kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+Failed to proxy https://o135838.ingest.us.sentry.io/api/4510783211175936/envelope/?o=135838&p=4510783211175936&r=us&hsts=0 [Error: socket hang up] { code: 'ECONNRESET' }
+[Error: socket hang up] { code: 'ECONNRESET' }
+Failed to proxy https://o135838.ingest.us.sentry.io/api/4510783211175936/envelope/?o=135838&p=4510783211175936&r=us&hsts=0 [Error: socket hang up] { code: 'ECONNRESET' }
+[Error: socket hang up] { code: 'ECONNRESET' }
+ ✓ Compiled /_error in 32.2s (4054 modules)
+[2026-02-13T12:04:28.938Z] [DEBUG] [prisma] Prisma client created with Neon adapter
+[2026-02-13T12:04:29.620Z] [DEBUG] [API] [GET_SETTINGS] GET request for branch {"branch":"Harare"}
+[2026-02-13T12:04:30.494Z] [DEBUG] [API] GET /api/admin/developments called
+[2026-02-13T12:04:30.495Z] [INFO] [db-pool] Creating shared database connection pool
+[2026-02-13T12:04:30.495Z] [DEBUG] [API] Database pool obtained
+[2026-02-13T12:04:30.495Z] [DEBUG] [API] [getDevelopments] Building query with filters {"branch":null,"status":null,"id":null}
+[2026-02-13T12:04:30.495Z] [DEBUG] [API] Executing count query {"countQuery":"SELECT COUNT(*) as count FROM developments WHERE 1=1","paramsCount":0,"filters":{"branch":null,"status":null,"id":null}}
+[2026-02-13T12:04:30.544Z] [INFO] [API] [GET_AGENTS] GET /api/admin/agents called
+[2026-02-13T12:04:30.660Z] [DEBUG] [prisma] Prisma client created with Neon adapter
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+ POST /api/auth/_log 200 in 35740ms
+[2026-02-13T12:04:40.507Z] [ERROR] [API] Count query failed {"countQuery":"SELECT COUNT(*) as count FROM developments WHERE 1=1","params":[],"errorMessage":"Connection terminated due to connection timeout","error":"Connection terminated due to connection timeout","stack":"Error: Connection terminated due to connection timeout\n    at C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\pg\\node_modules\\pg-pool\\index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async GET$1 (webpack-internal:///(rsc)/./app/api/admin/developments/route.ts:1132:27)\n    at async eval (webpack-internal:///(rsc)/./node_modules/@sentry/nextjs/build/cjs/common/wrapRouteHandlerWithSentry.js:36:30)\n    at async AppRouteRouteModule.do (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:5:38696)\n    at async AppRouteRouteModule.handle (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:5:45978)\n    at async responseGenerator (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fdevelopments%2Froute&page=%2Fapi%2Fadmin%2Fdevelopments%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fdevelopments%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:206:38)\n    at async AppRouteRouteModule.handleResponse (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:1:187565)\n    at async handleResponse (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fdevelopments%2Froute&page=%2Fapi%2Fadmin%2Fdevelopments%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fdevelopments%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:268:32)\n    at async handler (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fdevelopments%2Froute&page=%2Fapi%2Fadmin%2Fdevelopments%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fdevelopments%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:318:13)\n    at async DevServer.renderToResponseWithComponentsImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1422:9)\n    at async DevServer.renderPageComponent (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1474:24)\n    at async DevServer.renderToResponseImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1514:32)\n    at async DevServer.pipeImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1025:25)\n    at async NextNodeServer.handleCatchallRenderRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\next-server.js:393:17)\n    at async DevServer.handleRequestImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:916:17)\n    at async C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:399:20\n    at async Span.traceAsyncFn (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\trace\\trace.js:157:20)\n    at async DevServer.handleRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:395:24)\n    at async invokeRender (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:240:21)\n    at async handleRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:437:24)\n    at async requestHandlerImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:485:13)\n    at async Server.requestListener (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\start-server.js:226:13)"}
+prisma:error undefined
+[2026-02-13T12:04:40.655Z] [DEBUG] [API] [SETTINGS] Table already exists or error {"error":{"clientVersion":"7.2.0"}}
+ ○ Compiling / ...
+[2026-02-13T12:04:50.515Z] [ERROR] [API] Fallback count query also failed {"error":"Connection terminated due to connection timeout","stack":"Error: Connection terminated due to connection timeout\n    at C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\pg\\node_modules\\pg-pool\\index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async GET$1 (webpack-internal:///(rsc)/./app/api/admin/developments/route.ts:1143:31)\n    at async eval (webpack-internal:///(rsc)/./node_modules/@sentry/nextjs/build/cjs/common/wrapRouteHandlerWithSentry.js:36:30)\n    at async AppRouteRouteModule.do (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:5:38696)\n    at async AppRouteRouteModule.handle (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:5:45978)\n    at async responseGenerator (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fdevelopments%2Froute&page=%2Fapi%2Fadmin%2Fdevelopments%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fdevelopments%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:206:38)\n    at async AppRouteRouteModule.handleResponse (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:1:187565)\n    at async handleResponse (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fdevelopments%2Froute&page=%2Fapi%2Fadmin%2Fdevelopments%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fdevelopments%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:268:32)\n    at async handler (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fdevelopments%2Froute&page=%2Fapi%2Fadmin%2Fdevelopments%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fdevelopments%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:318:13)\n    at async DevServer.renderToResponseWithComponentsImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1422:9)\n    at async DevServer.renderPageComponent (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1474:24)\n    at async DevServer.renderToResponseImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1514:32)\n    at async DevServer.pipeImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1025:25)\n    at async NextNodeServer.handleCatchallRenderRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\next-server.js:393:17)\n    at async DevServer.handleRequestImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:916:17)\n    at async C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:399:20\n    at async Span.traceAsyncFn (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\trace\\trace.js:157:20)\n    at async DevServer.handleRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:395:24)\n    at async invokeRender (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:240:21)\n    at async handleRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:437:24)\n    at async requestHandlerImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:485:13)\n    at async Server.requestListener (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\start-server.js:226:13)"}
+[2026-02-13T12:04:50.516Z] [ERROR] [API] Development fetch error {"error":"Connection terminated due to connection timeout","stack":"Error: Connection terminated due to connection timeout\n    at C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\pg\\node_modules\\pg-pool\\index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async GET$1 (webpack-internal:///(rsc)/./app/api/admin/developments/route.ts:1132:27)\n    at async eval (webpack-internal:///(rsc)/./node_modules/@sentry/nextjs/build/cjs/common/wrapRouteHandlerWithSentry.js:36:30)\n    at async AppRouteRouteModule.do (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:5:38696)\n    at async AppRouteRouteModule.handle (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:5:45978)\n    at async responseGenerator (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fdevelopments%2Froute&page=%2Fapi%2Fadmin%2Fdevelopments%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fdevelopments%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:206:38)\n    at async AppRouteRouteModule.handleResponse (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:1:187565)\n    at async handleResponse (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fdevelopments%2Froute&page=%2Fapi%2Fadmin%2Fdevelopments%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fdevelopments%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:268:32)\n    at async handler (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fdevelopments%2Froute&page=%2Fapi%2Fadmin%2Fdevelopments%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fdevelopments%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:318:13)\n    at async DevServer.renderToResponseWithComponentsImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1422:9)\n    at async DevServer.renderPageComponent (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1474:24)\n    at async DevServer.renderToResponseImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1514:32)\n    at async DevServer.pipeImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1025:25)\n    at async NextNodeServer.handleCatchallRenderRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\next-server.js:393:17)\n    at async DevServer.handleRequestImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:916:17)\n    at async C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:399:20\n    at async Span.traceAsyncFn (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\trace\\trace.js:157:20)\n    at async DevServer.handleRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:395:24)\n    at async invokeRender (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:240:21)\n    at async handleRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:437:24)\n    at async requestHandlerImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:485:13)\n    at async Server.requestListener (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\start-server.js:226:13)"}
+ GET /api/admin/developments 200 in 55218ms
+Request timed out after 3000ms
+
+Retrying 1/3...
+prisma:query SELECT "public"."company_settings"."id", "public"."company_settings"."branch", "public"."company_settings"."logo_url", "public"."company_settings"."company_name", "public"."company_settings"."phone", "public"."company_settings"."email", "public"."company_settings"."address", "public"."company_settings"."principal_agent_name", "public"."company_settings"."principal_agent_email", "public"."company_settings"."created_at", "public"."company_settings"."updated_at" FROM "public"."company_settings" WHERE "public"."company_settings"."branch" = $1 LIMIT $2 OFFSET $3
+[2026-02-13T12:04:54.062Z] [DEBUG] [API] [GET_SETTINGS] Found settings for branch {"branch":"Harare"}
+ GET /api/admin/settings?branch=Harare 200 in 58763ms
+Failed to proxy https://o135838.ingest.us.sentry.io/api/4510783211175936/envelope/?o=135838&p=4510783211175936&r=us&hsts=0 [Error: socket hang up] { code: 'ECONNRESET' }
+[Error: socket hang up] { code: 'ECONNRESET' }
+[2026-02-13T12:05:03.635Z] [DEBUG] [API] [GET_AGENTS] Fetched agents from Neon {"count":2}
+ GET /api/admin/agents 200 in 68329ms
+ ✓ Compiled / in 44.1s (5475 modules)
+Image with src "https://p95t08lhll.ufs.sh/f/I5VkKRpIwc8j6cHk9iebfHgyVdO1n3XA9vJzheM4ZYrUSEqw" is using quality "85" which is not configured in images.qualities. This config will be required starting in Next.js 16.
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+ GET / 200 in 47260ms
+[2026-02-13T12:05:32.021Z] [DEBUG] [API] GET /api/admin/developments called
+[2026-02-13T12:05:32.022Z] [INFO] [db-pool] Creating shared database connection pool
+[2026-02-13T12:05:32.022Z] [DEBUG] [API] Database pool obtained
+[2026-02-13T12:05:32.022Z] [DEBUG] [API] [getDevelopments] Building query with filters {"branch":null,"status":null,"id":null}
+[2026-02-13T12:05:32.023Z] [DEBUG] [API] Executing count query {"countQuery":"SELECT COUNT(*) as count FROM developments WHERE 1=1","paramsCount":0,"filters":{"branch":null,"status":null,"id":null}}
+[2026-02-13T12:05:32.165Z] [INFO] [API] [GET_AGENTS] GET /api/admin/agents called
+[2026-02-13T12:05:32.204Z] [DEBUG] [API] [GET_SETTINGS] GET request for branch {"branch":"Harare"}
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+ GET /api/auth/session 200 in 1456ms
+[2026-02-13T12:05:34.227Z] [DEBUG] [prisma] Prisma client created with Neon adapter
+ ⨯ upstream image response timed out for https://p95t08lhll.ufs.sh/f/I5VkKRpIwc8j6cHk9iebfHgyVdO1n3XA9vJzheM4ZYrUSEqw
+[Error: "url" parameter is valid but upstream response timed out] {
+  statusCode: 504
+}
+[NEXTAUTH] redirect() called: { url: 'http://localhost:3000', baseUrl: 'http://localhost:3000' }
+[NEXTAUTH] Same origin, redirecting to: http://localhost:3000
+ GET /api/auth/session?t=1770984337910 200 in 186ms
+ ○ Compiling /login ...
+[2026-02-13T12:05:39.784Z] [DEBUG] [prisma] Prisma client created with Neon adapter
+Failed to proxy https://o135838.ingest.us.sentry.io/api/4510783211175936/envelope/?o=135838&p=4510783211175936&r=us&hsts=0 [Error: socket hang up] { code: 'ECONNRESET' }
+[Error: socket hang up] { code: 'ECONNRESET' }
+[2026-02-13T12:05:42.067Z] [ERROR] [API] Count query failed {"countQuery":"SELECT COUNT(*) as count FROM developments WHERE 1=1","params":[],"errorMessage":"Connection terminated due to connection timeout","error":"Connection terminated due to connection timeout","stack":"Error: Connection terminated due to connection timeout\n    at C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\pg\\node_modules\\pg-pool\\index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async GET$1 (webpack-internal:///(rsc)/./app/api/admin/developments/route.ts:1132:27)\n    at async eval (webpack-internal:///(rsc)/./node_modules/@sentry/nextjs/build/cjs/common/wrapRouteHandlerWithSentry.js:36:30)\n    at async AppRouteRouteModule.do (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:5:38696)\n    at async AppRouteRouteModule.handle (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:5:45978)\n    at async responseGenerator (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fdevelopments%2Froute&page=%2Fapi%2Fadmin%2Fdevelopments%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fdevelopments%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:206:38)\n    at async AppRouteRouteModule.handleResponse (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:1:187565)\n    at async handleResponse (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fdevelopments%2Froute&page=%2Fapi%2Fadmin%2Fdevelopments%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fdevelopments%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:268:32)\n    at async handler (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fdevelopments%2Froute&page=%2Fapi%2Fadmin%2Fdevelopments%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fdevelopments%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:318:13)\n    at async DevServer.renderToResponseWithComponentsImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1422:9)\n    at async DevServer.renderPageComponent (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1474:24)\n    at async DevServer.renderToResponseImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1514:32)\n    at async DevServer.pipeImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1025:25)\n    at async NextNodeServer.handleCatchallRenderRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\next-server.js:393:17)\n    at async DevServer.handleRequestImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:916:17)\n    at async C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:399:20\n    at async Span.traceAsyncFn (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\trace\\trace.js:157:20)\n    at async DevServer.handleRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:395:24)\n    at async invokeRender (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:240:21)\n    at async handleRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:437:24)\n    at async requestHandlerImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:485:13)\n    at async Server.requestListener (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\start-server.js:226:13)"}
+prisma:error undefined
+[2026-02-13T12:05:43.877Z] [DEBUG] [API] [SETTINGS] Table already exists or error {"error":{"clientVersion":"7.2.0"}}
+ ✓ Compiled /login in 5.9s (5491 modules)
+ GET /login 200 in 6942ms
+[2026-02-13T12:05:52.079Z] [ERROR] [API] Fallback count query also failed {"error":"Connection terminated due to connection timeout","stack":"Error: Connection terminated due to connection timeout\n    at C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\pg\\node_modules\\pg-pool\\index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async GET$1 (webpack-internal:///(rsc)/./app/api/admin/developments/route.ts:1143:31)\n    at async eval (webpack-internal:///(rsc)/./node_modules/@sentry/nextjs/build/cjs/common/wrapRouteHandlerWithSentry.js:36:30)\n    at async AppRouteRouteModule.do (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:5:38696)\n    at async AppRouteRouteModule.handle (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:5:45978)\n    at async responseGenerator (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fdevelopments%2Froute&page=%2Fapi%2Fadmin%2Fdevelopments%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fdevelopments%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:206:38)\n    at async AppRouteRouteModule.handleResponse (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:1:187565)\n    at async handleResponse (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fdevelopments%2Froute&page=%2Fapi%2Fadmin%2Fdevelopments%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fdevelopments%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:268:32)\n    at async handler (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fdevelopments%2Froute&page=%2Fapi%2Fadmin%2Fdevelopments%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fdevelopments%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:318:13)\n    at async DevServer.renderToResponseWithComponentsImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1422:9)\n    at async DevServer.renderPageComponent (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1474:24)\n    at async DevServer.renderToResponseImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1514:32)\n    at async DevServer.pipeImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1025:25)\n    at async NextNodeServer.handleCatchallRenderRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\next-server.js:393:17)\n    at async DevServer.handleRequestImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:916:17)\n    at async C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:399:20\n    at async Span.traceAsyncFn (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\trace\\trace.js:157:20)\n    at async DevServer.handleRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:395:24)\n    at async invokeRender (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:240:21)\n    at async handleRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:437:24)\n    at async requestHandlerImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:485:13)\n    at async Server.requestListener (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\start-server.js:226:13)"}
+[2026-02-13T12:05:52.079Z] [ERROR] [API] Development fetch error {"error":"Connection terminated due to connection timeout","stack":"Error: Connection terminated due to connection timeout\n    at C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\pg\\node_modules\\pg-pool\\index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async GET$1 (webpack-internal:///(rsc)/./app/api/admin/developments/route.ts:1132:27)\n    at async eval (webpack-internal:///(rsc)/./node_modules/@sentry/nextjs/build/cjs/common/wrapRouteHandlerWithSentry.js:36:30)\n    at async AppRouteRouteModule.do (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:5:38696)\n    at async AppRouteRouteModule.handle (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:5:45978)\n    at async responseGenerator (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fdevelopments%2Froute&page=%2Fapi%2Fadmin%2Fdevelopments%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fdevelopments%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:206:38)\n    at async AppRouteRouteModule.handleResponse (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:1:187565)\n    at async handleResponse (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fdevelopments%2Froute&page=%2Fapi%2Fadmin%2Fdevelopments%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fdevelopments%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:268:32)\n    at async handler (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fdevelopments%2Froute&page=%2Fapi%2Fadmin%2Fdevelopments%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fdevelopments%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:318:13)\n    at async DevServer.renderToResponseWithComponentsImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1422:9)\n    at async DevServer.renderPageComponent (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1474:24)\n    at async DevServer.renderToResponseImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1514:32)\n    at async DevServer.pipeImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1025:25)\n    at async NextNodeServer.handleCatchallRenderRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\next-server.js:393:17)\n    at async DevServer.handleRequestImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:916:17)\n    at async C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:399:20\n    at async Span.traceAsyncFn (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\trace\\trace.js:157:20)\n    at async DevServer.handleRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:395:24)\n    at async invokeRender (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:240:21)\n    at async handleRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:437:24)\n    at async requestHandlerImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:485:13)\n    at async Server.requestListener (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\start-server.js:226:13)"}
+ GET /api/admin/developments 200 in 21292ms
+ ⨯ upstream image response timed out for https://p95t08lhll.ufs.sh/f/I5VkKRpIwc8jJwmr1gbkDVm5eta1ozsOGc6nEPXf7uJvxpIH
+[Error: "url" parameter is valid but upstream response timed out] {
+  statusCode: 504
+}
+prisma:query SELECT "public"."company_settings"."id", "public"."company_settings"."branch", "public"."company_settings"."logo_url", "public"."company_settings"."company_name", "public"."company_settings"."phone", "public"."company_settings"."email", "public"."company_settings"."address", "public"."company_settings"."principal_agent_name", "public"."company_settings"."principal_agent_email", "public"."company_settings"."created_at", "public"."company_settings"."updated_at" FROM "public"."company_settings" WHERE "public"."company_settings"."branch" = $1 LIMIT $2 OFFSET $3
+[2026-02-13T12:05:53.869Z] [DEBUG] [API] [GET_SETTINGS] Found settings for branch {"branch":"Harare"}
+ GET /api/admin/settings?branch=Harare 200 in 23075ms
+[2026-02-13T12:06:00.701Z] [DEBUG] [API] [GET_AGENTS] Fetched agents from Neon {"count":2}
+ GET /api/admin/agents 200 in 29910ms
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+[NEXTAUTH] redirect() called: { url: 'http://localhost:3000', baseUrl: 'http://localhost:3000' }
+[NEXTAUTH] Same origin, redirecting to: http://localhost:3000
+ GET /api/auth/providers 200 in 496ms
+[NEXTAUTH] redirect() called: { url: 'http://localhost:3000', baseUrl: 'http://localhost:3000' }
+[NEXTAUTH] Same origin, redirecting to: http://localhost:3000
+ GET /api/auth/csrf 200 in 225ms
+[NEXTAUTH] redirect() called: {
+  url: 'http://localhost:6060/login',
+  baseUrl: 'http://localhost:3000'
+}
+[NEXTAUTH] External origin or default, redirecting to post-login
+[NEXTAUTH] authorize() called with email: admin@fineandcountry.co.zw
+[NEXTAUTH] Looking up user: admin@fineandcountry.co.zw
+[2026-02-13T12:06:13.669Z] [DEBUG] [prisma] Prisma client created with Neon adapter
+Image with src "https://p95t08lhll.ufs.sh/f/I5VkKRpIwc8j6cHk9iebfHgyVdO1n3XA9vJzheM4ZYrUSEqw" is using quality "85" which is not configured in images.qualities. This config will be required starting in Next.js 16.
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+ GET / 200 in 1689ms
+[2026-02-13T12:06:25.779Z] [DEBUG] [API] GET /api/admin/developments called
+[2026-02-13T12:06:25.779Z] [INFO] [db-pool] Creating shared database connection pool
+[2026-02-13T12:06:25.780Z] [DEBUG] [API] Database pool obtained
+[2026-02-13T12:06:25.780Z] [DEBUG] [API] [getDevelopments] Building query with filters {"branch":null,"status":null,"id":null}
+[2026-02-13T12:06:25.780Z] [DEBUG] [API] Executing count query {"countQuery":"SELECT COUNT(*) as count FROM developments WHERE 1=1","paramsCount":0,"filters":{"branch":null,"status":null,"id":null}}
+[2026-02-13T12:06:25.968Z] [INFO] [API] [GET_AGENTS] GET /api/admin/agents called
+[2026-02-13T12:06:26.007Z] [DEBUG] [API] [GET_SETTINGS] GET request for branch {"branch":"Harare"}
+[NEXTAUTH] redirect() called: { url: 'http://localhost:3000', baseUrl: 'http://localhost:3000' }
+[NEXTAUTH] Same origin, redirecting to: http://localhost:3000
+ GET /api/auth/session 200 in 616ms
+[2026-02-13T12:06:27.723Z] [DEBUG] [prisma] Prisma client created with Neon adapter
+prisma:query SELECT "public"."users"."id", "public"."users"."email", "public"."users"."name", "public"."users"."role"::text, "public"."users"."branch", "public"."users"."is_active", "public"."users"."password" FROM "public"."users" WHERE ("public"."users"."email" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[NEXTAUTH] User authenticated: {
+  id: 'cmkwvmway0000p0bnsgwdzbnx',
+  email: 'admin@fineandcountry.co.zw',
+  role: 'ADMIN'
+}
+[NEXTAUTH] JWT created: { id: 'cmkwvmway0000p0bnsgwdzbnx', role: 'ADMIN' }
+[AUDIT] Failed to import Prisma: Error [PrismaClientInitializationError]: `PrismaClient` needs to be constructed with a non-empty, valid `PrismaClientOptions`:
+
+```
+new PrismaClient({
+  ...
+})
+```
+
+or
+
+```
+constructor() {
+  super({ ... });
+}
+```
+          
+    at eval (lib\authOptions.ts:312:28)
+  310 |           // Server-side: Use Promise without await
+  311 |           import('@prisma/client').then(({ PrismaClient }) => {
+> 312 |             const prisma = new PrismaClient();
+      |                            ^
+  313 |             prisma.activityLog.create({
+  314 |               data: {
+  315 |                 branch: (user as any).branch || 'Harare', {
+  clientVersion: '7.2.0',
+  errorCode: undefined,
+  retryable: undefined
+}
+ POST /api/auth/callback/credentials 200 in 17910ms
+[2026-02-13T12:06:35.801Z] [ERROR] [API] Count query failed {"countQuery":"SELECT COUNT(*) as count FROM developments WHERE 1=1","params":[],"errorMessage":"Connection terminated due to connection timeout","error":"Connection terminated due to connection timeout","stack":"Error: Connection terminated due to connection timeout\n    at C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\pg\\node_modules\\pg-pool\\index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async GET$1 (webpack-internal:///(rsc)/./app/api/admin/developments/route.ts:1132:27)\n    at async eval (webpack-internal:///(rsc)/./node_modules/@sentry/nextjs/build/cjs/common/wrapRouteHandlerWithSentry.js:36:30)\n    at async AppRouteRouteModule.do (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:5:38696)\n    at async AppRouteRouteModule.handle (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:5:45978)\n    at async responseGenerator (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fdevelopments%2Froute&page=%2Fapi%2Fadmin%2Fdevelopments%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fdevelopments%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:206:38)\n    at async AppRouteRouteModule.handleResponse (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:1:187565)\n    at async handleResponse (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fdevelopments%2Froute&page=%2Fapi%2Fadmin%2Fdevelopments%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fdevelopments%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:268:32)\n    at async handler (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fdevelopments%2Froute&page=%2Fapi%2Fadmin%2Fdevelopments%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fdevelopments%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:318:13)\n    at async DevServer.renderToResponseWithComponentsImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1422:9)\n    at async DevServer.renderPageComponent (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1474:24)\n    at async DevServer.renderToResponseImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1514:32)\n    at async DevServer.pipeImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1025:25)\n    at async NextNodeServer.handleCatchallRenderRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\next-server.js:393:17)\n    at async DevServer.handleRequestImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:916:17)\n    at async C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:399:20\n    at async Span.traceAsyncFn (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\trace\\trace.js:157:20)\n    at async DevServer.handleRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:395:24)\n    at async invokeRender (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:240:21)\n    at async handleRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:437:24)\n    at async requestHandlerImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:485:13)\n    at async Server.requestListener (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\start-server.js:226:13)"}
+prisma:query 
+      CREATE TABLE IF NOT EXISTS "company_settings" (
+        "id" TEXT NOT NULL PRIMARY KEY,
+        "branch" TEXT NOT NULL UNIQUE,
+        "logo_url" TEXT,
+        "company_name" TEXT DEFAULT 'Fine & Country Zimbabwe',
+        "phone" TEXT,
+        "email" TEXT,
+        "address" TEXT,
+        "principal_agent_name" TEXT,
+        "principal_agent_email" TEXT,
+        "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+      );
+    
+[2026-02-13T12:06:45.873Z] [ERROR] [API] Fallback count query also failed {"error":"Connection terminated due to connection timeout","stack":"Error: Connection terminated due to connection timeout\n    at C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\pg\\node_modules\\pg-pool\\index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async GET$1 (webpack-internal:///(rsc)/./app/api/admin/developments/route.ts:1143:31)\n    at async eval (webpack-internal:///(rsc)/./node_modules/@sentry/nextjs/build/cjs/common/wrapRouteHandlerWithSentry.js:36:30)\n    at async AppRouteRouteModule.do (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:5:38696)\n    at async AppRouteRouteModule.handle (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:5:45978)\n    at async responseGenerator (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fdevelopments%2Froute&page=%2Fapi%2Fadmin%2Fdevelopments%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fdevelopments%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:206:38)\n    at async AppRouteRouteModule.handleResponse (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:1:187565)\n    at async handleResponse (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fdevelopments%2Froute&page=%2Fapi%2Fadmin%2Fdevelopments%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fdevelopments%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:268:32)\n    at async handler (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fdevelopments%2Froute&page=%2Fapi%2Fadmin%2Fdevelopments%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fdevelopments%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:318:13)\n    at async DevServer.renderToResponseWithComponentsImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1422:9)\n    at async DevServer.renderPageComponent (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1474:24)\n    at async DevServer.renderToResponseImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1514:32)\n    at async DevServer.pipeImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1025:25)\n    at async NextNodeServer.handleCatchallRenderRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\next-server.js:393:17)\n    at async DevServer.handleRequestImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:916:17)\n    at async C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:399:20\n    at async Span.traceAsyncFn (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\trace\\trace.js:157:20)\n    at async DevServer.handleRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:395:24)\n    at async invokeRender (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:240:21)\n    at async handleRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:437:24)\n    at async requestHandlerImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:485:13)\n    at async Server.requestListener (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\start-server.js:226:13)"}
+[2026-02-13T12:06:45.873Z] [ERROR] [API] Development fetch error {"error":"Connection terminated due to connection timeout","stack":"Error: Connection terminated due to connection timeout\n    at C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\pg\\node_modules\\pg-pool\\index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async GET$1 (webpack-internal:///(rsc)/./app/api/admin/developments/route.ts:1132:27)\n    at async eval (webpack-internal:///(rsc)/./node_modules/@sentry/nextjs/build/cjs/common/wrapRouteHandlerWithSentry.js:36:30)\n    at async AppRouteRouteModule.do (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:5:38696)\n    at async AppRouteRouteModule.handle (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:5:45978)\n    at async responseGenerator (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fdevelopments%2Froute&page=%2Fapi%2Fadmin%2Fdevelopments%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fdevelopments%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:206:38)\n    at async AppRouteRouteModule.handleResponse (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:1:187565)\n    at async handleResponse (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fdevelopments%2Froute&page=%2Fapi%2Fadmin%2Fdevelopments%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fdevelopments%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:268:32)\n    at async handler (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fdevelopments%2Froute&page=%2Fapi%2Fadmin%2Fdevelopments%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fdevelopments%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:318:13)\n    at async DevServer.renderToResponseWithComponentsImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1422:9)\n    at async DevServer.renderPageComponent (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1474:24)\n    at async DevServer.renderToResponseImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1514:32)\n    at async DevServer.pipeImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1025:25)\n    at async NextNodeServer.handleCatchallRenderRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\next-server.js:393:17)\n    at async DevServer.handleRequestImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:916:17)\n    at async C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:399:20\n    at async Span.traceAsyncFn (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\trace\\trace.js:157:20)\n    at async DevServer.handleRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:395:24)\n    at async invokeRender (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:240:21)\n    at async handleRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:437:24)\n    at async requestHandlerImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:485:13)\n    at async Server.requestListener (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\start-server.js:226:13)"}
+ GET /api/admin/developments 200 in 20561ms
+prisma:query ALTER TABLE "company_settings" ADD COLUMN IF NOT EXISTS "principal_agent_name" TEXT;
+prisma:query ALTER TABLE "company_settings" ADD COLUMN IF NOT EXISTS "principal_agent_email" TEXT;
+[2026-02-13T12:06:47.527Z] [DEBUG] [API] [SETTINGS] CompanySettings table ensured
+[NEXTAUTH] redirect() called: { url: 'http://localhost:3000', baseUrl: 'http://localhost:3000' }
+[NEXTAUTH] Same origin, redirecting to: http://localhost:3000
+ GET /api/auth/session 200 in 1710ms
+[2026-02-13T12:06:49.135Z] [DEBUG] [prisma] Prisma client created with Neon adapter
+Failed to proxy https://o135838.ingest.us.sentry.io/api/4510783211175936/envelope/?o=135838&p=4510783211175936&r=us&hsts=0 [Error: socket hang up] { code: 'ECONNRESET' }
+[Error: socket hang up] { code: 'ECONNRESET' }
+[NEXTAUTH] redirect() called: {
+  url: 'http://localhost:3000/post-login',
+  baseUrl: 'http://localhost:3000'
+}
+[NEXTAUTH] Same origin, redirecting to: http://localhost:3000/post-login
+prisma:query SELECT "public"."company_settings"."id", "public"."company_settings"."branch", "public"."company_settings"."logo_url", "public"."company_settings"."company_name", "public"."company_settings"."phone", "public"."company_settings"."email", "public"."company_settings"."address", "public"."company_settings"."principal_agent_name", "public"."company_settings"."principal_agent_email", "public"."company_settings"."created_at", "public"."company_settings"."updated_at" FROM "public"."company_settings" WHERE "public"."company_settings"."branch" = $1 LIMIT $2 OFFSET $3
+[2026-02-13T12:06:57.017Z] [DEBUG] [API] [GET_SETTINGS] Found settings for branch {"branch":"Harare"}
+ GET /api/admin/settings?branch=Harare 200 in 31696ms
+[2026-02-13T12:06:58.649Z] [ERROR] [API] [GET_AGENTS] Agent fetch error {"error":"Client network socket disconnected before secure TLS connection was established","stack":"Error: Client network socket disconnected before secure TLS connection was established\n    at C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\pg\\node_modules\\pg-pool\\index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async GET$1 (webpack-internal:///(rsc)/./app/api/admin/agents/route.ts:69:24)\n    at async eval (webpack-internal:///(rsc)/./node_modules/@sentry/nextjs/build/cjs/common/wrapRouteHandlerWithSentry.js:36:30)\n    at async AppRouteRouteModule.do (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:5:38696)\n    at async AppRouteRouteModule.handle (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:5:45978)\n    at async responseGenerator (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fagents%2Froute&page=%2Fapi%2Fadmin%2Fagents%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fagents%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:206:38)\n    at async AppRouteRouteModule.handleResponse (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:1:187565)\n    at async handleResponse (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fagents%2Froute&page=%2Fapi%2Fadmin%2Fagents%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fagents%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:268:32)\n    at async handler (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fagents%2Froute&page=%2Fapi%2Fadmin%2Fagents%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fagents%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:318:13)\n    at async DevServer.renderToResponseWithComponentsImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1422:9)\n    at async DevServer.renderPageComponent (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1474:24)\n    at async DevServer.renderToResponseImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1514:32)\n    at async DevServer.pipeImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1025:25)\n    at async NextNodeServer.handleCatchallRenderRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\next-server.js:393:17)\n    at async DevServer.handleRequestImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:916:17)\n    at async C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:399:20\n    at async Span.traceAsyncFn (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\trace\\trace.js:157:20)\n    at async DevServer.handleRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:395:24)\n    at async invokeRender (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:240:21)\n    at async handleRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:437:24)\n    at async requestHandlerImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:485:13)\n    at async Server.requestListener (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\start-server.js:226:13)"}
+ GET /api/admin/agents 200 in 33318ms
+[2026-02-13T12:06:58.408Z] [DEBUG] [prisma] Prisma client created with Neon adapter
+Failed to proxy https://o135838.ingest.us.sentry.io/api/4510783211175936/envelope/?o=135838&p=4510783211175936&r=us&hsts=0 [Error: socket hang up] { code: 'ECONNRESET' }
+[Error: socket hang up] { code: 'ECONNRESET' }
+ ⨯ upstream image response timed out for https://p95t08lhll.ufs.sh/f/I5VkKRpIwc8jJwmr1gbkDVm5eta1ozsOGc6nEPXf7uJvxpIH
+[Error: "url" parameter is valid but upstream response timed out] {
+  statusCode: 504
+}
+ ⨯ upstream image response timed out for https://p95t08lhll.ufs.sh/f/I5VkKRpIwc8jJwmr1gbkDVm5eta1ozsOGc6nEPXf7uJvxpIH
+[Error: "url" parameter is valid but upstream response timed out] {
+  statusCode: 504
+}
+Failed to proxy https://o135838.ingest.us.sentry.io/api/4510783211175936/envelope/?o=135838&p=4510783211175936&r=us&hsts=0 [Error: socket hang up] { code: 'ECONNRESET' }
+[Error: socket hang up] { code: 'ECONNRESET' }
+prisma:error undefined
+[NEXTAUTH] Failed to refresh role from DB: ErrorEvent {
+  type: 'error',
+  defaultPrevented: false,
+  cancelable: false,
+  timeStamp: 229393.9645
+}
+ GET /api/auth/session 200 in 11792ms
+ ○ Compiling /post-login ...
+ ⨯ upstream image response timed out for https://p95t08lhll.ufs.sh/f/I5VkKRpIwc8jJwmr1gbkDVm5eta1ozsOGc6nEPXf7uJvxpIH?v=1770984417040
+ ⨯ upstream image response timed out for https://p95t08lhll.ufs.sh/f/I5VkKRpIwc8jJwmr1gbkDVm5eta1ozsOGc6nEPXf7uJvxpIH?v=1770984417040
+ ✓ Compiled /post-login in 15.8s (5567 modules)
+ GET /post-login 200 in 16651ms
+ GET /post-login 200 in 18565ms
+[2026-02-13T12:07:29.055Z] [DEBUG] [API] [GET_SETTINGS] GET request for branch {"branch":"Harare"}
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+[NEXTAUTH] redirect() called: {
+  url: 'http://localhost:3000/post-login',
+  baseUrl: 'http://localhost:3000'
+}
+[NEXTAUTH] Same origin, redirecting to: http://localhost:3000/post-login
+[2026-02-13T12:07:30.914Z] [DEBUG] [prisma] Prisma client created with Neon adapter
+Image with src "https://p95t08lhll.ufs.sh/f/I5VkKRpIwc8j6cHk9iebfHgyVdO1n3XA9vJzheM4ZYrUSEqw" is using quality "85" which is not configured in images.qualities. This config will be required starting in Next.js 16.
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+ GET / 200 in 1128ms
+prisma:error undefined
+[2026-02-13T12:07:40.039Z] [DEBUG] [API] [SETTINGS] Table already exists or error {"error":{"clientVersion":"7.2.0"}}
+prisma:error undefined
+[NEXTAUTH] Failed to refresh role from DB: ErrorEvent {
+  type: 'error',
+  defaultPrevented: false,
+  cancelable: false,
+  timeStamp: 261579.4189
+}
+ GET /api/auth/session 200 in 12004ms
+[2026-02-13T12:07:40.817Z] [DEBUG] [API] GET /api/admin/developments called
+[2026-02-13T12:07:40.818Z] [INFO] [db-pool] Creating shared database connection pool
+[2026-02-13T12:07:40.819Z] [DEBUG] [API] Database pool obtained
+[2026-02-13T12:07:40.819Z] [DEBUG] [API] [getDevelopments] Building query with filters {"branch":null,"status":null,"id":null}
+[2026-02-13T12:07:40.819Z] [DEBUG] [API] Executing count query {"countQuery":"SELECT COUNT(*) as count FROM developments WHERE 1=1","paramsCount":0,"filters":{"branch":null,"status":null,"id":null}}
+ ⨯ upstream image response timed out for https://p95t08lhll.ufs.sh/f/I5VkKRpIwc8j6cHk9iebfHgyVdO1n3XA9vJzheM4ZYrUSEqw
+[Error: "url" parameter is valid but upstream response timed out] {
+  statusCode: 504
+}
+prisma:error undefined
+[2026-02-13T12:07:50.677Z] [ERROR] Database query error {"clientVersion":"7.2.0"}
+[2026-02-13T12:07:50.677Z] [DEBUG] [API] [GET_SETTINGS] Returning default settings for branch {"branch":"Harare"}
+ GET /api/admin/settings?branch=Harare 200 in 22194ms
+[2026-02-13T12:07:50.828Z] [ERROR] [API] Count query failed {"countQuery":"SELECT COUNT(*) as count FROM developments WHERE 1=1","params":[],"errorMessage":"Connection terminated due to connection timeout","error":"Connection terminated due to connection timeout","stack":"Error: Connection terminated due to connection timeout\n    at C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\pg\\node_modules\\pg-pool\\index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async GET$1 (webpack-internal:///(rsc)/./app/api/admin/developments/route.ts:1132:27)\n    at async eval (webpack-internal:///(rsc)/./node_modules/@sentry/nextjs/build/cjs/common/wrapRouteHandlerWithSentry.js:36:30)\n    at async AppRouteRouteModule.do (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:5:38696)\n    at async AppRouteRouteModule.handle (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:5:45978)\n    at async responseGenerator (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fdevelopments%2Froute&page=%2Fapi%2Fadmin%2Fdevelopments%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fdevelopments%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:206:38)\n    at async AppRouteRouteModule.handleResponse (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:1:187565)\n    at async handleResponse (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fdevelopments%2Froute&page=%2Fapi%2Fadmin%2Fdevelopments%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fdevelopments%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:268:32)\n    at async handler (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fdevelopments%2Froute&page=%2Fapi%2Fadmin%2Fdevelopments%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fdevelopments%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:318:13)\n    at async DevServer.renderToResponseWithComponentsImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1422:9)\n    at async DevServer.renderPageComponent (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1474:24)\n    at async DevServer.renderToResponseImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1514:32)\n    at async DevServer.pipeImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1025:25)\n    at async NextNodeServer.handleCatchallRenderRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\next-server.js:393:17)\n    at async DevServer.handleRequestImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:916:17)\n    at async C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:399:20\n    at async Span.traceAsyncFn (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\trace\\trace.js:157:20)\n    at async DevServer.handleRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:395:24)\n    at async invokeRender (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:240:21)\n    at async handleRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:437:24)\n    at async requestHandlerImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:485:13)\n    at async Server.requestListener (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\start-server.js:226:13)"}
+[2026-02-13T12:07:50.855Z] [INFO] [API] [GET_AGENTS] GET /api/admin/agents called
+[2026-02-13T12:07:57.086Z] [DEBUG] [API] [GET_SETTINGS] GET request for branch {"branch":"Harare"}
+Failed to proxy https://o135838.ingest.us.sentry.io/api/4510783211175936/envelope/?o=135838&p=4510783211175936&r=us&hsts=0 [Error: socket hang up] { code: 'ECONNRESET' }
+[Error: socket hang up] { code: 'ECONNRESET' }
+[NEXTAUTH] redirect() called: {
+  url: 'http://localhost:3000/post-login',
+  baseUrl: 'http://localhost:3000'
+}
+[NEXTAUTH] Same origin, redirecting to: http://localhost:3000/post-login
+[2026-02-13T12:07:59.161Z] [DEBUG] [prisma] Prisma client created with Neon adapter
+[2026-02-13T12:08:00.845Z] [ERROR] [API] Fallback count query also failed {"error":"Connection terminated due to connection timeout","stack":"Error: Connection terminated due to connection timeout\n    at C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\pg\\node_modules\\pg-pool\\index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async GET$1 (webpack-internal:///(rsc)/./app/api/admin/developments/route.ts:1143:31)\n    at async eval (webpack-internal:///(rsc)/./node_modules/@sentry/nextjs/build/cjs/common/wrapRouteHandlerWithSentry.js:36:30)\n    at async AppRouteRouteModule.do (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:5:38696)\n    at async AppRouteRouteModule.handle (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:5:45978)\n    at async responseGenerator (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fdevelopments%2Froute&page=%2Fapi%2Fadmin%2Fdevelopments%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fdevelopments%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:206:38)\n    at async AppRouteRouteModule.handleResponse (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:1:187565)\n    at async handleResponse (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fdevelopments%2Froute&page=%2Fapi%2Fadmin%2Fdevelopments%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fdevelopments%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:268:32)\n    at async handler (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fdevelopments%2Froute&page=%2Fapi%2Fadmin%2Fdevelopments%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fdevelopments%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:318:13)\n    at async DevServer.renderToResponseWithComponentsImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1422:9)\n    at async DevServer.renderPageComponent (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1474:24)\n    at async DevServer.renderToResponseImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1514:32)\n    at async DevServer.pipeImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1025:25)\n    at async NextNodeServer.handleCatchallRenderRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\next-server.js:393:17)\n    at async DevServer.handleRequestImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:916:17)\n    at async C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:399:20\n    at async Span.traceAsyncFn (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\trace\\trace.js:157:20)\n    at async DevServer.handleRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:395:24)\n    at async invokeRender (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:240:21)\n    at async handleRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:437:24)\n    at async requestHandlerImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:485:13)\n    at async Server.requestListener (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\start-server.js:226:13)"}
+[2026-02-13T12:08:00.846Z] [ERROR] [API] Development fetch error {"error":"Connection terminated due to connection timeout","stack":"Error: Connection terminated due to connection timeout\n    at C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\pg\\node_modules\\pg-pool\\index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async GET$1 (webpack-internal:///(rsc)/./app/api/admin/developments/route.ts:1132:27)\n    at async eval (webpack-internal:///(rsc)/./node_modules/@sentry/nextjs/build/cjs/common/wrapRouteHandlerWithSentry.js:36:30)\n    at async AppRouteRouteModule.do (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:5:38696)\n    at async AppRouteRouteModule.handle (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:5:45978)\n    at async responseGenerator (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fdevelopments%2Froute&page=%2Fapi%2Fadmin%2Fdevelopments%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fdevelopments%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:206:38)\n    at async AppRouteRouteModule.handleResponse (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:1:187565)\n    at async handleResponse (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fdevelopments%2Froute&page=%2Fapi%2Fadmin%2Fdevelopments%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fdevelopments%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:268:32)\n    at async handler (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fdevelopments%2Froute&page=%2Fapi%2Fadmin%2Fdevelopments%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fdevelopments%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:318:13)\n    at async DevServer.renderToResponseWithComponentsImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1422:9)\n    at async DevServer.renderPageComponent (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1474:24)\n    at async DevServer.renderToResponseImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1514:32)\n    at async DevServer.pipeImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1025:25)\n    at async NextNodeServer.handleCatchallRenderRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\next-server.js:393:17)\n    at async DevServer.handleRequestImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:916:17)\n    at async C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:399:20\n    at async Span.traceAsyncFn (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\trace\\trace.js:157:20)\n    at async DevServer.handleRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:395:24)\n    at async invokeRender (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:240:21)\n    at async handleRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:437:24)\n    at async requestHandlerImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:485:13)\n    at async Server.requestListener (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\start-server.js:226:13)"}
+ GET /api/admin/developments 200 in 20225ms
+ ○ Compiling /api/auth/me ...
+ ✓ Compiled /api/auth/me in 3.5s (5569 modules)
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+[NEXTAUTH] redirect() called: {
+  url: 'http://localhost:3000/post-login',
+  baseUrl: 'http://localhost:3000'
+}
+[NEXTAUTH] Same origin, redirecting to: http://localhost:3000/post-login
+prisma:error undefined
+[2026-02-13T12:08:08.479Z] [DEBUG] [API] [SETTINGS] Table already exists or error {"error":{"clientVersion":"7.2.0"}}
+prisma:error undefined
+[NEXTAUTH] Failed to refresh role from DB: ErrorEvent {
+  type: 'error',
+  defaultPrevented: false,
+  cancelable: false,
+  timeStamp: 290024.3915
+}
+ GET /api/auth/session 200 in 11608ms
+[2026-02-13T12:08:12.386Z] [ERROR] [API] [GET_AGENTS] Agent fetch error {"error":"","stack":"AggregateError: \n    at C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\pg\\node_modules\\pg-pool\\index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async GET$1 (webpack-internal:///(rsc)/./app/api/admin/agents/route.ts:69:24)\n    at async eval (webpack-internal:///(rsc)/./node_modules/@sentry/nextjs/build/cjs/common/wrapRouteHandlerWithSentry.js:36:30)\n    at async AppRouteRouteModule.do (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:5:38696)\n    at async AppRouteRouteModule.handle (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:5:45978)\n    at async responseGenerator (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fagents%2Froute&page=%2Fapi%2Fadmin%2Fagents%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fagents%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:206:38)\n    at async AppRouteRouteModule.handleResponse (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\compiled\\next-server\\app-route.runtime.dev.js:1:187565)\n    at async handleResponse (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fagents%2Froute&page=%2Fapi%2Fadmin%2Fagents%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fagents%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:268:32)\n    at async handler (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fadmin%2Fagents%2Froute&page=%2Fapi%2Fadmin%2Fagents%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fadmin%2Fagents%2Froute.ts&appDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=C%3A%5CUsers%5CAcer%5CDocuments%5Cdevelopmentsfc-main&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:318:13)\n    at async DevServer.renderToResponseWithComponentsImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1422:9)\n    at async DevServer.renderPageComponent (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1474:24)\n    at async DevServer.renderToResponseImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1514:32)\n    at async DevServer.pipeImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:1025:25)\n    at async NextNodeServer.handleCatchallRenderRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\next-server.js:393:17)\n    at async DevServer.handleRequestImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\base-server.js:916:17)\n    at async C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:399:20\n    at async Span.traceAsyncFn (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\trace\\trace.js:157:20)\n    at async DevServer.handleRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:395:24)\n    at async invokeRender (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:240:21)\n    at async handleRequest (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:437:24)\n    at async requestHandlerImpl (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\router-server.js:485:13)\n    at async Server.requestListener (C:\\Users\\Acer\\Documents\\developmentsfc-main\\node_modules\\next\\dist\\server\\lib\\start-server.js:226:13)"}
+ GET /api/admin/agents 200 in 21633ms
+prisma:error undefined
+[NEXTAUTH] Failed to refresh role from DB: ErrorEvent {
+  type: 'error',
+  defaultPrevented: false,
+  cancelable: false,
+  timeStamp: 296102.8798
+}
+prisma:error undefined
+[2026-02-13T12:08:19.121Z] [ERROR] Database query error {"clientVersion":"7.2.0"}
+[2026-02-13T12:08:19.122Z] [DEBUG] [API] [GET_SETTINGS] Returning default settings for branch {"branch":"Harare"}
+ GET /api/admin/settings?branch=Harare 200 in 22119ms
+[NEXTAUTH] redirect() called: {
+  url: 'http://localhost:3000/post-login',
+  baseUrl: 'http://localhost:3000'
+}
+[NEXTAUTH] Same origin, redirecting to: http://localhost:3000/post-login
+Failed to proxy https://o135838.ingest.us.sentry.io/api/4510783211175936/envelope/?o=135838&p=4510783211175936&r=us&hsts=0 [Error: socket hang up] { code: 'ECONNRESET' }
+[Error: socket hang up] { code: 'ECONNRESET' }
+[NEXTAUTH] redirect() called: {
+  url: 'http://localhost:3000/post-login',
+  baseUrl: 'http://localhost:3000'
+}
+[NEXTAUTH] Same origin, redirecting to: http://localhost:3000/post-login
+[2026-02-13T12:08:20.822Z] [DEBUG] [prisma] Prisma client created with Neon adapter
+prisma:error undefined
+[2026-02-13T12:08:25.692Z] [ERROR] GET /api/auth/me error {"clientVersion":"7.2.0"}
+ GET /api/auth/me 500 in 24786ms
+[NEXTAUTH] redirect() called: {
+  url: 'http://localhost:3000/post-login',
+  baseUrl: 'http://localhost:3000'
+}
+[NEXTAUTH] Same origin, redirecting to: http://localhost:3000/post-login
+[2026-02-13T12:08:27.642Z] [DEBUG] [prisma] Prisma client created with Neon adapter
+prisma:error undefined
+[NEXTAUTH] Failed to refresh role from DB: ErrorEvent {
+  type: 'error',
+  defaultPrevented: false,
+  cancelable: false,
+  timeStamp: 310760.4852
+}
+ GET /api/auth/session 200 in 10541ms
+[NEXTAUTH] redirect() called: {
+  url: 'http://localhost:3000/post-login',
+  baseUrl: 'http://localhost:3000'
+}
+[NEXTAUTH] Same origin, redirecting to: http://localhost:3000/post-login
+prisma:error undefined
+[NEXTAUTH] Failed to refresh role from DB: ErrorEvent {
+  type: 'error',
+  defaultPrevented: false,
+  cancelable: false,
+  timeStamp: 311256.8891
+}
+ GET /api/auth/session 200 in 10510ms
+[NEXTAUTH] redirect() called: {
+  url: 'http://localhost:3000/post-login',
+  baseUrl: 'http://localhost:3000'
+}
+[NEXTAUTH] Same origin, redirecting to: http://localhost:3000/post-login
+[2026-02-13T12:08:31.347Z] [DEBUG] [prisma] Prisma client created with Neon adapter
+prisma:error undefined
+[NEXTAUTH] Failed to refresh role from DB: ErrorEvent {
+  type: 'error',
+  defaultPrevented: false,
+  cancelable: false,
+  timeStamp: 317322.9383
+}
+ GET /api/auth/session 200 in 10491ms
+Failed to proxy https://o135838.ingest.us.sentry.io/api/4510783211175936/envelope/?o=135838&p=4510783211175936&r=us&hsts=0 [Error: socket hang up] { code: 'ECONNRESET' }
+[Error: socket hang up] { code: 'ECONNRESET' }
+ ○ Compiling /api/notifications/unread-count ...
+ ✓ Compiled /api/notifications/unread-count in 3.9s (5571 modules)
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+[NEXTAUTH] redirect() called: {
+  url: 'http://localhost:3000/post-login',
+  baseUrl: 'http://localhost:3000'
+}
+[NEXTAUTH] Same origin, redirecting to: http://localhost:3000/post-login
+ GET /api/auth/csrf 200 in 3692ms
+[NEXTAUTH] redirect() called: {
+  url: 'http://localhost:3000/post-login',
+  baseUrl: 'http://localhost:3000'
+}
+[NEXTAUTH] Same origin, redirecting to: http://localhost:3000/post-login
+[NEXTAUTH] redirect() called: {
+  url: 'http://localhost:3000/post-login',
+  baseUrl: 'http://localhost:3000'
+}
+[NEXTAUTH] Same origin, redirecting to: http://localhost:3000/post-login
+prisma:error undefined
+[NEXTAUTH] Failed to refresh role from DB: ErrorEvent {
+  type: 'error',
+  defaultPrevented: false,
+  cancelable: false,
+  timeStamp: 321823.0077
+}
+ GET /api/auth/session 200 in 10989ms
+[NEXTAUTH] redirect() called: {
+  url: 'http://localhost:6060/post-login',
+  baseUrl: 'http://localhost:3000'
+}
+[NEXTAUTH] External origin or default, redirecting to post-login
+[AUDIT] Failed to import Prisma: Error [PrismaClientInitializationError]: `PrismaClient` needs to be constructed with a non-empty, valid `PrismaClientOptions`:
+
+```
+new PrismaClient({
+  ...
+})
+```
+
+or
+
+```
+constructor() {
+  super({ ... });
+}
+```
+          
+    at eval (lib\authOptions.ts:344:28)
+  342 |           // Server-side: Use Promise without await
+  343 |           import('@prisma/client').then(({ PrismaClient }) => {
+> 344 |             const prisma = new PrismaClient();
+      |                            ^
+  345 |             prisma.activityLog.create({
+  346 |               data: {
+  347 |                 branch: (token as any).branch || 'Harare', {
+  clientVersion: '7.2.0',
+  errorCode: undefined,
+  retryable: undefined
+}
+ POST /api/auth/signout 200 in 148ms
+prisma:error undefined
+[NEXTAUTH] Failed to refresh role from DB: ErrorEvent {
+  type: 'error',
+  defaultPrevented: false,
+  cancelable: false,
+  timeStamp: 322323.2469
+}
+ GET /api/auth/session 200 in 11036ms
+[NEXTAUTH] redirect() called: {
+  url: 'http://localhost:3000/post-login',
+  baseUrl: 'http://localhost:3000'
+}
+[NEXTAUTH] Same origin, redirecting to: http://localhost:3000/post-login
+[2026-02-13T12:08:42.022Z] [DEBUG] [prisma] Prisma client created with Neon adapter
+Failed to proxy https://o135838.ingest.us.sentry.io/api/4510783211175936/envelope/?o=135838&p=4510783211175936&r=us&hsts=0 [Error: socket hang up] { code: 'ECONNRESET' }
+[Error: socket hang up] { code: 'ECONNRESET' }
+ ⨯ upstream image response timed out for https://p95t08lhll.ufs.sh/f/I5VkKRpIwc8jJwmr1gbkDVm5eta1ozsOGc6nEPXf7uJvxpIH
+[Error: "url" parameter is valid but upstream response timed out] {
+  statusCode: 504
+}
+prisma:error undefined
+[NEXTAUTH] Failed to refresh role from DB: ErrorEvent {
+  type: 'error',
+  defaultPrevented: false,
+  cancelable: false,
+  timeStamp: 331930.5845
+}
+prisma:error undefined
+[NEXTAUTH] Failed to refresh role from DB: ErrorEvent {
+  type: 'error',
+  defaultPrevented: false,
+  cancelable: false,
+  timeStamp: 331935.7937
+}
+prisma:error undefined
+[NEXTAUTH] Failed to refresh role from DB: ErrorEvent {
+  type: 'error',
+  defaultPrevented: false,
+  cancelable: false,
+  timeStamp: 332956.7126
+}
+ GET /api/auth/session 200 in 10594ms
+[NEXTAUTH] redirect() called: {
+  url: 'http://localhost:3000/post-login',
+  baseUrl: 'http://localhost:3000'
+}
+[NEXTAUTH] Same origin, redirecting to: http://localhost:3000/post-login
+[2026-02-13T12:08:53.721Z] [DEBUG] [prisma] Prisma client created with Neon adapter
+[NEXTAUTH] redirect() called: {
+  url: 'http://localhost:3000/post-login',
+  baseUrl: 'http://localhost:3000'
+}
+[NEXTAUTH] Same origin, redirecting to: http://localhost:3000/post-login
+prisma:error undefined
+[2026-02-13T12:09:01.503Z] [ERROR] [Notifications Unread-Count GET] Error {"clientVersion":"7.2.0"}
+ GET /api/notifications/unread-count 500 in 20854ms
+prisma:error undefined
+[2026-02-13T12:09:01.523Z] [ERROR] [Notifications Unread-Count GET] Error {"clientVersion":"7.2.0"}
+ GET /api/notifications/unread-count 500 in 25213ms
+prisma:query SELECT "public"."users"."id", "public"."users"."role"::text, "public"."users"."name", "public"."users"."branch", "public"."users"."is_active" FROM "public"."users" WHERE ("public"."users"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+ GET /api/auth/session 200 in 12164ms
+[NEXTAUTH] redirect() called: {
+  url: 'http://localhost:3000/post-login',
+  baseUrl: 'http://localhost:3000'
+}
+[NEXTAUTH] Same origin, redirecting to: http://localhost:3000/post-login
+[2026-02-13T12:09:05.873Z] [DEBUG] [prisma] Prisma client created with Neon adapter
+prisma:query SELECT "public"."users"."id", "public"."users"."role"::text, "public"."users"."name", "public"."users"."branch", "public"."users"."is_active" FROM "public"."users" WHERE ("public"."users"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+ GET /api/auth/session 200 in 3853ms
+[NEXTAUTH] redirect() called: {
+  url: 'http://localhost:3000/post-login',
+  baseUrl: 'http://localhost:3000'
+}
+[NEXTAUTH] Same origin, redirecting to: http://localhost:3000/post-login
+ GET /api/auth/session 200 in 89ms
+[NEXTAUTH] redirect() called: {
+  url: 'http://localhost:3000/post-login',
+  baseUrl: 'http://localhost:3000'
+}
+[NEXTAUTH] Same origin, redirecting to: http://localhost:3000/post-login
+ GET /api/auth/session 200 in 101ms
+ GET /login?error=missing_role 200 in 681ms
+[2026-02-13T12:09:09.625Z] [DEBUG] [prisma] Prisma client created with Neon adapter
+[2026-02-13T12:09:11.101Z] [DEBUG] [API] [GET_SETTINGS] GET request for branch {"branch":"Harare"}
+[NEXTAUTH] redirect() called: {
+  url: 'http://localhost:3000/post-login',
+  baseUrl: 'http://localhost:3000'
+}
+[NEXTAUTH] Same origin, redirecting to: http://localhost:3000/post-login
+Failed to proxy https://o135838.ingest.us.sentry.io/api/4510783211175936/envelope/?o=135838&p=4510783211175936&r=us&hsts=0 [Error: socket hang up] { code: 'ECONNRESET' }
+[Error: socket hang up] { code: 'ECONNRESET' }
+[2026-02-13T12:09:12.814Z] [DEBUG] [prisma] Prisma client created with Neon adapter
+prisma:query 
+      CREATE TABLE IF NOT EXISTS "company_settings" (
+        "id" TEXT NOT NULL PRIMARY KEY,
+        "branch" TEXT NOT NULL UNIQUE,
+        "logo_url" TEXT,
+        "company_name" TEXT DEFAULT 'Fine & Country Zimbabwe',
+        "phone" TEXT,
+        "email" TEXT,
+        "address" TEXT,
+        "principal_agent_name" TEXT,
+        "principal_agent_email" TEXT,
+        "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+      );
+    
+prisma:query SELECT "public"."users"."id", "public"."users"."role"::text, "public"."users"."name", "public"."users"."branch", "public"."users"."is_active" FROM "public"."users" WHERE ("public"."users"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT 1 FROM notifications LIMIT 1
+prisma:query SELECT COUNT(*) AS "_count$_all" FROM (SELECT "public"."notifications"."id" FROM "public"."notifications" WHERE ("public"."notifications"."recipient_user_id" = $1 AND "public"."notifications"."is_read" = $2) OFFSET $3) AS "sub"
+ GET /api/notifications/unread-count 200 in 18645ms
+prisma:query ALTER TABLE "company_settings" ADD COLUMN IF NOT EXISTS "principal_agent_name" TEXT;
+prisma:query ALTER TABLE "company_settings" ADD COLUMN IF NOT EXISTS "principal_agent_email" TEXT;
+[2026-02-13T12:09:18.312Z] [DEBUG] [API] [SETTINGS] CompanySettings table ensured
+prisma:query SELECT "public"."company_settings"."id", "public"."company_settings"."branch", "public"."company_settings"."logo_url", "public"."company_settings"."company_name", "public"."company_settings"."phone", "public"."company_settings"."email", "public"."company_settings"."address", "public"."company_settings"."principal_agent_name", "public"."company_settings"."principal_agent_email", "public"."company_settings"."created_at", "public"."company_settings"."updated_at" FROM "public"."company_settings" WHERE "public"."company_settings"."branch" = $1 LIMIT $2 OFFSET $3
+[2026-02-13T12:09:20.509Z] [DEBUG] [API] [GET_SETTINGS] Found settings for branch {"branch":"Harare"}
+ GET /api/admin/settings?branch=Harare 200 in 9590ms
+prisma:query SELECT "public"."users"."id", "public"."users"."role"::text, "public"."users"."name", "public"."users"."branch", "public"."users"."is_active" FROM "public"."users" WHERE ("public"."users"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+ GET /api/auth/session 200 in 11157ms
+[NEXTAUTH] redirect() called: {
+  url: 'http://localhost:3000/post-login',
+  baseUrl: 'http://localhost:3000'
+}
+[NEXTAUTH] Same origin, redirecting to: http://localhost:3000/post-login
+prisma:query SELECT "public"."users"."id", "public"."users"."role"::text, "public"."users"."name", "public"."users"."branch", "public"."users"."is_active" FROM "public"."users" WHERE ("public"."users"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+ GET /api/auth/session 200 in 949ms
+[NEXTAUTH] redirect() called: {
+  url: 'http://localhost:3000/post-login',
+  baseUrl: 'http://localhost:3000'
+}
+[NEXTAUTH] Same origin, redirecting to: http://localhost:3000/post-login
+prisma:query SELECT "public"."users"."id", "public"."users"."role"::text, "public"."users"."name", "public"."users"."branch", "public"."users"."is_active" FROM "public"."users" WHERE ("public"."users"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[2026-02-13T12:09:23.931Z] [DEBUG] [prisma] Prisma client created with Neon adapter
+prisma:query SELECT 1 FROM notifications LIMIT 1
+prisma:query SELECT COUNT(*) AS "_count$_all" FROM (SELECT "public"."notifications"."id" FROM "public"."notifications" WHERE ("public"."notifications"."recipient_user_id" = $1 AND "public"."notifications"."is_read" = $2) OFFSET $3) AS "sub"
+ GET /api/notifications/unread-count 200 in 1168ms
+ GET /post-login 200 in 276ms
+[NEXTAUTH] redirect() called: {
+  url: 'http://localhost:3000/post-login',
+  baseUrl: 'http://localhost:3000'
+}
+[NEXTAUTH] Same origin, redirecting to: http://localhost:3000/post-login
+[NEXTAUTH] redirect() called: {
+  url: 'http://localhost:3000/post-login',
+  baseUrl: 'http://localhost:3000'
+}
+[NEXTAUTH] Same origin, redirecting to: http://localhost:3000/post-login
+prisma:query SELECT "public"."users"."id", "public"."users"."role"::text, "public"."users"."name", "public"."users"."branch", "public"."users"."is_active" FROM "public"."users" WHERE ("public"."users"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT 1 FROM notifications LIMIT 1
+prisma:query SELECT "public"."users"."id", "public"."users"."role"::text, "public"."users"."name", "public"."users"."branch", "public"."users"."is_active" FROM "public"."users" WHERE ("public"."users"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT COUNT(*) AS "_count$_all" FROM (SELECT "public"."notifications"."id" FROM "public"."notifications" WHERE ("public"."notifications"."recipient_user_id" = $1 AND "public"."notifications"."is_read" = $2) OFFSET $3) AS "sub"
+ GET /api/notifications/unread-count 200 in 2554ms
+prisma:query SELECT "public"."users"."id", "public"."users"."email", "public"."users"."name", "public"."users"."role"::text, "public"."users"."branch" FROM "public"."users" WHERE ("public"."users"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+ GET /api/auth/me 200 in 2178ms
+[MIDDLEWARE] Path: /dashboards/admin, User role: ADMIN
+[MIDDLEWARE] Access granted to ADMIN for /dashboards/admin
+[NEXTAUTH] redirect() called: {
+  url: 'http://localhost:3000/post-login',
+  baseUrl: 'http://localhost:3000'
+}
+[NEXTAUTH] Same origin, redirecting to: http://localhost:3000/post-login
+prisma:query SELECT "public"."users"."id", "public"."users"."role"::text, "public"."users"."name", "public"."users"."branch", "public"."users"."is_active" FROM "public"."users" WHERE ("public"."users"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+ ○ Compiling /dashboards/admin ...
+prisma:query SELECT "public"."users"."id", "public"."users"."email", "public"."users"."name", "public"."users"."role"::text, "public"."users"."branch" FROM "public"."users" WHERE ("public"."users"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+ GET /api/auth/me 200 in 1831ms
+[MIDDLEWARE] Path: /dashboards/admin, User role: ADMIN
+[MIDDLEWARE] Access granted to ADMIN for /dashboards/admin
+ ✓ Compiled /dashboards/admin in 36.5s (5819 modules)
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+[NEXTAUTH] redirect() called: {
+  url: 'http://localhost:3000/post-login',
+  baseUrl: 'http://localhost:3000'
+}
+[NEXTAUTH] Same origin, redirecting to: http://localhost:3000/post-login
+[NEXTAUTH] redirect() called: {
+  url: 'http://localhost:3000/post-login',
+  baseUrl: 'http://localhost:3000'
+}
+[NEXTAUTH] Same origin, redirecting to: http://localhost:3000/post-login
+[NEXTAUTH] redirect() called: {
+  url: 'http://localhost:3000/post-login',
+  baseUrl: 'http://localhost:3000'
+}
+[NEXTAUTH] Same origin, redirecting to: http://localhost:3000/post-login
+[2026-02-13T12:10:10.844Z] [DEBUG] [prisma] Prisma client created with Neon adapter
+prisma:query SELECT "public"."users"."id", "public"."users"."role"::text, "public"."users"."name", "public"."users"."branch", "public"."users"."is_active" FROM "public"."users" WHERE ("public"."users"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."users"."id", "public"."users"."role"::text, "public"."users"."name", "public"."users"."branch", "public"."users"."is_active" FROM "public"."users" WHERE ("public"."users"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."users"."id", "public"."users"."role"::text, "public"."users"."name", "public"."users"."branch", "public"."users"."is_active" FROM "public"."users" WHERE ("public"."users"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT 1 FROM notifications LIMIT 1
+prisma:query SELECT COUNT(*) AS "_count$_all" FROM (SELECT "public"."notifications"."id" FROM "public"."notifications" WHERE ("public"."notifications"."recipient_user_id" = $1 AND "public"."notifications"."is_read" = $2) OFFSET $3) AS "sub"
+ ✓ Compiled in 13.5s (1860 modules)
+ ✓ Compiled in 3.3s (4689 modules)
+ ✓ Compiled in 744ms (1860 modules)
+ ✓ Compiled in 587ms (1860 modules)
