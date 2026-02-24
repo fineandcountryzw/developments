@@ -25,6 +25,7 @@ import {
   convertToImportFormat,
   FileFormat 
 } from '@/lib/import/excel-parser';
+import { runPostImportFlow } from '@/lib/import/post-import-flow';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
@@ -101,6 +102,7 @@ async function importLakeCityFormat(
   const createdDevelopers = new Map<string, string>();
   const createdDevelopments = new Map<string, string>();
   const createdStands = new Map<string, string>();
+  const standIds: string[] = [];
 
   try {
     await prisma.$transaction(async (tx) => {
@@ -199,6 +201,7 @@ async function importLakeCityFormat(
             });
             standId = newStand.id;
             counts.standsCreated++;
+            standIds.push(standId);
 
             // Update development counts
             await tx.development.update({
@@ -207,6 +210,7 @@ async function importLakeCityFormat(
             });
           } else {
             standId = `dry-run-${stand.development}-${stand.standNumber}`;
+            standIds.push(standId);
           }
           createdStands.set(`${stand.development}:${stand.standNumber}`, standId);
         }
@@ -301,6 +305,38 @@ async function importLakeCityFormat(
     }
   }
 
+  // Run post-import flow (after transaction commits)
+  let postImportResult;
+  if (!options.dryRun && standIds.length > 0) {
+    try {
+      postImportResult = await runPostImportFlow(
+        {
+          stands: parseResult.stands.map((s, idx) => ({
+            id: standIds[idx] || '',
+            standNumber: s.standNumber,
+            development: s.development,
+            clientId: null,
+          })),
+          payments: [], // Would be populated from actual payment records
+          totalCollected: parseResult.summary.totalCollected,
+          errors: errors,
+          standIds: standIds,
+          developmentIds: Array.from(createdDevelopments.values()),
+          clientsNeeded: 0, // Will be calculated in post-import flow
+        },
+        {
+          importedBy: userId,
+          importBatchId: batchId,
+          filename: filename,
+          notifyEmail: process.env.MANAGER_NOTIFY_EMAIL,
+        }
+      );
+    } catch (postImportError) {
+      console.error('Post-import flow failed:', postImportError);
+      // Don't fail the whole import if post-import fails
+    }
+  }
+
   return {
     batchId,
     format: 'LAKECITY_LEDGER',
@@ -308,6 +344,8 @@ async function importLakeCityFormat(
     logs,
     warnings: parseResult.warnings,
     errors,
+    standIds,
+    postImport: postImportResult,
   };
 }
 
