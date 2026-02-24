@@ -36,8 +36,8 @@
   --erp-success: #10B981;
   --erp-warning: #F59E0B;
   
-  /* Font: Inter via next/font (--font-inter on html). Fallback when variable not set. */
-  --font-inter: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  /* Font: Plus Jakarta Sans via next/font (--font-plus-jakarta on html). Fallback when variable not set. */
+  --font-plus-jakarta: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
 }
 
 /* Dark mode support */
@@ -77,7 +77,7 @@ html, body {
 body {
   background: #FFFFFF;
   color: #0a0a0a;
-  font-family: var(--font-inter);
+  font-family: var(--font-plus-jakarta), var(--font-sans, sans-serif);
   line-height: 1.6;
   font-weight: 400;
   letter-spacing: 0;

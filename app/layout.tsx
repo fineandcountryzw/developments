@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import React from "react";
-import { Inter } from 'next/font/google';
+import { Plus_Jakarta_Sans } from 'next/font/google';
 import "./globals.css";
 import { Providers } from './providers';
 
-const inter = Inter({ 
+const plusJakartaSans = Plus_Jakarta_Sans({ 
   subsets: ['latin'], 
-  variable: '--font-inter',
+  variable: '--font-plus-jakarta',
   display: 'swap',
 });
 const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://fineandcountryerp.com';
@@ -73,7 +73,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={plusJakartaSans.variable}>
       <head>
         <meta charSet="utf-8" />
         <meta name="theme-color" content="#85754E" />
@@ -88,7 +88,7 @@ export default function RootLayout({
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
         <meta name="format-detection" content="telephone=no" />
         
-        {/* Font: Inter via next/font (--font-inter). Tailwind font-sans uses it. */}
+        {/* Font: Plus Jakarta Sans via next/font (--font-plus-jakarta). Tailwind font-sans uses it. */}
         
         {/* Tailwind CSS is configured via PostCSS - DO NOT use CDN in production */}
         <script dangerouslySetInnerHTML={{__html: `
@@ -98,7 +98,7 @@ export default function RootLayout({
               theme: {
                 extend: {
                   fontFamily: {
-                    sans: ['var(--font-inter)', 'Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol']
+                    sans: ['var(--font-plus-jakarta)', 'Plus Jakarta Sans', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol']
                   },
                   colors: {
                     fcGold: '#C5A059',

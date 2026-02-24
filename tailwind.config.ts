@@ -37,8 +37,8 @@ const config: Config = {
       },
       fontFamily: {
         sans: [
-          'var(--font-instrument-sans)',
-          'Instrument Sans',
+          'var(--font-plus-jakarta)',
+          'Plus Jakarta Sans',
           'ui-sans-serif',
           'system-ui',
           '-apple-system',
