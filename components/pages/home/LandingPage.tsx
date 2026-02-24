@@ -70,6 +70,7 @@ import { DevelopmentCard } from "../../DevelopmentCard";
 import { HeroAnimatedBackground } from "../../HeroAnimatedBackground";
 import { Header } from "../../Header";
 import { Footer } from "../../Footer";
+import { ScrollProgress } from "../../ScrollProgress";
 
 // Dynamic import with ssr: false to avoid Leaflet window reference errors during SSR
 const PlotSelectorMap = dynamic(
@@ -1080,6 +1081,9 @@ export const LandingPage: React.FC<LandingPageProps> = () => {
 
   return (
     <div className="relative min-h-screen flex flex-col bg-white overflow-x-hidden font-sans">
+      {/* Scroll Progress Bar */}
+      <ScrollProgress />
+      
       {/* Premium White Header */}
       <Header
         primaryCTA="Reserve Your Stand"
