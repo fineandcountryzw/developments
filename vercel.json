@@ -5,6 +5,5 @@
   "outputDirectory": ".next",
   "env": {
     "DATABASE_URL": "postgresql://neondb_owner:npg_hsQdL7KHBX8c@ep-mute-river-a4uai6d1-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
-  },
-  "_crons_disabled": "Temporarily disabled - crons were moved to external service or disabled. See vercel.crons.json.bak for original config."
+  }
 }
