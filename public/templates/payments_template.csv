@@ -1,0 +1,5 @@
+stand_number,development_name,payment_date,amount_usd,reference,description,payment_method,notes
+304,Lakecity,06/10/2025,320,INV2066,Monthly Installment,Cash,October payment
+304,Lakecity,04/11/2025,320,INV2224,Monthly Installment,Transfer,November payment
+305,Lakecity,15/09/2025,1200,DEP001,Deposit,Cash,Initial deposit
+305,Lakecity,15/10/2025,300,INV2055,Monthly Installment,Transfer,October installment

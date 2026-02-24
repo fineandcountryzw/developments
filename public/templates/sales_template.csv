@@ -1,0 +1,4 @@
+stand_number,development_name,purchase_price_usd,deposit_amount_usd,sale_date,agent_code,has_agreement,agreement_date,agreement_reference,agent_name,notes
+304,Lakecity,12000,500,08/08/2025,PM,No,,,Tendai Moyo,First purchase
+305,Lakecity,12000,1200,15/08/2025,KK,Yes,15/08/2025,AG2025-001,Kudakwashe Moyo,Deposit paid
+306,Lakecity,12000,0,20/08/2025,KCM,No,,,Chengetai Moyo,Zero deposit

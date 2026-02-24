@@ -3,20 +3,14 @@
  * 
  * Handles the specific format from Fine & Country Zimbabwe legacy Excel files:
  * - Multiple sheets per workbook (each sheet = one development/tier)
- * - Ledger-style blocks: one stand = ~18 rows
+ * - Ledger-style blocks: one stand = variable rows
  * - Two-sided accounting: LEFT = client payments, RIGHT = disbursements
- * - Agent codes in stand header row (KCM, KK, PM, RJ, TM)
+ * - Agent codes in last non-null column of stand header row
  * 
- * Sheet → Development Mapping:
- * - Kumvura estate → Kumvura Estate Developers / Kumvura Estate
- * - Hirange KK → Highrange LC Developers / Highrange
- * - $9000 → Lakecity Developers / Lakecity ($9,000 tier)
- * - $500 KK zero dep $12k → Lakecity Developers / Lakecity ($12,000 tier)
- * - Rockridge KCMPM → Southlands Developers / Rockridge ($18,000)
- * - $12k CKTM → Lakecity Developers / Lakecity ($12,000 tier)
- * - $12k KK → Lakecity Developers / Lakecity ($12,000 tier)
- * - Cluster stands KK → Highrange LC Developers / Highrange Cluster
- * - Lomlight → Lomlight Teddy M Developers / Lomlight
+ * Stand Block Structure:
+ * ROW N:   [index] | "Stand number XXXX" | ... | [AGENT_CODE]
+ * ROW N+1: [size?] | "Date" | "Description" | "Ref" | "Amount $" | "Date" | "Description" | "Ref" | "Amount $"
+ * ROW N+2+: Transaction rows until SUM row
  */
 
 import * as XLSX from 'xlsx';
@@ -25,524 +19,533 @@ import * as XLSX from 'xlsx';
 // Types
 // ─────────────────────────────────────────────────────────────────────────────
 
+export type StandType = 'STAND' | 'CLUSTER';
+
 export interface ParsedTransaction {
-  rowIndex: number;
   date: Date | null;
   description: string;
-  amount: number;
-  transactionType: 'DEPOSIT' | 'INSTALLMENT' | 'LEGAL_FEE' | 'AOS_FEE' | 'FC_ADMIN_FEE' | 'OTHER';
-  side: 'CLIENT' | 'DISBURSEMENT'; // LEFT side = client payments, RIGHT side = disbursements
-  isValid: boolean;
-  validationError?: string;
+  reference: string | null;
+  amount: number | null;
+  type: 'DEPOSIT' | 'INSTALLMENT' | 'LEGAL_FEE' | 'AOS_FEE' | 'FC_ADMIN_FEE' | 'OTHER';
+  side: 'LEFT' | 'RIGHT'; // LEFT = client payments, RIGHT = disbursements
 }
 
 export interface ParsedStand {
-  standNumber: string;
-  standHash: string; // For duplicate detection
-  clientName: string;
-  agentCode: string | null;
-  priceTier: number; // e.g., 9000, 12000, 18000
-  transactions: ParsedTransaction[];
-  totals: {
-    clientPayments: number;
-    disbursements: number;
-    balance: number;
-  };
-  isDuplicate: boolean; // True if this stand number appears multiple times
-  duplicateOf?: string; // Reference to original stand hash
-}
-
-export interface ParsedSheet {
   sheetName: string;
-  developerName: string;
-  developmentName: string;
-  priceTier: number;
-  stands: ParsedStand[];
-  summary: {
-    totalStands: number;
-    totalClientPayments: number;
-    totalDisbursements: number;
-    invalidDates: Array<{ row: number; value: string }>;
-    missingAgents: number;
-  };
+  developer: string;
+  development: string;
+  standNumber: string;
+  standType: StandType;
+  sizeSqm: number | null;
+  priceUsd: number | null;
+  agentCode: string | null;
+  transactions: ParsedTransaction[];
+  rowIndex: number; // For error reporting
 }
 
-export interface ExcelParseResult {
-  fileName: string;
-  sheets: ParsedSheet[];
-  developers: Map<string, { name: string; standCount: number }>;
-  globalSummary: {
+export interface ParseResult {
+  stands: ParsedStand[];
+  warnings: string[];
+  skipped: number;
+  summary: {
     totalSheets: number;
     totalStands: number;
     totalTransactions: number;
     totalCollected: number;
-    invalidDateCount: number;
-    missingAgentCount: number;
-    duplicateStandCount: number;
+    developers: Map<string, number>; // developer name -> stand count
+    developments: Map<string, number>; // development name -> stand count
   };
-  errors: Array<{ sheet: string; row: number; message: string }>;
 }
 
+export type FileFormat = 'FLAT_CSV' | 'FLAT_EXCEL' | 'LAKECITY_LEDGER' | 'UNKNOWN';
+
 // ─────────────────────────────────────────────────────────────────────────────
-// Sheet → Development Mapping Configuration
+// Sheet Configuration
 // ─────────────────────────────────────────────────────────────────────────────
 
-const SHEET_MAPPING: Record<string, { developer: string; development: string; priceTier: number }> = {
-  'Kumvura estate': { developer: 'Kumvura Estate Developers', development: 'Kumvura Estate', priceTier: 0 },
-  'Hirange KK': { developer: 'Highrange LC Developers', development: 'Highrange', priceTier: 0 },
-  '$9000': { developer: 'Lakecity Developers', development: 'Lakecity', priceTier: 9000 },
-  '$500 KK zero dep $12k': { developer: 'Lakecity Developers', development: 'Lakecity', priceTier: 12000 },
-  'Rockridge KCMPM': { developer: 'Southlands Developers', development: 'Rockridge', priceTier: 18000 },
-  '$12k CKTM': { developer: 'Lakecity Developers', development: 'Lakecity', priceTier: 12000 },
-  '$12k KK': { developer: 'Lakecity Developers', development: 'Lakecity', priceTier: 12000 },
-  'Cluster stands KK': { developer: 'Highrange LC Developers', development: 'Highrange Cluster', priceTier: 0 },
-  'Lomlight': { developer: 'Lomlight Teddy M Developers', development: 'Lomlight', priceTier: 0 },
+const SHEET_CONFIG: Record<string, {
+  developer: string;
+  development: string;
+  priceUsd: number | null;
+}> = {
+  'Kumvura estate': {
+    developer: 'Kumvura Estate Developers',
+    development: 'Kumvura Estate',
+    priceUsd: null,
+  },
+  'Hirange KK': {
+    developer: 'Highrange LC Developers', 
+    development: 'Highrange',
+    priceUsd: null,
+  },
+  '$9000': {
+    developer: 'Lakecity Developers',
+    development: 'Lakecity',
+    priceUsd: 9000,
+  },
+  '$500 KK zero dep $12k': {
+    developer: 'Lakecity Developers',
+    development: 'Lakecity',
+    priceUsd: 12000,
+  },
+  'Rockridge KCMPM': {
+    developer: 'Southlands Developers',
+    development: 'Rockridge',
+    priceUsd: 18000,
+  },
+  '$12k CKTM': {
+    developer: 'Lakecity Developers',
+    development: 'Lakecity',
+    priceUsd: 12000,
+  },
+  '$12k KK': {
+    developer: 'Lakecity Developers',
+    development: 'Lakecity',
+    priceUsd: 12000,
+  },
+  'Cluster stands KK': {
+    developer: 'Highrange LC Developers',
+    development: 'Highrange Cluster',
+    priceUsd: null,
+  },
+  'Lomlight': {
+    developer: 'Lomlight Teddy M Developers',
+    development: 'Lomlight',
+    priceUsd: null,
+  },
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Helper Functions
-// ─────────────────────────────────────────────────────────────────────────────
-
 function normalizeSheetName(name: string): string {
-  // Handle variations in sheet naming
   const normalized = name.trim();
   
   // Direct match
-  if (SHEET_MAPPING[normalized]) return normalized;
+  if (SHEET_CONFIG[normalized]) return normalized;
   
   // Case-insensitive match
   const lowerName = normalized.toLowerCase();
-  for (const [key, value] of Object.entries(SHEET_MAPPING)) {
+  for (const key of Object.keys(SHEET_CONFIG)) {
     if (key.toLowerCase() === lowerName) return key;
   }
   
   // Fuzzy match for common variations
   if (lowerName.includes('kumvura')) return 'Kumvura estate';
   if (lowerName.includes('hirange') || lowerName.includes('highrange')) return 'Hirange KK';
-  if (lowerName.includes('9000')) return '$9000';
+  if (lowerName.includes('9000') && !lowerName.includes('12k')) return '$9000';
   if (lowerName.includes('rockridge')) return 'Rockridge KCMPM';
   if (lowerName.includes('lomlight')) return 'Lomlight';
   if (lowerName.includes('cluster')) return 'Cluster stands KK';
   if (lowerName.includes('12k') && lowerName.includes('cktm')) return '$12k CKTM';
-  if (lowerName.includes('12k') && lowerName.includes('kk')) return '$12k KK';
+  if (lowerName.includes('12k') && lowerName.includes('kk') && !lowerName.includes('cktm')) return '$12k KK';
   if (lowerName.includes('500') && lowerName.includes('12k')) return '$500 KK zero dep $12k';
   
   return normalized;
 }
 
-function parseDate(value: any): { date: Date | null; isValid: boolean; rawValue: string } {
-  if (!value) return { date: null, isValid: false, rawValue: '' };
+function getSheetConfig(sheetName: string): typeof SHEET_CONFIG[string] | null {
+  const normalized = normalizeSheetName(sheetName);
+  return SHEET_CONFIG[normalized] || null;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Parsing Helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
+export function parseDate(val: unknown): Date | null {
+  if (!val) return null;
+  if (val instanceof Date) return val;
   
-  const rawValue = String(value).trim();
+  const str = String(val).trim();
+  
+  // DD.MM.YYYY format (common in Zimbabwe)
+  const ddmmyyyy = str.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+  if (ddmmyyyy) {
+    const day = parseInt(ddmmyyyy[1]);
+    const month = parseInt(ddmmyyyy[2]) - 1;
+    const year = parseInt(ddmmyyyy[3]);
+    const date = new Date(year, month, day);
+    return isNaN(date.getTime()) ? null : date;
+  }
+  
+  // DD/MM/YYYY format
+  const ddmmSlash = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (ddmmSlash) {
+    const day = parseInt(ddmmSlash[1]);
+    const month = parseInt(ddmmSlash[2]) - 1;
+    const year = parseInt(ddmmSlash[3]);
+    const date = new Date(year, month, day);
+    return isNaN(date.getTime()) ? null : date;
+  }
   
   // Excel serial date (number)
-  if (typeof value === 'number') {
-    // Excel dates are serial numbers since 1900-01-01
+  if (typeof val === 'number') {
     const excelEpoch = new Date(1900, 0, 1);
-    const daysOffset = value - 2; // Excel has a bug counting 1900 as leap year
+    const daysOffset = val - 2; // Excel has a bug counting 1900 as leap year
     const date = new Date(excelEpoch.getTime() + daysOffset * 24 * 60 * 60 * 1000);
-    return { date, isValid: !isNaN(date.getTime()), rawValue };
+    return isNaN(date.getTime()) ? null : date;
   }
   
-  // String date parsing
-  const datePatterns = [
-    // YYYY-MM-DD
-    { regex: /^(\d{4})-(\d{1,2})-(\d{1,2})$/, parse: (m: RegExpMatchArray) => new Date(parseInt(m[1]), parseInt(m[2]) - 1, parseInt(m[3])) },
-    // DD/MM/YYYY or DD-MM-YYYY
-    { regex: /^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/, parse: (m: RegExpMatchArray) => new Date(parseInt(m[3]), parseInt(m[2]) - 1, parseInt(m[1])) },
-    // MM/DD/YYYY (US format)
-    { regex: /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/, parse: (m: RegExpMatchArray) => new Date(parseInt(m[3]), parseInt(m[1]) - 1, parseInt(m[2])) },
-  ];
+  // Try standard Date parsing
+  const d = new Date(str);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+export function parseAmount(val: unknown): number | null {
+  if (val === null || val === undefined) return null;
+  if (typeof val === 'number') return val > 0 ? val : null;
   
-  for (const pattern of datePatterns) {
-    const match = rawValue.match(pattern.regex);
-    if (match) {
-      const date = pattern.parse(match);
-      return { date, isValid: !isNaN(date.getTime()), rawValue };
+  const str = String(val).trim();
+  
+  // Handle Excel formulas: =993+992 or =500+250+250
+  if (str.startsWith('=')) {
+    const nums = str.match(/\d+(?:\.\d+)?/g);
+    if (nums) {
+      return nums.reduce((sum, n) => sum + parseFloat(n), 0);
     }
+    return null;
   }
   
-  // Try native Date parsing as fallback
-  const date = new Date(rawValue);
-  return { date, isValid: !isNaN(date.getTime()), rawValue };
+  // Handle currency formatting: $1,234.56 or 1,234.56
+  const cleaned = str.replace(/[$,\s]/g, '');
+  const n = parseFloat(cleaned);
+  return isNaN(n) || n <= 0 ? null : n;
 }
 
-function parseAmount(value: any): number {
-  if (!value) return 0;
-  if (typeof value === 'number') return value;
+export function parseSizeSqm(val: unknown): number | null {
+  if (!val) return null;
+  if (typeof val === 'number') return val;
   
-  const cleaned = String(value)
-    .replace(/[$,\s]/g, '') // Remove $, commas, spaces
-    .replace(/\((.*)\)/, '-$1') // Convert (100) to -100
-    .trim();
-  
-  const amount = parseFloat(cleaned);
-  return isNaN(amount) ? 0 : amount;
+  const str = String(val).trim();
+  // Handle formats like "450m²", "450 m2", "450"
+  const match = str.match(/^(\d+(?:\.\d+)?)/);
+  if (match) {
+    const n = parseFloat(match[1]);
+    return isNaN(n) ? null : n;
+  }
+  return null;
 }
 
-function detectTransactionType(description: string): ParsedTransaction['transactionType'] {
-  const lower = description.toLowerCase();
+export function classifyTransaction(description: string): ParsedTransaction['type'] {
+  const d = description.toLowerCase().trim();
   
-  if (lower.includes('deposit') || lower.includes('dep')) return 'DEPOSIT';
-  if (lower.includes('installment') || lower.includes('monthly') || lower.includes('inst')) return 'INSTALLMENT';
-  if (lower.includes('legal') || lower.includes('legal fees')) return 'LEGAL_FEE';
-  if (lower.includes('aos') || lower.includes('agreement of sale')) return 'AOS_FEE';
-  if (lower.includes('f&c') || lower.includes('admin') || lower.includes('administration')) return 'FC_ADMIN_FEE';
+  if (d.includes('deposit') || d.includes('dep.')) return 'DEPOSIT';
+  if (d.includes('monthly installment') || d.includes('monthly installments')) return 'INSTALLMENT';
+  if (d.includes('f&c administration') || d.includes('administration fee') || d.includes('f&c admin')) return 'FC_ADMIN_FEE';
+  if (d.includes('legal fee') || d.includes('legal fees')) return 'LEGAL_FEE';
+  if (d.includes('aos fee') || d.includes('aos fees') || d.includes('agreement of sale')) return 'AOS_FEE';
   
   return 'OTHER';
 }
 
-function extractAgentCode(row: any[]): string | null {
-  // Agent codes are typically in the last column of the stand header row
-  // Look for patterns like KCM, KK, PM, RJ, TM
-  const agentPattern = /\b(KCM|KK|PM|RJ|TM)\b/;
-  
-  for (const cell of row) {
-    if (!cell) continue;
-    const match = String(cell).match(agentPattern);
-    if (match) return match[1];
+function extractAgentCode(row: unknown[]): string | null {
+  // Find last non-null value in row
+  for (let i = row.length - 1; i >= 0; i--) {
+    const val = row[i];
+    if (val !== null && val !== undefined && String(val).trim() !== '') {
+      const str = String(val).trim();
+      // Check if it's an agent code pattern
+      if (/^(KCM|KK|PM|RJ|TM)$/i.test(str)) {
+        return str.toUpperCase();
+      }
+    }
   }
-  
   return null;
 }
 
-function generateStandHash(standNumber: string, sheetName: string): string {
-  // Create unique hash for duplicate detection
-  return `${sheetName}:${standNumber}`.toUpperCase();
+function isStandHeaderRow(row: unknown[]): { isHeader: boolean; standNumber: string | null; standType: StandType } {
+  if (!row || row.length < 2) return { isHeader: false, standNumber: null, standType: 'STAND' };
+  
+  // Check column A (index 0) - should be a number or numeric string
+  const colA = row[0];
+  const isNumber = typeof colA === 'number' || /^\d+(?:\.\d+)?$/.test(String(colA));
+  
+  if (!isNumber) return { isHeader: false, standNumber: null, standType: 'STAND' };
+  
+  // Check column B (index 1) - should match "Stand number XXX" or "Cluster stand XXX"
+  const colB = String(row[1] || '').trim();
+  
+  const standMatch = colB.match(/(?:stand number|cluster stand)\s+(\w+)/i);
+  if (!standMatch) return { isHeader: false, standNumber: null, standType: 'STAND' };
+  
+  const standNumber = standMatch[1];
+  const standType: StandType = colB.toLowerCase().includes('cluster') ? 'CLUSTER' : 'STAND';
+  
+  return { isHeader: true, standNumber, standType };
+}
+
+function shouldSkipTransaction(row: unknown[]): boolean {
+  if (!row || row.length < 5) return true;
+  
+  const desc = String(row[2] || '').trim().toLowerCase();
+  const colE = String(row[4] || '');
+  const colG = String(row[6] || '');
+  
+  // Skip header row
+  if (desc === 'description') return true;
+  
+  // Skip SUM formula rows
+  if (colE.includes('=SUM(')) return true;
+  
+  // Skip Balance c/d rows
+  if (colG.toLowerCase() === 'balance c/d') return true;
+  
+  // Skip empty template rows (both date and amount null)
+  const dateLeft = row[1];
+  const dateRight = row[5];
+  const amountLeft = parseAmount(row[4]);
+  const amountRight = parseAmount(row[8]);
+  
+  if (!dateLeft && !dateRight && amountLeft === null && amountRight === null) return true;
+  
+  return false;
+}
+
+function isSumRow(row: unknown[]): boolean {
+  if (!row) return false;
+  const colB = String(row[1] || '').trim().toLowerCase();
+  const colE = String(row[4] || '');
+  return colB.includes('total') || colB.includes('sum') || colE.includes('=sum(');
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Core Parsing Functions
+// Stand Block Parser
 // ─────────────────────────────────────────────────────────────────────────────
 
 function parseStandBlock(
-  rows: any[][],
+  rows: unknown[][],
   startRow: number,
   sheetName: string
 ): { stand: ParsedStand | null; endRow: number } {
-  const row = rows[startRow];
+  const headerRow = rows[startRow];
+  const headerInfo = isStandHeaderRow(headerRow);
   
-  // Check if this is a stand header row
-  // Stand headers typically have "Stand X" or similar in first column
-  const firstCell = String(row[0] || '').trim();
-  const standMatch = firstCell.match(/stand\s*(\d+[a-z]?)/i);
-  
-  if (!standMatch) {
+  if (!headerInfo.isHeader || !headerInfo.standNumber) {
     return { stand: null, endRow: startRow };
   }
   
-  const standNumber = standMatch[1];
-  const standHash = generateStandHash(standNumber, sheetName);
-  const agentCode = extractAgentCode(row);
+  const config = getSheetConfig(sheetName);
+  if (!config) {
+    console.warn(`No config found for sheet: ${sheetName}`);
+  }
   
-  // Try to find client name (usually in row after header or in header)
-  let clientName = '';
+  // Extract agent code from header row (last non-null column)
+  const agentCode = extractAgentCode(headerRow);
+  
+  // Row N+1 contains size in column A (optional)
+  let sizeSqm: number | null = null;
   if (rows[startRow + 1]) {
-    const nextRowFirstCell = String(rows[startRow + 1][0] || '').trim();
-    if (!nextRowFirstCell.toLowerCase().includes('stand')) {
-      clientName = nextRowFirstCell;
-    }
+    sizeSqm = parseSizeSqm(rows[startRow + 1][0]);
   }
   
   const transactions: ParsedTransaction[] = [];
-  let rowIdx = startRow + (clientName ? 2 : 1);
-  const invalidDates: Array<{ row: number; value: string }> = [];
+  let rowIdx = startRow + 2; // Start from transaction rows
   
-  // Parse transaction rows (typically 12-16 rows per stand)
-  // Stop when we hit next stand or empty rows
-  while (rowIdx < rows.length && rowIdx < startRow + 20) {
-    const transRow = rows[rowIdx];
+  // Parse transaction rows until we hit SUM row or next stand
+  while (rowIdx < rows.length) {
+    const row = rows[rowIdx];
     
     // Check for next stand header
-    const nextFirstCell = String(transRow?.[0] || '').trim();
-    if (nextFirstCell.match(/stand\s*\d+/i)) break;
+    if (isStandHeaderRow(row).isHeader) break;
     
-    // Check for empty row (all cells empty)
-    if (!transRow || transRow.every(cell => !cell)) {
+    // Check for SUM/total row
+    if (isSumRow(row)) {
+      rowIdx++;
+      break;
+    }
+    
+    // Skip rows that shouldn't be imported
+    if (shouldSkipTransaction(row)) {
       rowIdx++;
       continue;
     }
     
-    // Parse date (column 0 or 1)
-    let dateValue = transRow[0] || transRow[1];
-    const dateResult = parseDate(dateValue);
+    // Parse LEFT side (client payments)
+    const dateLeft = parseDate(row[1]);
+    const descLeft = String(row[2] || '').trim();
+    const refLeft = String(row[3] || '');
+    const amountLeft = parseAmount(row[4]);
     
-    if (!dateResult.isValid && dateValue) {
-      invalidDates.push({ row: rowIdx, value: dateResult.rawValue });
+    if (descLeft && amountLeft !== null) {
+      const type = classifyTransaction(descLeft);
+      
+      // Skip FC_ADMIN_FEE (internal)
+      if (type !== 'FC_ADMIN_FEE') {
+        transactions.push({
+          date: dateLeft,
+          description: descLeft,
+          reference: refLeft || null,
+          amount: amountLeft,
+          type,
+          side: 'LEFT',
+        });
+      }
     }
     
-    // Parse description (usually column 1 or 2)
-    const description = String(transRow[1] || transRow[2] || '').trim();
+    // Parse RIGHT side (disbursements)
+    const dateRight = parseDate(row[5]);
+    const descRight = String(row[6] || '').trim();
+    const refRight = String(row[7] || '');
+    const amountRight = parseAmount(row[8]);
     
-    // Parse amounts - LEDGER STYLE: LEFT = client payments, RIGHT = disbursements
-    // LEFT side (columns 2-4 typically)
-    const leftAmount = parseAmount(transRow[2]) || parseAmount(transRow[3]) || parseAmount(transRow[4]);
-    
-    // RIGHT side (columns 5-7 typically)
-    const rightAmount = parseAmount(transRow[5]) || parseAmount(transRow[6]) || parseAmount(transRow[7]);
-    
-    // Create transaction for LEFT side (client payment)
-    if (leftAmount > 0 && description) {
-      transactions.push({
-        rowIndex: rowIdx,
-        date: dateResult.date,
-        description,
-        amount: leftAmount,
-        transactionType: detectTransactionType(description),
-        side: 'CLIENT',
-        isValid: dateResult.isValid || !dateValue, // Allow missing dates for some transactions
-      });
-    }
-    
-    // Create transaction for RIGHT side (disbursement)
-    if (rightAmount > 0 && description) {
-      transactions.push({
-        rowIndex: rowIdx,
-        date: dateResult.date,
-        description,
-        amount: rightAmount,
-        transactionType: detectTransactionType(description),
-        side: 'DISBURSEMENT',
-        isValid: dateResult.isValid || !dateValue,
-      });
+    if (descRight && amountRight !== null) {
+      const type = classifyTransaction(descRight);
+      
+      // Skip FC_ADMIN_FEE (internal)
+      if (type !== 'FC_ADMIN_FEE') {
+        transactions.push({
+          date: dateRight,
+          description: descRight,
+          reference: refRight || null,
+          amount: amountRight,
+          type,
+          side: 'RIGHT',
+        });
+      }
     }
     
     rowIdx++;
   }
   
-  // Calculate totals
-  const clientPayments = transactions
-    .filter(t => t.side === 'CLIENT')
-    .reduce((sum, t) => sum + t.amount, 0);
-  
-  const disbursements = transactions
-    .filter(t => t.side === 'DISBURSEMENT')
-    .reduce((sum, t) => sum + t.amount, 0);
-  
   const stand: ParsedStand = {
-    standNumber,
-    standHash,
-    clientName,
+    sheetName,
+    developer: config?.developer || 'Unknown Developer',
+    development: config?.development || sheetName,
+    standNumber: headerInfo.standNumber,
+    standType: headerInfo.standType,
+    sizeSqm,
+    priceUsd: config?.priceUsd || null,
     agentCode,
-    priceTier: 0, // Set from sheet mapping
     transactions,
-    totals: {
-      clientPayments,
-      disbursements,
-      balance: clientPayments - disbursements,
-    },
-    isDuplicate: false,
+    rowIndex: startRow,
   };
   
   return { stand, endRow: rowIdx - 1 };
 }
 
-function parseSheet(worksheet: XLSX.WorkSheet, sheetName: string): ParsedSheet {
-  const normalizedName = normalizeSheetName(sheetName);
-  const mapping = SHEET_MAPPING[normalizedName] || { 
-    developer: 'Unknown Developer', 
-    development: normalizedName,
-    priceTier: 0 
-  };
-  
-  // Convert worksheet to array of arrays
-  const rows: any[][] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+// ─────────────────────────────────────────────────────────────────────────────
+// Main Parse Function
+// ─────────────────────────────────────────────────────────────────────────────
+
+export function parseLakeCityExcel(buffer: ArrayBuffer): ParseResult {
+  const workbook = XLSX.read(buffer, { type: 'array' });
   
   const stands: ParsedStand[] = [];
-  const seenStands = new Map<string, ParsedStand>(); // For duplicate detection
-  const errors: Array<{ row: number; message: string }> = [];
-  const invalidDates: Array<{ row: number; value: string }> = [];
-  let missingAgentCount = 0;
+  const warnings: string[] = [];
+  let skipped = 0;
   
-  let rowIdx = 0;
-  while (rowIdx < rows.length) {
-    const result = parseStandBlock(rows, rowIdx, sheetName);
+  const summary = {
+    totalSheets: 0,
+    totalStands: 0,
+    totalTransactions: 0,
+    totalCollected: 0,
+    developers: new Map<string, number>(),
+    developments: new Map<string, number>(),
+  };
+  
+  for (const sheetName of workbook.SheetNames) {
+    const config = getSheetConfig(sheetName);
+    if (!config) {
+      warnings.push(`Sheet "${sheetName}" has no configuration, skipping`);
+      skipped++;
+      continue;
+    }
     
-    if (result.stand) {
-      // Check for duplicates
-      if (seenStands.has(result.stand.standHash)) {
-        result.stand.isDuplicate = true;
-        result.stand.duplicateOf = seenStands.get(result.stand.standHash)!.standHash;
+    summary.totalSheets++;
+    
+    const worksheet = workbook.Sheets[sheetName];
+    const rows: unknown[][] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+    
+    let rowIdx = 0;
+    while (rowIdx < rows.length) {
+      const result = parseStandBlock(rows, rowIdx, sheetName);
+      
+      if (result.stand) {
+        stands.push(result.stand);
+        
+        // Update summary
+        summary.totalStands++;
+        summary.totalTransactions += result.stand.transactions.length;
+        
+        const clientPayments = result.stand.transactions
+          .filter(t => t.side === 'LEFT')
+          .reduce((sum, t) => sum + (t.amount || 0), 0);
+        summary.totalCollected += clientPayments;
+        
+        // Track developer count
+        const devCount = summary.developers.get(result.stand.developer) || 0;
+        summary.developers.set(result.stand.developer, devCount + 1);
+        
+        // Track development count
+        const devNameCount = summary.developments.get(result.stand.development) || 0;
+        summary.developments.set(result.stand.development, devNameCount + 1);
+        
+        rowIdx = result.endRow + 1;
       } else {
-        seenStands.set(result.stand.standHash, result.stand);
+        rowIdx++;
       }
-      
-      // Set price tier from sheet mapping
-      result.stand.priceTier = mapping.priceTier;
-      
-      // Track missing agents
-      if (!result.stand.agentCode) missingAgentCount++;
-      
-      stands.push(result.stand);
-      rowIdx = result.endRow + 1;
-    } else {
-      rowIdx++;
     }
   }
   
-  // Calculate sheet totals
-  const totalClientPayments = stands.reduce((sum, s) => sum + s.totals.clientPayments, 0);
-  const totalDisbursements = stands.reduce((sum, s) => sum + s.totals.disbursements, 0);
-  
-  return {
-    sheetName,
-    developerName: mapping.developer,
-    developmentName: mapping.development,
-    priceTier: mapping.priceTier,
-    stands,
-    summary: {
-      totalStands: stands.length,
-      totalClientPayments,
-      totalDisbursements,
-      invalidDates,
-      missingAgents: missingAgentCount,
-    },
-  };
+  return { stands, warnings, skipped, summary };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Main Export Function
+// Format Detection
 // ─────────────────────────────────────────────────────────────────────────────
 
-export function parseLakeCityExcel(fileBuffer: Buffer, fileName: string): ExcelParseResult {
-  const workbook = XLSX.read(fileBuffer, { type: 'buffer' });
+export function detectFileFormat(buffer: ArrayBuffer, filename: string): FileFormat {
+  const lowerName = filename.toLowerCase();
   
-  const sheets: ParsedSheet[] = [];
-  const developers = new Map<string, { name: string; standCount: number }>();
-  const errors: Array<{ sheet: string; row: number; message: string }> = [];
+  // Check extension first
+  if (lowerName.endsWith('.csv')) {
+    return 'FLAT_CSV';
+  }
   
-  // Track global duplicates across all sheets
-  const globalStandHashes = new Set<string>();
-  let duplicateStandCount = 0;
-  
-  for (const sheetName of workbook.SheetNames) {
+  if (lowerName.endsWith('.xlsx') || lowerName.endsWith('.xls')) {
+    // Try to read as Excel and detect LakeCity format
     try {
-      const worksheet = workbook.Sheets[sheetName];
-      const parsedSheet = parseSheet(worksheet, sheetName);
+      const workbook = XLSX.read(buffer, { type: 'array' });
       
-      // Track developers
-      const devKey = parsedSheet.developerName;
-      const existing = developers.get(devKey);
-      if (existing) {
-        existing.standCount += parsedSheet.stands.length;
-      } else {
-        developers.set(devKey, { 
-          name: parsedSheet.developerName, 
-          standCount: parsedSheet.stands.length 
-        });
-      }
-      
-      // Track global duplicates
-      for (const stand of parsedSheet.stands) {
-        const globalHash = `${parsedSheet.developmentName}:${stand.standNumber}`;
-        if (globalStandHashes.has(globalHash)) {
-          duplicateStandCount++;
-          stand.isDuplicate = true;
-        } else {
-          globalStandHashes.add(globalHash);
+      // Check if any sheet matches LakeCity pattern
+      for (const sheetName of workbook.SheetNames) {
+        const worksheet = workbook.Sheets[sheetName];
+        const rows: unknown[][] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+        
+        // Look for stand header pattern in first 50 rows
+        for (let i = 0; i < Math.min(rows.length, 50); i++) {
+          if (isStandHeaderRow(rows[i]).isHeader) {
+            return 'LAKECITY_LEDGER';
+          }
         }
       }
       
-      sheets.push(parsedSheet);
-    } catch (err) {
-      errors.push({
-        sheet: sheetName,
-        row: 0,
-        message: err instanceof Error ? err.message : 'Failed to parse sheet',
-      });
+      // Has sheets but no stand headers - treat as flat Excel
+      return 'FLAT_EXCEL';
+    } catch {
+      return 'UNKNOWN';
     }
   }
   
-  // Calculate global summary
-  const totalStands = sheets.reduce((sum, s) => sum + s.summary.totalStands, 0);
-  const totalTransactions = sheets.reduce(
-    (sum, s) => sum + s.stands.reduce((ts, st) => ts + st.transactions.length, 0), 
-    0
-  );
-  const totalCollected = sheets.reduce((sum, s) => sum + s.summary.totalClientPayments, 0);
-  const invalidDateCount = sheets.reduce(
-    (sum, s) => sum + s.summary.invalidDates.length, 
-    0
-  );
-  const missingAgentCount = sheets.reduce((sum, s) => sum + s.summary.missingAgents, 0);
-  
-  return {
-    fileName,
-    sheets,
-    developers,
-    globalSummary: {
-      totalSheets: sheets.length,
-      totalStands,
-      totalTransactions,
-      totalCollected,
-      invalidDateCount,
-      missingAgentCount,
-      duplicateStandCount,
-    },
-    errors,
-  };
+  return 'UNKNOWN';
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Export for API Usage
 // ─────────────────────────────────────────────────────────────────────────────
 
-export function convertToImportFormat(result: ExcelParseResult): {
+export function convertToImportFormat(result: ParseResult): {
   developers: Array<{ name: string; standCount: number }>;
-  developments: Array<{ name: string; developerName: string; priceTier: number; stands: ParsedStand[] }>;
-  transactions: Array<{
-    standNumber: string;
-    developmentName: string;
-    developerName: string;
-    date: Date | null;
-    amount: number;
-    type: string;
-    side: string;
-    agentCode: string | null;
-    isValid: boolean;
-  }>;
+  developments: Array<{ name: string; standCount: number }>;
+  stands: ParsedStand[];
 } {
-  const developments: Array<{ name: string; developerName: string; priceTier: number; stands: ParsedStand[] }> = [];
-  const transactions: Array<{
-    standNumber: string;
-    developmentName: string;
-    developerName: string;
-    date: Date | null;
-    amount: number;
-    type: string;
-    side: string;
-    agentCode: string | null;
-    isValid: boolean;
-  }> = [];
-  
-  for (const sheet of result.sheets) {
-    developments.push({
-      name: sheet.developmentName,
-      developerName: sheet.developerName,
-      priceTier: sheet.priceTier,
-      stands: sheet.stands,
-    });
-    
-    for (const stand of sheet.stands) {
-      for (const trans of stand.transactions) {
-        transactions.push({
-          standNumber: stand.standNumber,
-          developmentName: sheet.developmentName,
-          developerName: sheet.developerName,
-          date: trans.date,
-          amount: trans.amount,
-          type: trans.transactionType,
-          side: trans.side,
-          agentCode: stand.agentCode,
-          isValid: trans.isValid,
-        });
-      }
-    }
-  }
-  
   return {
-    developers: Array.from(result.developers.values()),
-    developments,
-    transactions,
+    developers: Array.from(result.summary.developers.entries()).map(([name, count]) => ({
+      name,
+      standCount: count,
+    })),
+    developments: Array.from(result.summary.developments.entries()).map(([name, count]) => ({
+      name,
+      standCount: count,
+    })),
+    stands: result.stands,
   };
 }

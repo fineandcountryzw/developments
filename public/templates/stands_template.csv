@@ -1,0 +1,6 @@
+stand_number,development_name,developer_name,size_sqm,price_usd,status,agent_code,notes
+304,Lakecity,Lakecity Developers,450,12000,SOLD,PM,
+305,Lakecity,Lakecity Developers,320,12000,AVAILABLE,KK,
+306,Lakecity,Lakecity Developers,500,12000,SOLD,KCM,
+401,Highrange,Highrange LC Developers,380,0,SOLD,TM,
+402,Highrange Cluster,Highrange LC Developers,420,0,RESERVED,KK,
