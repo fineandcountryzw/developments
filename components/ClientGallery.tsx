@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { 
-  Search, User, DollarSign, Building2, Plus, 
+import {
+  Search, User, DollarSign, Building2, Plus,
   ChevronRight, ArrowRight, UserPlus, Filter,
   CreditCard, LayoutGrid, List, MoreHorizontal,
   Mail, Phone, ShieldCheck, Loader2, MapPin
@@ -56,9 +56,9 @@ export const ClientGallery: React.FC<ClientGalleryProps> = ({ activeBranch, onSe
       const matchesSearch = c.name.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
         c.email.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
         (c.nationalId && c.nationalId.toLowerCase().includes(debouncedSearch.toLowerCase()));
-      
+
       const matchesRegion = regionFilter === 'All' || c.branch === regionFilter;
-      
+
       return matchesSearch && matchesRegion;
     });
   }, [clients, debouncedSearch, regionFilter]);
@@ -86,9 +86,8 @@ export const ClientGallery: React.FC<ClientGalleryProps> = ({ activeBranch, onSe
               <button
                 key={region}
                 onClick={() => setRegionFilter(region)}
-                className={`px-6 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all font-[\'Plus Jakarta Sans\'],sans-serif ${
-                  regionFilter === region ? 'bg-fcGold text-white shadow-lg' : 'text-gray-600 hover:text-fcSlate'
-                }`}
+                className={`px-6 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all font-[\'Plus Jakarta Sans\'],sans-serif ${regionFilter === region ? 'bg-fcGold text-white shadow-lg' : 'text-gray-600 hover:text-fcSlate'
+                  }`}
                 style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}
               >
                 {region}
@@ -98,15 +97,15 @@ export const ClientGallery: React.FC<ClientGalleryProps> = ({ activeBranch, onSe
 
           <div className="relative flex-1 md:w-80 group">
             <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-fcGold group-focus-within:scale-110 transition-transform" size={18} />
-            <input 
-              type="text" 
-              placeholder="Search by name, email, or ID..." 
+            <input
+              type="text"
+              placeholder="Search by name, email, or ID..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full bg-white border border-fcDivider rounded-[20px] pl-14 pr-6 py-4 text-sm font-bold text-fcSlate focus:ring-2 focus:ring-fcGold outline-none transition-all placeholder:text-slate-300"
             />
           </div>
-          <button 
+          <button
             onClick={onOpenPayment}
             className="p-4 bg-fcGold text-white rounded-[20px] shadow-lg shadow-fcGold/20 hover:brightness-110 transition-all flex items-center justify-center shrink-0"
             title="Register Walk-in Client"
@@ -126,7 +125,7 @@ export const ClientGallery: React.FC<ClientGalleryProps> = ({ activeBranch, onSe
           {filteredClients.map((client) => {
             const { totalPayments, uniqueDevelopments } = getClientMetrics(client.name);
             return (
-              <div 
+              <div
                 key={client.id}
                 onClick={() => onSelectClient(client)}
                 className="group relative bg-white rounded-[32px] border border-fcDivider p-8 shadow-sm hover:shadow-2xl hover:border-fcGold/30 transition-all cursor-pointer overflow-hidden"
@@ -134,11 +133,10 @@ export const ClientGallery: React.FC<ClientGalleryProps> = ({ activeBranch, onSe
                 {/* Branch Badge - Top Right */}
                 <div className="absolute top-6 right-6 z-20">
                   <div
-                    className={`px-3 py-1 rounded-full text-[9px] font-extrabold uppercase tracking-widest border shadow-md font-[\'Plus Jakarta Sans\'],sans-serif ${
-                      client.branch === 'Harare'
+                    className={`px-3 py-1 rounded-full text-[9px] font-extrabold uppercase tracking-widest border shadow-md font-[\'Plus Jakarta Sans\'],sans-serif ${client.branch === 'Harare'
                         ? 'bg-fcSlate text-white border-gray-200'
                         : 'bg-fcGold text-white border-fcGold/20'
-                    }`}
+                      }`}
                     style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', letterSpacing: '0.15em', boxShadow: '0 2px 8px rgba(0,0,0,0.07)' }}
                   >
                     {client.branch === 'Harare' ? 'HRE' : 'BYO'}
@@ -147,22 +145,22 @@ export const ClientGallery: React.FC<ClientGalleryProps> = ({ activeBranch, onSe
 
                 {/* Accent Ribbon */}
                 <div className="absolute top-0 left-0 w-1.5 h-full bg-fcGold/10 group-hover:bg-fcGold transition-colors" />
-                
+
                 <div className="space-y-8 relative z-10">
                   <div className="flex justify-between items-start">
                     <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-fcGold font-black text-lg shadow-inner group-hover:bg-fcGold group-hover:text-white transition-all duration-500 font-mono">
                       {client.name.split(' ').map(n => n[0]).join('')}
                     </div>
                     <div className="flex items-center space-x-2 mr-12"> {/* Space for branch badge */}
-                       {client.isPortalUser && (
-                         <span className="flex items-center space-x-1 text-[8px] font-black bg-green-50 text-green-600 px-2 py-0.5 rounded-full border border-green-100 uppercase tracking-widest">
-                           <ShieldCheck size={8} />
-                           <span>Verified</span>
-                         </span>
-                       )}
-                       <button className="text-slate-200 group-hover:text-gray-600 transition-colors">
-                         <MoreHorizontal size={18} />
-                       </button>
+                      {client.isPortalUser && (
+                        <span className="flex items-center space-x-1 text-[8px] font-black bg-green-50 text-green-600 px-2 py-0.5 rounded-full border border-green-100 uppercase tracking-widest">
+                          <ShieldCheck size={8} />
+                          <span>Verified</span>
+                        </span>
+                      )}
+                      <button className="text-slate-200 group-hover:text-gray-600 transition-colors">
+                        <MoreHorizontal size={18} />
+                      </button>
                     </div>
                   </div>
 
@@ -208,14 +206,14 @@ export const ClientGallery: React.FC<ClientGalleryProps> = ({ activeBranch, onSe
                           </span>
                         ))
                       ) : (
-                        <span className="text-[9px] text-slate-300 italic font-bold">No active investments found</span>
+                        <span className="text-[9px] text-slate-300 font-bold">No active investments found</span>
                       )}
                     </div>
                   </div>
 
                   <div className="pt-2 flex justify-between items-center group-hover:translate-x-1 transition-transform">
-                     <span className="text-[10px] font-black text-fcGold uppercase tracking-widest">Open Portfolio</span>
-                     <ChevronRight size={16} className="text-fcGold" />
+                    <span className="text-[10px] font-black text-fcGold uppercase tracking-widest">Open Portfolio</span>
+                    <ChevronRight size={16} className="text-fcGold" />
                   </div>
                 </div>
               </div>
@@ -233,7 +231,7 @@ export const ClientGallery: React.FC<ClientGalleryProps> = ({ activeBranch, onSe
               Your search parameters yielded zero results from the regional development manifest.
             </p>
           </div>
-          <button 
+          <button
             onClick={onOpenPayment}
             className="bg-fcGold text-white px-12 py-5 rounded-2xl font-black uppercase tracking-[0.3em] text-[11px] shadow-2xl shadow-fcGold/30 hover:brightness-110 transition-all flex items-center justify-center space-x-4 mx-auto font-sans"
           >

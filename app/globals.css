@@ -33,8 +33,17 @@
   --erp-border-strong: rgba(15, 23, 42, 0.2);
   --erp-danger: #EF4444;
   --erp-danger-foreground: #FFFFFF;
-  --erp-success: #10B981;
-  --erp-warning: #F59E0B;
+  
+  /* Premium Shadow Tokens */
+  --shadow-forensic: 0 4px 30px rgba(0, 0, 0, 0.03);
+  --shadow-forensic-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-forensic-md: 0 4px 20px rgba(0, 0, 0, 0.05);
+  --shadow-forensic-lg: 0 10px 40px rgba(0, 0, 0, 0.08);
+
+  /* Glassmorphism Tokens */
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.3);
+  --glass-blur: blur(12px);
   
   /* Font: Plus Jakarta Sans via next/font (--font-plus-jakarta on html). Fallback when variable not set. */
   --font-plus-jakarta: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';

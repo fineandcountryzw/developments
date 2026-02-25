@@ -71,6 +71,7 @@ import { HeroAnimatedBackground } from "../../HeroAnimatedBackground";
 import { Header } from "../../Header";
 import { Footer } from "../../Footer";
 import { ScrollProgress } from "../../ScrollProgress";
+import { motion, AnimatePresence } from "framer-motion";
 
 // Dynamic import with ssr: false to avoid Leaflet window reference errors during SSR
 const PlotSelectorMap = dynamic(
@@ -1083,7 +1084,7 @@ export const LandingPage: React.FC<LandingPageProps> = () => {
     <div className="relative min-h-screen flex flex-col bg-white overflow-x-hidden font-sans">
       {/* Scroll Progress Bar */}
       <ScrollProgress />
-      
+
       {/* Premium White Header */}
       <Header
         primaryCTA="Reserve Your Stand"
@@ -1141,7 +1142,9 @@ export const LandingPage: React.FC<LandingPageProps> = () => {
         {/* Hero Section - Premium Value Proposition with Image */}
         {!selectedDev && (
           <section className="relative isolate px-6 pt-14 lg:px-8 overflow-hidden bg-gradient-to-b from-fcGold/10 via-fcGold/5 to-transparent">
-            {/* Background gradient uses existing `fcGold` theme color with reduced opacity */}
+            <HeroAnimatedBackground />
+
+            {/* Background gradient covers with reduced opacity */}
             {/* Subtle Background Blobs - Behind Image */}
             <div
               className="absolute inset-x-0 -top-40 -z-0 transform-gpu overflow-hidden blur-3xl sm:-top-80"
@@ -1185,16 +1188,26 @@ export const LandingPage: React.FC<LandingPageProps> = () => {
 
                   {/* Hero Headline */}
                   <div className="space-y-6">
-                    <h1 className="text-4xl md:text-5xl lg:text-[52px] font-semibold text-fcSlate tracking-tight leading-[1.15] max-w-2xl">
+                    <motion.h1
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.8, ease: "easeOut" }}
+                      className="text-4xl md:text-5xl lg:text-[56px] font-medium text-fcSlate tracking-tight leading-[1.1] max-w-2xl"
+                    >
                       Secure Your Future with
-                      <span className="block text-fcGold mt-3">
+                      <span className="block text-fcGold mt-4 font-semibold">
                         Premium Land Investments
                       </span>
-                    </h1>
-                    <p className="text-base md:text-lg text-gray-600 leading-[1.7] font-normal max-w-xl">
+                    </motion.h1>
+                    <motion.p
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+                      className="text-base md:text-lg text-gray-600 leading-[1.8] font-normal max-w-xl"
+                    >
                       Verified developments, transparent pricing, and secure
-                      transactions. Reserve your stand with confidence.
-                    </p>
+                      transactions. Reserve your stand with confidence through Zimbabwe's leading property platform.
+                    </motion.p>
                   </div>
 
                   {/* Primary CTA */}
@@ -1232,40 +1245,45 @@ export const LandingPage: React.FC<LandingPageProps> = () => {
                   </div>
 
                   {/* Trust Indicators */}
-                  <div className="grid grid-cols-2 gap-6 pt-8 max-w-sm">
-                    <div>
-                      <div className="text-3xl md:text-4xl font-black text-fcGold mb-2">
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+                    className="grid grid-cols-2 gap-8 pt-10 max-w-sm"
+                  >
+                    <div className="group/stat">
+                      <div className="text-3xl md:text-4xl font-black text-fcGold mb-1 group-hover/stat:scale-110 transition-transform origin-left duration-300">
                         72h
                       </div>
-                      <div className="text-xs font-bold text-gray-600 uppercase tracking-wider">
+                      <div className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em]">
                         Exclusive Hold
                       </div>
                     </div>
-                    <div>
-                      <div className="text-3xl md:text-4xl font-black text-fcGold mb-2">
+                    <div className="group/stat">
+                      <div className="text-3xl md:text-4xl font-black text-fcGold mb-1 group-hover/stat:scale-110 transition-transform origin-left duration-300">
                         100%
                       </div>
-                      <div className="text-xs font-bold text-gray-600 uppercase tracking-wider">
+                      <div className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em]">
                         Secure Payments
                       </div>
                     </div>
-                    <div>
-                      <div className="text-3xl md:text-4xl font-black text-fcGold mb-2">
+                    <div className="group/stat">
+                      <div className="text-3xl md:text-4xl font-black text-fcGold mb-1 group-hover/stat:scale-110 transition-transform origin-left duration-300">
                         ✓
                       </div>
-                      <div className="text-xs font-bold text-gray-600 uppercase tracking-wider">
-                        Verified Developments
+                      <div className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em]">
+                        Verified Property
                       </div>
                     </div>
-                    <div>
-                      <div className="text-3xl md:text-4xl font-black text-fcGold mb-2">
+                    <div className="group/stat">
+                      <div className="text-3xl md:text-4xl font-black text-fcGold mb-1 group-hover/stat:scale-110 transition-transform origin-left duration-300">
                         24/7
                       </div>
-                      <div className="text-xs font-bold text-gray-600 uppercase tracking-wider">
-                        Support
+                      <div className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em]">
+                        Personal Support
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 </div>
 
                 {/* Right Column: Hero Image */}
@@ -1303,134 +1321,159 @@ export const LandingPage: React.FC<LandingPageProps> = () => {
         {!selectedDev && (
           <>
             {/* Why Trust Us Section */}
-            <section className="relative z-10 px-4 md:px-6 lg:px-12 py-16 md:py-24 bg-white">
-              <div className="max-w-7xl mx-auto">
-                <div className="text-center mb-12 md:mb-16">
-                  <h2 className="text-3xl md:text-[32px] font-semibold text-fcSlate mb-4 tracking-tight leading-[1.25]">
-                    Why Trust Us
+            <section className="relative z-10 px-4 md:px-6 lg:px-12 py-24 md:py-32 bg-white">
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.8 }}
+                className="max-w-7xl mx-auto"
+              >
+                <div className="text-center mb-16 md:mb-20">
+                  <h2 className="text-3xl md:text-[40px] font-medium text-fcSlate mb-6 tracking-tight leading-tight">
+                    Built for your security
                   </h2>
-                  <p className="text-base text-gray-600 max-w-2xl mx-auto leading-[1.6]">
-                    Built for transparency, security, and your peace of mind
+                  <p className="text-lg text-gray-500 max-w-2xl mx-auto leading-relaxed">
+                    A property platform designed for transparency and peace of mind
                   </p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-                  <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow duration-150 ease-out focus-within:ring-2 focus-within:ring-fcGold focus-within:ring-offset-2">
-                    <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center mb-6">
-                      <Shield size={20} className="text-blue-600" />
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12">
+                  <motion.div
+                    whileHover={{ y: -8 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                    className="bg-white rounded-2xl border border-gray-100 p-8 shadow-forensic hover:shadow-forensic-lg transition-all duration-300"
+                  >
+                    <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center mb-8">
+                      <Shield size={24} className="text-blue-600" />
                     </div>
-                    <h3 className="text-xl font-semibold text-fcSlate mb-3 leading-[1.3]">
+                    <h3 className="text-2xl font-semibold text-fcSlate mb-4">
                       Secure Transactions
                     </h3>
-                    <p className="text-gray-600 leading-[1.6] text-base">
-                      All payments are encrypted and processed through verified
-                      banking channels. Your financial data is protected with
-                      bank-level security.
+                    <p className="text-gray-500 leading-relaxed text-base">
+                      All payments are processed through verified
+                      banking channels with bank-level encryption protecting your data.
                     </p>
-                  </div>
-                  <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow duration-150 ease-out focus-within:ring-2 focus-within:ring-fcGold focus-within:ring-offset-2">
-                    <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center mb-6">
-                      <CheckCircle2 size={20} className="text-green-600" />
+                  </motion.div>
+                  <motion.div
+                    whileHover={{ y: -8 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                    className="bg-white rounded-2xl border border-gray-100 p-8 shadow-forensic hover:shadow-forensic-lg transition-all duration-300"
+                  >
+                    <div className="w-14 h-14 rounded-2xl bg-green-50 flex items-center justify-center mb-8">
+                      <CheckCircle2 size={24} className="text-green-600" />
                     </div>
-                    <h3 className="text-xl font-semibold text-fcSlate mb-3 leading-[1.3]">
-                      Verified Developments
+                    <h3 className="text-2xl font-semibold text-fcSlate mb-4">
+                      Verified Property
                     </h3>
-                    <p className="text-gray-600 leading-[1.6] text-base">
-                      Every development undergoes rigorous verification. We
-                      verify legal status, title deeds, and development
-                      approvals before listing.
+                    <p className="text-gray-500 leading-relaxed text-base">
+                      Rigorous legal verification of all titles and approvals ensures your investment is legitimate and safe.
                     </p>
-                  </div>
-                  <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow duration-150 ease-out focus-within:ring-2 focus-within:ring-fcGold focus-within:ring-offset-2">
-                    <div className="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center mb-6">
-                      <FileText size={20} className="text-purple-600" />
+                  </motion.div>
+                  <motion.div
+                    whileHover={{ y: -8 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                    className="bg-white rounded-2xl border border-gray-100 p-8 shadow-forensic hover:shadow-forensic-lg transition-all duration-300"
+                  >
+                    <div className="w-14 h-14 rounded-2xl bg-purple-50 flex items-center justify-center mb-8">
+                      <FileText size={24} className="text-purple-600" />
                     </div>
-                    <h3 className="text-xl font-semibold text-fcSlate mb-3 leading-[1.3]">
-                      Transparent Pricing
+                    <h3 className="text-2xl font-semibold text-fcSlate mb-4">
+                      Full Transparency
                     </h3>
-                    <p className="text-gray-600 leading-[1.6] text-base">
-                      Complete fee breakdown with VAT, admin fees, and all
-                      charges clearly displayed. No hidden costs, no surprises.
+                    <p className="text-gray-500 leading-relaxed text-base">
+                      Detailed fee breakdowns with no hidden costs. Every cent of your investment is accounted for.
                     </p>
-                  </div>
+                  </motion.div>
                 </div>
-              </div>
+              </motion.div>
             </section>
 
             {/* Process Timeline Section */}
             <section
               id="process-timeline"
-              className="px-4 md:px-6 lg:px-12 py-16 md:py-24 bg-gray-50/50"
+              className="px-4 md:px-6 lg:px-12 py-24 md:py-32 bg-gray-50/30"
             >
-              <div className="max-w-7xl mx-auto">
-                <div className="text-center mb-12 md:mb-16">
-                  <h2 className="text-3xl md:text-[32px] font-semibold text-fcSlate mb-4 tracking-tight leading-[1.25]">
-                    Simple Process
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.8 }}
+                className="max-w-7xl mx-auto"
+              >
+                <div className="text-center mb-16 md:mb-20">
+                  <h2 className="text-3xl md:text-[40px] font-medium text-fcSlate mb-6 tracking-tight">
+                    How it works
                   </h2>
-                  <p className="text-base text-gray-600 max-w-2xl mx-auto leading-[1.6]">
-                    From reservation to delivery in four clear steps
+                  <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+                    A streamlined journey from selection to ownership
                   </p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                   {[
                     {
-                      step: "1",
+                      step: "01",
                       title: "Reserve",
-                      desc: "Select your stand and complete reservation",
+                      desc: "Select your preferred stand and place a hold",
                       icon: MapPin,
                     },
                     {
-                      step: "2",
-                      title: "Pay Deposit",
-                      desc: "Secure your stand with deposit payment",
+                      step: "02",
+                      title: "Secure",
+                      desc: "Confirm with a deposit via secure channels",
                       icon: ShieldCheck,
                     },
                     {
-                      step: "3",
-                      title: "Paperwork",
+                      step: "03",
+                      title: "Review",
                       desc: "Complete legal documentation digitally",
                       icon: FileText,
                     },
                     {
-                      step: "4",
-                      title: "Delivery",
-                      desc: "Receive title and take ownership",
+                      step: "04",
+                      title: "Ownership",
+                      desc: "Receive final title and take possession",
                       icon: CheckCircle2,
                     },
                   ].map((item, idx) => (
-                    <div key={idx} className="relative">
-                      <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow duration-150 ease-out text-center">
-                        <div className="w-16 h-16 rounded-full bg-fcGold/10 flex items-center justify-center mx-auto mb-4">
-                          <item.icon size={24} className="text-fcGold" />
+                    <motion.div
+                      key={idx}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: idx * 0.1 }}
+                      className="relative"
+                    >
+                      <div className="bg-white rounded-3xl border border-gray-100 p-8 shadow-forensic hover:shadow-forensic-md transition-all duration-300 h-full">
+                        <div className="w-12 h-12 rounded-2xl bg-fcGold/10 flex items-center justify-center mb-6 text-fcGold">
+                          <item.icon size={24} />
                         </div>
-                        <div className="w-8 h-8 rounded-full bg-fcGold text-white flex items-center justify-center mx-auto mb-4 font-semibold text-sm">
+                        <span className="text-4xl font-black text-fcGold/10 absolute top-6 right-8">
                           {item.step}
-                        </div>
-                        <h3 className="text-xl font-semibold text-fcSlate mb-2 leading-[1.3]">
+                        </span>
+                        <h3 className="text-xl font-semibold text-fcSlate mb-3">
                           {item.title}
                         </h3>
-                        <p className="text-base text-gray-600 leading-[1.6]">
+                        <p className="text-sm text-gray-500 leading-relaxed">
                           {item.desc}
                         </p>
                       </div>
-                      {idx < 3 && (
-                        <div
-                          className="hidden md:block absolute top-1/2 left-full w-full h-0.5 bg-fcGold/20 -translate-y-1/2 -z-10"
-                          style={{ width: "calc(100% - 2rem)" }}
-                        >
-                          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-fcGold"></div>
-                        </div>
-                      )}
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
-              </div>
+              </motion.div>
             </section>
 
             {/* Secure Payments & Insurance Section */}
-            <section className="px-4 md:px-6 lg:px-12 py-16 md:py-24 bg-white">
-              <div className="max-w-7xl mx-auto">
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-3xl border border-blue-100 p-8 md:p-12">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
+            <section className="px-4 md:px-6 lg:px-12 py-24 md:py-32 bg-white">
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.8 }}
+                className="max-w-7xl mx-auto"
+              >
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-[40px] border border-blue-100 p-8 md:p-16 lg:p-24 shadow-forensic">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                     <div>
                       <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 rounded-full mb-6">
                         <Shield size={16} className="text-blue-600" />
@@ -1438,54 +1481,54 @@ export const LandingPage: React.FC<LandingPageProps> = () => {
                           Bank-Level Security
                         </span>
                       </div>
-                      <h2 className="text-3xl md:text-[32px] font-semibold text-fcSlate mb-4 tracking-tight leading-[1.25]">
+                      <h2 className="text-3xl md:text-[40px] font-medium text-fcSlate mb-6 tracking-tight leading-tight">
                         Secure Payments & Protection
                       </h2>
-                      <p className="text-base text-gray-700 mb-6 leading-[1.6]">
+                      <p className="text-lg text-gray-700 mb-10 leading-relaxed">
                         Your transactions are protected with industry-leading
                         security measures and compliance standards.
                       </p>
-                      <div className="space-y-4">
-                        <div className="flex items-start gap-3">
+                      <div className="space-y-6">
+                        <div className="flex items-start gap-4">
                           <CheckCircle2
-                            size={20}
-                            className="text-blue-600 mt-0.5 flex-shrink-0"
+                            size={24}
+                            className="text-blue-600 mt-1 flex-shrink-0"
                           />
                           <div>
-                            <p className="font-bold text-fcSlate text-sm">
+                            <p className="font-semibold text-fcSlate text-base">
                               Encrypted Payment Processing
                             </p>
-                            <p className="text-xs text-gray-600">
+                            <p className="text-sm text-gray-500">
                               All financial data encrypted in transit and at
                               rest
                             </p>
                           </div>
                         </div>
-                        <div className="flex items-start gap-3">
+                        <div className="flex items-start gap-4">
                           <CheckCircle2
-                            size={20}
-                            className="text-blue-600 mt-0.5 flex-shrink-0"
+                            size={24}
+                            className="text-blue-600 mt-1 flex-shrink-0"
                           />
                           <div>
-                            <p className="font-bold text-fcSlate text-sm">
+                            <p className="font-semibold text-fcSlate text-base">
                               Verified Banking Channels
                             </p>
-                            <p className="text-xs text-gray-600">
+                            <p className="text-sm text-gray-500">
                               Direct integration with verified financial
                               institutions
                             </p>
                           </div>
                         </div>
-                        <div className="flex items-start gap-3">
+                        <div className="flex items-start gap-4">
                           <CheckCircle2
-                            size={20}
-                            className="text-blue-600 mt-0.5 flex-shrink-0"
+                            size={24}
+                            className="text-blue-600 mt-1 flex-shrink-0"
                           />
                           <div>
-                            <p className="font-bold text-fcSlate text-sm">
+                            <p className="font-semibold text-fcSlate text-base">
                               72-Hour Hold Guarantee
                             </p>
-                            <p className="text-xs text-gray-600">
+                            <p className="text-sm text-gray-500">
                               Your stand is locked exclusively to you during
                               reservation
                             </p>
@@ -1493,38 +1536,38 @@ export const LandingPage: React.FC<LandingPageProps> = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-lg">
-                      <h3 className="text-xl font-bold text-fcSlate mb-6">
+                    <div className="bg-white/70 backdrop-blur-md rounded-3xl p-8 md:p-10 border border-white/50 shadow-xl">
+                      <h3 className="text-xl font-semibold text-fcSlate mb-8">
                         Payment Options
                       </h3>
                       <div className="space-y-4">
-                        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                        <div className="flex items-center justify-between p-5 bg-white rounded-2xl border border-gray-50">
                           <span className="font-medium text-fcSlate">Cash</span>
-                          <CheckCircle2 size={20} className="text-green-600" />
+                          <CheckCircle2 size={24} className="text-green-600" />
                         </div>
-                        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                        <div className="flex items-center justify-between p-5 bg-white rounded-2xl border border-gray-50">
                           <span className="font-medium text-fcSlate">
                             Bank Transfer
                           </span>
-                          <CheckCircle2 size={20} className="text-green-600" />
+                          <CheckCircle2 size={24} className="text-green-600" />
                         </div>
-                        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                        <div className="flex items-center justify-between p-5 bg-white rounded-2xl border border-gray-50">
                           <span className="font-medium text-fcSlate">
                             Mobile Money
                           </span>
-                          <CheckCircle2 size={20} className="text-green-600" />
+                          <CheckCircle2 size={24} className="text-green-600" />
                         </div>
-                        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                        <div className="flex items-center justify-between p-5 bg-white rounded-2xl border border-gray-50">
                           <span className="font-medium text-fcSlate">
                             Installment Plans
                           </span>
-                          <CheckCircle2 size={20} className="text-green-600" />
+                          <CheckCircle2 size={24} className="text-green-600" />
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             </section>
           </>
         )}

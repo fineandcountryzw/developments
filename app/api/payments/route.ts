@@ -1,7 +1,14 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { PaymentsService, CreatePaymentInput } from '@/lib/payments/payments.service';
-import { Currency, PaymentMethod, PaymentSource } from '@prisma/client';
+
+// Enums defined locally since Prisma 7 doesn't export them the same way
+const Currency = { USD: 'USD', ZAR: 'ZAR', BWP: 'BWP' } as const;
+const PaymentMethod = { BANK: 'BANK', CASH: 'CASH', MOBILE: 'MOBILE', ECOCASH: 'ECOCASH', ZIPIT: 'ZIPIT', TRANSFER: 'TRANSFER' } as const;
+const PaymentSource = { API: 'API', PORTAL: 'PORTAL', IMPORT: 'IMPORT', MANUAL: 'MANUAL' } as const;
+type Currency = typeof Currency[keyof typeof Currency];
+type PaymentMethod = typeof PaymentMethod[keyof typeof PaymentMethod];
+type PaymentSource = typeof PaymentSource[keyof typeof PaymentSource];
 
 export async function POST(req: NextRequest) {
     try {
@@ -17,8 +24,8 @@ export async function POST(req: NextRequest) {
 
         const input: CreatePaymentInput = {
             amount: Number(body.amount),
-            currency: body.currency as Currency || Currency.USD,
-            method: body.method as PaymentMethod || PaymentMethod.CASH,
+            currency: (body.currency as any) || 'USD',
+            method: (body.method as any) || 'CASH',
             reference: body.reference,
             externalId: body.externalId,
             idempotencyKey: body.idempotencyKey,
@@ -28,9 +35,9 @@ export async function POST(req: NextRequest) {
             invoiceId: body.invoiceId,
             developmentId: body.developmentId,
             standId: body.standId,
-            source: body.source as PaymentSource || PaymentSource.API,
+            source: (body.source as any) || 'API',
             postedAt: body.postedAt ? new Date(body.postedAt) : undefined,
-            createdByUserId: body.createdByUserId, // Extract from session if available
+            createdByUserId: body.createdByUserId,
         };
 
         const payment = await PaymentsService.createPayment(input);

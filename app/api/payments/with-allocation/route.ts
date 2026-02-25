@@ -4,7 +4,16 @@ import prisma from '@/lib/prisma';
 import { PaymentsService, CreatePaymentInput } from '@/lib/payments/payments.service';
 import { FeeCalculator } from '@/lib/feeCalculator';
 import { logger } from '@/lib/logger';
-import { Currency, PaymentMethod, PaymentSource, TransactionStatus } from '@prisma/client';
+
+// Enums defined locally since Prisma 7 doesn't export them the same way
+const Currency = { USD: 'USD', ZAR: 'ZAR', BWP: 'BWP' } as const;
+const PaymentMethod = { BANK: 'BANK', CASH: 'CASH', MOBILE: 'MOBILE', ECOCASH: 'ECOCASH', ZIPIT: 'ZIPIT', TRANSFER: 'TRANSFER' } as const;
+const PaymentSource = { API: 'API', PORTAL: 'PORTAL', IMPORT: 'IMPORT', MANUAL: 'MANUAL' } as const;
+const TransactionStatus = { PENDING: 'PENDING', COMPLETED: 'COMPLETED', FAILED: 'FAILED' } as const;
+type Currency = typeof Currency[keyof typeof Currency];
+type PaymentMethod = typeof PaymentMethod[keyof typeof PaymentMethod];
+type PaymentSource = typeof PaymentSource[keyof typeof PaymentSource];
+type TransactionStatus = typeof TransactionStatus[keyof typeof TransactionStatus];
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -90,10 +99,10 @@ export async function POST(request: NextRequest) {
     // Create payment via canonical PaymentsService
     const paymentInput: CreatePaymentInput = {
         amount: paymentAmount,
-        currency: Currency.USD,
-        method: paymentMethod === 'Ecocash' ? PaymentMethod.ECOCASH : 
-                paymentMethod === 'Zipit' ? PaymentMethod.ZIPIT : 
-                paymentMethod === 'Transfer' ? PaymentMethod.TRANSFER : PaymentMethod.BANK,
+        currency: 'USD',
+        method: paymentMethod === 'Ecocash' ? 'ECOCASH' : 
+                paymentMethod === 'Zipit' ? 'ZIPIT' : 
+                paymentMethod === 'Transfer' ? 'TRANSFER' : 'BANK',
         reference: reference || `PAY-${Date.now()}`,
         idempotencyKey,
         memo: `Payment for stand ${stand.standNumber}`,
@@ -102,7 +111,7 @@ export async function POST(request: NextRequest) {
         invoiceId: undefined, // Will be linked if needed
         developmentId: stand.developmentId,
         standId: stand.id,
-        source: PaymentSource.MANUAL,
+        source: 'MANUAL',
         postedAt: new Date(),
         createdByUserId: user.id,
     };

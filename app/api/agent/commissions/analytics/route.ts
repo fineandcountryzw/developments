@@ -109,7 +109,7 @@ export async function GET(request: NextRequest) {
 
     // Monthly history (last 6 months)
     const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 5, 1);
-    const monthlyHistory = [];
+    const monthlyHistory: { month: string; total: number; earned: number; pending: number; }[] = [];
     for (let i = 5; i >= 0; i--) {
       const monthStart = new Date(now.getFullYear(), now.getMonth() - i, 1);
       const monthEnd = new Date(now.getFullYear(), now.getMonth() - i + 1, 0, 23, 59, 59, 999);

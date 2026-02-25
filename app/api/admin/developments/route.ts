@@ -865,7 +865,7 @@ export async function POST(request: NextRequest) {
         if (extendedData.manualStandSizes && typeof extendedData.manualStandSizes === 'string' && extendedData.manualStandSizes.trim()) {
           sizes = extendedData.manualStandSizes
             .split(',')
-            .map(s => parseFloat(s.trim()))
+            .map((s: string) => parseFloat(s.trim()))
             .filter(s => !isNaN(s) && s > 0);
         }
 

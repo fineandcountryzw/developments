@@ -142,7 +142,7 @@ export function ManagerDashboard() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [activeTab, setActiveTab] = useState<'overview' | 'developments' | 'stands' | 'contracts' | 'targets' | 'team' | 'branches' | 'ai-insights'>('overview');
-  
+
   const [kpis, setKpis] = useState<KPIData>({
     totalTeamMembers: 0,
     activeDeals: 0,
@@ -157,7 +157,7 @@ export function ManagerDashboard() {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [branchMetrics, setBranchMetrics] = useState<BranchMetrics[]>([]);
   const [chartData, setChartData] = useState<{ month: string; deals: number; revenue: number; target: number }[]>([]);
-  
+
   // Developments Overview State
   const [developmentsData, setDevelopmentsData] = useState<{
     developments: Array<{
@@ -192,7 +192,7 @@ export function ManagerDashboard() {
     }
   });
   const [developmentsLoading, setDevelopmentsLoading] = useState(false);
-  
+
   // GROQ Financial Analysis State
   const [aiAnalysis, setAiAnalysis] = useState<any>(null);
   const [aiAnalysisLoading, setAiAnalysisLoading] = useState(false);
@@ -207,7 +207,7 @@ export function ManagerDashboard() {
   });
   const [contractsLoading, setContractsLoading] = useState(false);
   const [selectedContractId, setSelectedContractId] = useState<string | null>(null);
-  
+
   // Contract filters
   const [contractFilters, setContractFilters] = useState({
     status: 'ALL',
@@ -338,7 +338,7 @@ export function ManagerDashboard() {
     const now = new Date();
     return `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`;
   });
-  
+
   // Target Creation Modal State
   const [showTargetModal, setShowTargetModal] = useState(false);
   const [selectedTargetAgent, setSelectedTargetAgent] = useState<string>('');
@@ -348,7 +348,7 @@ export function ManagerDashboard() {
   const [targetNotes, setTargetNotes] = useState<string>('');
   const [targetSubmitting, setTargetSubmitting] = useState(false);
   const [targetError, setTargetError] = useState<string | null>(null);
-  
+
   // Team Members for Target Selection
   const [agents, setAgents] = useState<Array<{ id: string; name: string; email: string }>>([]);
   const [agentsLoading, setAgentsLoading] = useState(false);
@@ -392,8 +392,8 @@ export function ManagerDashboard() {
             branch: member.branch || 'Harare',
             leadsGenerated: member.metrics?.totalClients || 0,
             dealsClosedThisMonth: member.metrics?.activeReservations || 0,
-            conversionRate: member.metrics?.totalClients > 0 
-              ? Math.round((member.metrics.activeReservations / member.metrics.totalClients) * 100 * 10) / 10 
+            conversionRate: member.metrics?.totalClients > 0
+              ? Math.round((member.metrics.activeReservations / member.metrics.totalClients) * 100 * 10) / 10
               : 0,
             targetAchievement: Math.min(Math.round((member.metrics?.totalCommissions || 0) * 10), 150),
             status: 'active' as const,
@@ -447,10 +447,10 @@ export function ManagerDashboard() {
       if (developmentsResponse.ok) {
         const devResult = await developmentsResponse.json();
         // API returns { success: true, data: [...] } or { developments: [...] }
-        const devs = Array.isArray(devResult.data) ? devResult.data : 
-                    Array.isArray(devResult.developments) ? devResult.developments : 
-                    Array.isArray(devResult) ? devResult : [];
-        
+        const devs = Array.isArray(devResult.data) ? devResult.data :
+          Array.isArray(devResult.developments) ? devResult.developments :
+            Array.isArray(devResult) ? devResult : [];
+
         if (devs.length > 0) {
           // Calculate summary statistics
           const summary = {
@@ -477,13 +477,13 @@ export function ManagerDashboard() {
               return sum + (totalStands * basePrice);
             }, 0)
           };
-          
+
           const mappedDevelopments = devs.map((d: any) => {
             const total = Number(d.total_stands) || 0;
             const available = Number(d.available_stands) || 0;
             const reserved = Number(d.reserved_stands) || Math.max(0, total - available);
             const sold = Math.max(0, total - available - reserved);
-            
+
             return {
               id: d.id,
               name: d.name,
@@ -497,7 +497,7 @@ export function ManagerDashboard() {
               status: d.status || 'Active'
             };
           });
-          
+
           setDevelopmentsData({
             developments: mappedDevelopments,
             summary
@@ -530,7 +530,7 @@ export function ManagerDashboard() {
   const fetchContractsData = async (page: number = contractPage) => {
     try {
       setContractsLoading(true);
-      
+
       // Build query parameters
       const params = new URLSearchParams({
         branch: selectedBranch,
@@ -555,7 +555,7 @@ export function ManagerDashboard() {
       }
 
       const response = await fetch(`/api/manager/contracts?${params}`);
-      
+
       if (response.ok) {
         const data = await response.json();
         if (data.success) {
@@ -615,9 +615,9 @@ export function ManagerDashboard() {
   const fetchTargetsData = async () => {
     try {
       setTargetsLoading(true);
-      
+
       const response = await fetch(`/api/manager/targets?branch=${selectedBranch}&period=${targetPeriod}`);
-      
+
       if (response.ok) {
         const data = await response.json();
         if (data.success) {
@@ -642,19 +642,19 @@ export function ManagerDashboard() {
       const params = new URLSearchParams({
         role: 'AGENT'
       });
-      
+
       if (selectedBranch !== 'all') {
         params.append('branch', selectedBranch);
       }
-      
+
       const response = await fetch(`/api/manager/team?${params}`);
-      
+
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }
-      
+
       const data = await response.json();
-      
+
       if (data.success && data.users) {
         setAgents(data.users.map((u: any) => ({
           id: u.id,
@@ -696,7 +696,7 @@ export function ManagerDashboard() {
     try {
       setTargetSubmitting(true);
       setTargetError(null);
-      
+
       const response = await fetch('/api/manager/targets', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -711,14 +711,14 @@ export function ManagerDashboard() {
           branch: selectedBranch !== 'all' ? selectedBranch : 'Harare'
         })
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || `HTTP ${response.status}`);
       }
-      
+
       const data = await response.json();
-      
+
       if (data.success) {
         setShowTargetModal(false);
         fetchTargetsData(); // Refresh targets list
@@ -766,7 +766,7 @@ export function ManagerDashboard() {
           branch: selectedBranch === 'all' ? null : selectedBranch
         })
       });
-      
+
       if (!response.ok) {
         setAiAnalysisEnabled(false);
         setAiAnalysisLoading(false);
@@ -774,7 +774,7 @@ export function ManagerDashboard() {
       }
 
       const result = await response.json();
-      
+
       if (result.success && result.analysis) {
         setAiAnalysis(result.analysis);
         logger.info('AI Financial Analysis generated', {
@@ -799,7 +799,7 @@ export function ManagerDashboard() {
       if (error instanceof Error && !error.message.includes('404') && !error.message.includes('Failed to fetch')) {
         logger.error('AI analysis failed', error, { module: 'ManagerDashboard', action: 'AI_ANALYSIS' });
       }
-  } finally {
+    } finally {
       setAiAnalysisLoading(false);
     }
   };
@@ -947,1054 +947,1043 @@ export function ManagerDashboard() {
       <main className="max-w-full lg:max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
         <div className="space-y-6 pb-12">
 
-      {/* KPI Cards - Using shared component */}
-      {activeTab === 'overview' && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          <KPICard
-            title="Team Members"
-            value={kpis.totalTeamMembers}
-            subtitle="Active agents"
-            icon={Users}
-            variant="default"
-            color="blue"
-            trend="neutral"
-            trendValue="100% coverage"
-          />
+          {/* KPI Cards - Using shared component */}
+          {activeTab === 'overview' && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+              <KPICard
+                title="Team Members"
+                value={kpis.totalTeamMembers}
+                subtitle="Active agents"
+                icon={Users}
+                variant="default"
+                color="blue"
+                trend="neutral"
+                trendValue="100% coverage"
+              />
 
-          <KPICard
-            title="Active Deals"
-            value={kpis.activeDeals}
-            subtitle="In pipeline"
-            icon={Target}
-            variant="default"
-            color="green"
-            trend="up"
-            trendValue="+4 this week"
-          />
+              <KPICard
+                title="Active Deals"
+                value={kpis.activeDeals}
+                subtitle="In pipeline"
+                icon={Target}
+                variant="default"
+                color="green"
+                trend="up"
+                trendValue="+4 this week"
+              />
 
-          <KPICard
-            title="Monthly Revenue"
-            value={`USD ${(kpis.monthlyRevenue / 1000).toFixed(0)}K`}
-            subtitle="Total this month"
-            icon={DollarSign}
-            variant="default"
-            color="emerald"
-            trend="up"
-            trendValue="+12% from last month"
-          />
+              <KPICard
+                title="Monthly Revenue"
+                value={`USD ${(kpis.monthlyRevenue / 1000).toFixed(0)}K`}
+                subtitle="Total this month"
+                icon={DollarSign}
+                variant="default"
+                color="emerald"
+                trend="up"
+                trendValue="+12% from last month"
+              />
 
-          <KPICard
-            title="Target Achievement"
-            value={`${kpis.targetAchievement}%`}
-            subtitle="Team performance"
-            icon={TrendingUp}
-            variant="default"
-            color="amber"
-          />
-        </div>
-      )}
-
-      {/* Developments Overview Section - Overview Tab */}
-      {activeTab === 'overview' && (
-        <Card className="mb-6">
-          <CardHeader>
-            <div className="flex justify-between items-center">
-              <div className="flex items-center gap-2">
-                <Building2 className="w-5 h-5 text-fcGold" />
-                <CardTitle>Developments Overview</CardTitle>
-              </div>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => window.location.href = '/dashboards/admin?tab=developments'}
-              >
-                <Eye className="w-4 h-4 mr-2" />
-                View All
-              </Button>
+              <KPICard
+                title="Target Achievement"
+                value={`${kpis.targetAchievement}%`}
+                subtitle="Team performance"
+                icon={TrendingUp}
+                variant="default"
+                color="amber"
+              />
             </div>
-            <CardDescription>Active developments and stand inventory</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {developmentsLoading ? (
-              <div className="flex items-center justify-center py-8">
-                <RefreshCw className="w-6 h-6 animate-spin text-fcGold" />
-              </div>
-            ) : (
-              <div className="space-y-6">
-                {/* Summary Cards */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-                  <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
-                    <p className="text-xs font-medium text-blue-600 mb-1">Total Developments</p>
-                    <p className="text-2xl font-bold text-blue-900">{developmentsData.summary.totalDevelopments}</p>
-                  </div>
-                  <div className="bg-green-50 rounded-xl p-4 border border-green-200">
-                    <p className="text-xs font-medium text-green-600 mb-1">Total Stands</p>
-                    <p className="text-2xl font-bold text-green-900">{developmentsData.summary.totalStands.toLocaleString()}</p>
-                  </div>
-                  <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-200">
-                    <p className="text-xs font-medium text-emerald-600 mb-1">Available</p>
-                    <p className="text-2xl font-bold text-emerald-900">{developmentsData.summary.availableStands.toLocaleString()}</p>
-                  </div>
-                  <div className="bg-amber-50 rounded-xl p-4 border border-amber-200">
-                    <p className="text-xs font-medium text-amber-600 mb-1">Reserved</p>
-                    <p className="text-2xl font-bold text-amber-900">{developmentsData.summary.reservedStands.toLocaleString()}</p>
-                  </div>
-                  <div className="bg-purple-50 rounded-xl p-4 border border-purple-200">
-                    <p className="text-xs font-medium text-purple-600 mb-1">Total Value</p>
-                    <p className="text-lg font-bold text-purple-900">
-                      ${(developmentsData.summary.totalValue / 1000000).toFixed(1)}M
-                    </p>
-                  </div>
-                </div>
+          )}
 
-                {/* Developments List */}
-                {developmentsData.developments.length > 0 ? (
-                  <div className="space-y-3">
-                    <h4 className="text-sm font-semibold text-gray-700 mb-3">Active Developments</h4>
-                    <div className="space-y-2 max-h-96 overflow-y-auto">
-                      {developmentsData.developments.slice(0, 10).map((dev) => {
-                        const utilizationRate = dev.totalStands > 0 
-                          ? ((dev.totalStands - dev.availableStands) / dev.totalStands * 100).toFixed(1)
-                          : '0';
-                        return (
-                          <div
-                            key={dev.id}
-                            className="flex items-center justify-between p-4 bg-white rounded-xl border border-gray-200 hover:border-fcGold/50 hover:shadow-md transition-all"
-                          >
-                            <div className="flex-1">
-                              <div className="flex items-center gap-3 mb-2">
-                                <h5 className="font-semibold text-gray-900">{dev.name}</h5>
-                                <span className="px-2 py-0.5 text-xs font-medium bg-fcGold/10 text-fcGold rounded-full">
-                                  {dev.branch}
-                                </span>
-                              </div>
-                              <p className="text-sm text-gray-600 mb-2">{dev.location}</p>
-                              <div className="flex items-center gap-4 text-xs text-gray-500">
-                                <span className="flex items-center gap-1">
-                                  <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                                  {dev.availableStands} Available
-                                </span>
-                                <span className="flex items-center gap-1">
-                                  <div className="w-2 h-2 rounded-full bg-amber-500"></div>
-                                  {dev.reservedStands} Reserved
-                                </span>
-                                <span className="flex items-center gap-1">
-                                  <div className="w-2 h-2 rounded-full bg-purple-500"></div>
-                                  {dev.totalStands} Total
-                                </span>
-                              </div>
-                            </div>
-                            <div className="text-right ml-4">
-                              <div className="mb-2">
-                                <div className="flex items-center justify-end gap-2 mb-1">
-                                  <span className="text-xs text-gray-500">Utilization</span>
-                                  <span className="text-sm font-bold text-gray-900">{utilizationRate}%</span>
-                                </div>
-                                <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
-                                  <div 
-                                    className="h-full bg-gradient-to-r from-fcGold to-amber-500 transition-all"
-                                    style={{ width: `${utilizationRate}%` }}
-                                  />
-                                </div>
-                              </div>
-                              <p className="text-sm font-semibold text-gray-900">
-                                ${(dev.basePrice / 1000).toFixed(0)}K
-                              </p>
-                              <p className="text-xs text-gray-500">Base Price</p>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                    {developmentsData.developments.length > 10 && (
-                      <p className="text-xs text-gray-500 text-center pt-2">
-                        Showing 10 of {developmentsData.developments.length} developments
-                      </p>
-                    )}
-                  </div>
-                ) : (
-                  <div className="text-center py-8 text-gray-500">
-                    <Building2 className="w-12 h-12 mx-auto mb-3 text-gray-400" />
-                    <p>No active developments found</p>
-                  </div>
-                )}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Developments Tab - Full Developments Management */}
-      {activeTab === 'developments' && (
-        <AdminDevelopmentsDashboard 
-          activeBranch={(selectedBranch === 'all' ? 'Harare' : selectedBranch) as any} 
-          userRole="Manager" 
-        />
-      )}
-
-      {/* Stands Tab - Full Stands/Inventory Management */}
-      {activeTab === 'stands' && (
-        <StandsInventoryView
-          role="manager"
-          title="Stands Inventory"
-          subtitle="View and manage stands across your branch developments"
-        />
-      )}
-
-      {/* Revenue Overview Section - Overview Tab */}
-      {activeTab === 'overview' && (
-        <div className="space-y-6">
-          {/* Revenue Summary Cards */}
-          <div>
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold flex items-center gap-2">
-                <DollarSign className="w-5 h-5 text-green-600" />
-                Revenue Analytics
-              </h3>
-              <Button variant="outline" size="sm" onClick={() => exportRevenue('month')}>
-                <Download className="w-4 h-4 mr-2" />
-                Export Revenue Report
-              </Button>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-              <Card>
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600 mb-1">This Week</p>
-                      <p className="text-2xl font-bold text-gray-900">
-                        ${(revenueData.summary.thisWeek.revenue / 1000).toFixed(0)}K
-                      </p>
-                      <div className="flex items-center gap-1 mt-1">
-                        {revenueData.summary.thisWeek.trendDirection === 'up' ? (
-                          <TrendingUp className="w-4 h-4 text-green-500" />
-                        ) : (
-                          <TrendingUp className="w-4 h-4 text-red-500 rotate-180" />
-                        )}
-                        <span className={`text-sm font-medium ${
-                          revenueData.summary.thisWeek.trendDirection === 'up' ? 'text-green-600' : 'text-red-600'
-                        }`}>
-                          {revenueData.summary.thisWeek.trend >= 0 ? '+' : ''}{revenueData.summary.thisWeek.trend.toFixed(1)}%
-                        </span>
-                        <span className="text-sm text-gray-500">vs last week</span>
-                      </div>
-                      <p className="text-xs text-gray-500 mt-1">
-                        {revenueData.summary.thisWeek.transactions} transaction{revenueData.summary.thisWeek.transactions !== 1 ? 's' : ''}
-                      </p>
-                    </div>
-                    <div className="bg-green-100 p-2 rounded-lg">
-                      <Calendar className="w-6 h-6 text-green-600" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600 mb-1">This Month</p>
-                      <p className="text-2xl font-bold text-gray-900">
-                        ${(revenueData.summary.thisMonth.revenue / 1000).toFixed(0)}K
-                      </p>
-                      <div className="flex items-center gap-1 mt-1">
-                        {revenueData.summary.thisMonth.trendDirection === 'up' ? (
-                          <TrendingUp className="w-4 h-4 text-green-500" />
-                        ) : (
-                          <TrendingUp className="w-4 h-4 text-red-500 rotate-180" />
-                        )}
-                        <span className={`text-sm font-medium ${
-                          revenueData.summary.thisMonth.trendDirection === 'up' ? 'text-green-600' : 'text-red-600'
-                        }`}>
-                          {revenueData.summary.thisMonth.trend >= 0 ? '+' : ''}{revenueData.summary.thisMonth.trend.toFixed(1)}%
-                        </span>
-                        <span className="text-sm text-gray-500">vs last month</span>
-                      </div>
-                      <p className="text-xs text-gray-500 mt-1">
-                        {revenueData.summary.thisMonth.transactions} transaction{revenueData.summary.thisMonth.transactions !== 1 ? 's' : ''}
-                      </p>
-                    </div>
-                    <div className="bg-blue-100 p-2 rounded-lg">
-                      <DollarSign className="w-6 h-6 text-blue-600" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600 mb-1">Previous Month</p>
-                      <p className="text-2xl font-bold text-gray-900">
-                        ${(revenueData.summary.previousMonth.revenue / 1000).toFixed(0)}K
-                      </p>
-                      <p className="text-xs text-gray-500 mt-3">
-                        {revenueData.summary.previousMonth.transactions} transaction{revenueData.summary.previousMonth.transactions !== 1 ? 's' : ''}
-                      </p>
-                    </div>
-                    <div className="bg-gray-100 p-2 rounded-lg">
-                      <BarChart3 className="w-6 h-6 text-gray-600" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600 mb-1">Avg Deal Size</p>
-                      <p className="text-2xl font-bold text-gray-900">
-                        ${(revenueData.summary.avgDealSize / 1000).toFixed(0)}K
-                      </p>
-                      <p className="text-xs text-gray-500 mt-3">This month average</p>
-                    </div>
-                    <div className="bg-purple-100 p-2 rounded-lg">
-                      <Target className="w-6 h-6 text-purple-600" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-
-          {/* Revenue Charts */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Daily Revenue Trend */}
-            <Card>
+          {/* Developments Overview Section - Overview Tab */}
+          {activeTab === 'overview' && (
+            <Card className="mb-6">
               <CardHeader>
-                <CardTitle>Daily Revenue Trend</CardTitle>
-                <CardDescription>Revenue performance this month</CardDescription>
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    <Building2 className="w-5 h-5 text-fcGold" />
+                    <CardTitle>Developments Overview</CardTitle>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => window.location.href = '/dashboards/admin?tab=developments'}
+                  >
+                    <Eye className="w-4 h-4 mr-2" />
+                    View All
+                  </Button>
+                </div>
+                <CardDescription>Active developments and stand inventory</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="h-80">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={revenueData.dailyRevenue}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                      <XAxis 
-                        dataKey="date" 
-                        stroke="#888"
-                        fontSize={12}
-                        tickFormatter={(value) => new Date(value).getDate().toString()}
+                {developmentsLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <RefreshCw className="w-6 h-6 animate-spin text-fcGold" />
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    {/* Summary Cards */}
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+                      <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
+                        <p className="text-xs font-medium text-blue-600 mb-1">Total Developments</p>
+                        <p className="text-2xl font-bold text-blue-900">{developmentsData.summary.totalDevelopments}</p>
+                      </div>
+                      <div className="bg-green-50 rounded-xl p-4 border border-green-200">
+                        <p className="text-xs font-medium text-green-600 mb-1">Total Stands</p>
+                        <p className="text-2xl font-bold text-green-900">{developmentsData.summary.totalStands.toLocaleString()}</p>
+                      </div>
+                      <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-200">
+                        <p className="text-xs font-medium text-emerald-600 mb-1">Available</p>
+                        <p className="text-2xl font-bold text-emerald-900">{developmentsData.summary.availableStands.toLocaleString()}</p>
+                      </div>
+                      <div className="bg-amber-50 rounded-xl p-4 border border-amber-200">
+                        <p className="text-xs font-medium text-amber-600 mb-1">Reserved</p>
+                        <p className="text-2xl font-bold text-amber-900">{developmentsData.summary.reservedStands.toLocaleString()}</p>
+                      </div>
+                      <div className="bg-purple-50 rounded-xl p-4 border border-purple-200">
+                        <p className="text-xs font-medium text-purple-600 mb-1">Total Value</p>
+                        <p className="text-lg font-bold text-purple-900">
+                          ${(developmentsData.summary.totalValue / 1000000).toFixed(1)}M
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Developments List */}
+                    {developmentsData.developments.length > 0 ? (
+                      <div className="space-y-3">
+                        <h4 className="text-sm font-semibold text-gray-700 mb-3">Active Developments</h4>
+                        <div className="space-y-2 max-h-96 overflow-y-auto">
+                          {developmentsData.developments.slice(0, 10).map((dev) => {
+                            const utilizationRate = dev.totalStands > 0
+                              ? ((dev.totalStands - dev.availableStands) / dev.totalStands * 100).toFixed(1)
+                              : '0';
+                            return (
+                              <div
+                                key={dev.id}
+                                className="flex items-center justify-between p-4 bg-white rounded-xl border border-gray-200 hover:border-fcGold/50 hover:shadow-md transition-all"
+                              >
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-3 mb-2">
+                                    <h5 className="font-semibold text-gray-900">{dev.name}</h5>
+                                    <span className="px-2 py-0.5 text-xs font-medium bg-fcGold/10 text-fcGold rounded-full">
+                                      {dev.branch}
+                                    </span>
+                                  </div>
+                                  <p className="text-sm text-gray-600 mb-2">{dev.location}</p>
+                                  <div className="flex items-center gap-4 text-xs text-gray-500">
+                                    <span className="flex items-center gap-1">
+                                      <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                                      {dev.availableStands} Available
+                                    </span>
+                                    <span className="flex items-center gap-1">
+                                      <div className="w-2 h-2 rounded-full bg-amber-500"></div>
+                                      {dev.reservedStands} Reserved
+                                    </span>
+                                    <span className="flex items-center gap-1">
+                                      <div className="w-2 h-2 rounded-full bg-purple-500"></div>
+                                      {dev.totalStands} Total
+                                    </span>
+                                  </div>
+                                </div>
+                                <div className="text-right ml-4">
+                                  <div className="mb-2">
+                                    <div className="flex items-center justify-end gap-2 mb-1">
+                                      <span className="text-xs text-gray-500">Utilization</span>
+                                      <span className="text-sm font-bold text-gray-900">{utilizationRate}%</span>
+                                    </div>
+                                    <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                      <div
+                                        className="h-full bg-gradient-to-r from-fcGold to-amber-500 transition-all"
+                                        style={{ width: `${utilizationRate}%` }}
+                                      />
+                                    </div>
+                                  </div>
+                                  <p className="text-sm font-semibold text-gray-900">
+                                    ${(dev.basePrice / 1000).toFixed(0)}K
+                                  </p>
+                                  <p className="text-xs text-gray-500">Base Price</p>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                        {developmentsData.developments.length > 10 && (
+                          <p className="text-xs text-gray-500 text-center pt-2">
+                            Showing 10 of {developmentsData.developments.length} developments
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8 text-gray-500">
+                        <Building2 className="w-12 h-12 mx-auto mb-3 text-gray-400" />
+                        <p>No active developments found</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Developments Tab - Full Developments Management */}
+          {activeTab === 'developments' && (
+            <AdminDevelopmentsDashboard
+              activeBranch={(selectedBranch === 'all' ? 'Harare' : selectedBranch) as any}
+              userRole="Manager"
+            />
+          )}
+
+          {/* Stands Tab - Full Stands/Inventory Management */}
+          {activeTab === 'stands' && (
+            <StandsInventoryView
+              role="manager"
+              title="Stands Inventory"
+              subtitle="View and manage stands across your branch developments"
+            />
+          )}
+
+          {/* Revenue Overview Section - Overview Tab */}
+          {activeTab === 'overview' && (
+            <div className="space-y-6">
+              {/* Revenue Summary Cards */}
+              <div>
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
+                    <DollarSign className="w-5 h-5 text-green-600" />
+                    Revenue Analytics
+                  </h3>
+                  <Button variant="outline" size="sm" onClick={() => exportRevenue('month')}>
+                    <Download className="w-4 h-4 mr-2" />
+                    Export Revenue Report
+                  </Button>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+                  <Card>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-medium text-gray-600 mb-1">This Week</p>
+                          <p className="text-2xl font-bold text-gray-900">
+                            ${(revenueData.summary.thisWeek.revenue / 1000).toFixed(0)}K
+                          </p>
+                          <div className="flex items-center gap-1 mt-1">
+                            {revenueData.summary.thisWeek.trendDirection === 'up' ? (
+                              <TrendingUp className="w-4 h-4 text-green-500" />
+                            ) : (
+                              <TrendingUp className="w-4 h-4 text-red-500 rotate-180" />
+                            )}
+                            <span className={`text-sm font-medium ${revenueData.summary.thisWeek.trendDirection === 'up' ? 'text-green-600' : 'text-red-600'
+                              }`}>
+                              {revenueData.summary.thisWeek.trend >= 0 ? '+' : ''}{revenueData.summary.thisWeek.trend.toFixed(1)}%
+                            </span>
+                            <span className="text-sm text-gray-500">vs last week</span>
+                          </div>
+                          <p className="text-xs text-gray-500 mt-1">
+                            {revenueData.summary.thisWeek.transactions} transaction{revenueData.summary.thisWeek.transactions !== 1 ? 's' : ''}
+                          </p>
+                        </div>
+                        <div className="bg-green-100 p-2 rounded-lg">
+                          <Calendar className="w-6 h-6 text-green-600" />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-medium text-gray-600 mb-1">This Month</p>
+                          <p className="text-2xl font-bold text-gray-900">
+                            ${(revenueData.summary.thisMonth.revenue / 1000).toFixed(0)}K
+                          </p>
+                          <div className="flex items-center gap-1 mt-1">
+                            {revenueData.summary.thisMonth.trendDirection === 'up' ? (
+                              <TrendingUp className="w-4 h-4 text-green-500" />
+                            ) : (
+                              <TrendingUp className="w-4 h-4 text-red-500 rotate-180" />
+                            )}
+                            <span className={`text-sm font-medium ${revenueData.summary.thisMonth.trendDirection === 'up' ? 'text-green-600' : 'text-red-600'
+                              }`}>
+                              {revenueData.summary.thisMonth.trend >= 0 ? '+' : ''}{revenueData.summary.thisMonth.trend.toFixed(1)}%
+                            </span>
+                            <span className="text-sm text-gray-500">vs last month</span>
+                          </div>
+                          <p className="text-xs text-gray-500 mt-1">
+                            {revenueData.summary.thisMonth.transactions} transaction{revenueData.summary.thisMonth.transactions !== 1 ? 's' : ''}
+                          </p>
+                        </div>
+                        <div className="bg-blue-100 p-2 rounded-lg">
+                          <DollarSign className="w-6 h-6 text-blue-600" />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-medium text-gray-600 mb-1">Previous Month</p>
+                          <p className="text-2xl font-bold text-gray-900">
+                            ${(revenueData.summary.previousMonth.revenue / 1000).toFixed(0)}K
+                          </p>
+                          <p className="text-xs text-gray-500 mt-3">
+                            {revenueData.summary.previousMonth.transactions} transaction{revenueData.summary.previousMonth.transactions !== 1 ? 's' : ''}
+                          </p>
+                        </div>
+                        <div className="bg-gray-100 p-2 rounded-lg">
+                          <BarChart3 className="w-6 h-6 text-gray-600" />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-medium text-gray-600 mb-1">Avg Deal Size</p>
+                          <p className="text-2xl font-bold text-gray-900">
+                            ${(revenueData.summary.avgDealSize / 1000).toFixed(0)}K
+                          </p>
+                          <p className="text-xs text-gray-500 mt-3">This month average</p>
+                        </div>
+                        <div className="bg-purple-100 p-2 rounded-lg">
+                          <Target className="w-6 h-6 text-purple-600" />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+
+              {/* Revenue Charts */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Daily Revenue Trend */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Daily Revenue Trend</CardTitle>
+                    <CardDescription>Revenue performance this month</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-80">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={revenueData.dailyRevenue}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                          <XAxis
+                            dataKey="date"
+                            stroke="#888"
+                            fontSize={12}
+                            tickFormatter={(value) => new Date(value).getDate().toString()}
+                          />
+                          <YAxis
+                            stroke="#888"
+                            fontSize={12}
+                            tickFormatter={(value) => `$${(value / 1000).toFixed(0)}K`}
+                          />
+                          <Tooltip
+                            formatter={(value: any) => [`$${(value / 1000).toFixed(1)}K`, 'Revenue']}
+                            labelFormatter={(label) => `Date: ${new Date(label).toLocaleDateString()}`}
+                          />
+                          <Line
+                            type="monotone"
+                            dataKey="revenue"
+                            stroke="#10b981"
+                            strokeWidth={2}
+                            dot={{ fill: '#10b981', strokeWidth: 2, r: 4 }}
+                            activeDot={{ r: 6 }}
+                          />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Revenue by Payment Type */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Revenue by Payment Type</CardTitle>
+                    <CardDescription>Breakdown by transaction type this month</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {revenueData.revenueByType.length === 0 ? (
+                        <div className="text-center py-8 text-gray-500">
+                          <DollarSign className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+                          <p>No revenue data available</p>
+                        </div>
+                      ) : (
+                        revenueData.revenueByType.map((type, index) => (
+                          <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div>
+                              <div className="font-medium text-gray-900">{type.type}</div>
+                              <div className="text-sm text-gray-500">{type.transactions} transactions</div>
+                            </div>
+                            <div className="text-right">
+                              <div className="font-semibold text-gray-900">
+                                ${(type.revenue / 1000).toFixed(0)}K
+                              </div>
+                              <div className="text-sm text-gray-500">{type.percentage}%</div>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          )}
+
+          {/* Payouts Overview Section - Overview Tab */}
+          {activeTab === 'overview' && (
+            <div className="space-y-6">
+              {/* Payouts Summary Cards */}
+              <div>
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
+                    <DollarSign className="w-5 h-5 text-red-600" />
+                    Expected Payouts & Cash Flow
+                  </h3>
+                  <Button variant="outline" size="sm" onClick={exportPayouts}>
+                    <Download className="w-4 h-4 mr-2" />
+                    Export Payouts Report
+                  </Button>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                  <Card>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-medium text-gray-600 mb-1">Commissions Due</p>
+                          <p className="text-2xl font-bold text-red-600">
+                            ${(payoutsData.summary.currentMonth.due / 1000).toFixed(0)}K
+                          </p>
+                          <div className="flex items-center gap-1 mt-1">
+                            {payoutsData.summary.currentMonth.trendDirection === 'up' ? (
+                              <TrendingUp className="w-4 h-4 text-red-500" />
+                            ) : (
+                              <TrendingUp className="w-4 h-4 text-green-500 rotate-180" />
+                            )}
+                            <span className={`text-sm font-medium ${payoutsData.summary.currentMonth.trendDirection === 'up' ? 'text-red-600' : 'text-green-600'
+                              }`}>
+                              {payoutsData.summary.currentMonth.trend >= 0 ? '+' : ''}{payoutsData.summary.currentMonth.trend.toFixed(1)}%
+                            </span>
+                            <span className="text-sm text-gray-500">vs last month</span>
+                          </div>
+                          <p className="text-xs text-gray-500 mt-1">
+                            {payoutsData.summary.currentMonth.agents} agent{payoutsData.summary.currentMonth.agents !== 1 ? 's' : ''}
+                          </p>
+                        </div>
+                        <div className="bg-red-100 p-2 rounded-lg">
+                          <AlertCircle className="w-6 h-6 text-red-600" />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-medium text-gray-600 mb-1">Total Pending</p>
+                          <p className="text-2xl font-bold text-orange-600">
+                            ${(payoutsData.summary.totalPending.amount / 1000).toFixed(0)}K
+                          </p>
+                          <p className="text-xs text-gray-500 mt-3">
+                            {payoutsData.summary.totalPending.commissions} commission{payoutsData.summary.totalPending.commissions !== 1 ? 's' : ''}
+                          </p>
+                        </div>
+                        <div className="bg-orange-100 p-2 rounded-lg">
+                          <Clock className="w-6 h-6 text-orange-600" />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-medium text-gray-600 mb-1">Total Paid</p>
+                          <p className="text-2xl font-bold text-green-600">
+                            ${(payoutsData.summary.totalPaid.amount / 1000).toFixed(0)}K
+                          </p>
+                          <p className="text-xs text-gray-500 mt-3">
+                            {payoutsData.summary.totalPaid.commissions} commission{payoutsData.summary.totalPaid.commissions !== 1 ? 's' : ''}
+                          </p>
+                        </div>
+                        <div className="bg-green-100 p-2 rounded-lg">
+                          <CheckCircle className="w-6 h-6 text-green-600" />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-medium text-gray-600 mb-1">Net Cash Position</p>
+                          <p className={`text-2xl font-bold ${payoutsData.summary.netCashPosition.amount >= 0 ? 'text-green-600' : 'text-red-600'
+                            }`}>
+                            {payoutsData.summary.netCashPosition.amount >= 0 ? '+' : ''}${(payoutsData.summary.netCashPosition.amount / 1000).toFixed(0)}K
+                          </p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            Margin: {payoutsData.summary.netCashPosition.margin}%
+                          </p>
+                        </div>
+                        <div className={`p-2 rounded-lg ${payoutsData.summary.netCashPosition.amount >= 0 ? 'bg-green-100' : 'bg-red-100'
+                          }`}>
+                          <Target className={`w-6 h-6 ${payoutsData.summary.netCashPosition.amount >= 0 ? 'text-green-600' : 'text-red-600'
+                            }`} />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-medium text-gray-600 mb-1">Previous Month</p>
+                          <p className="text-2xl font-bold text-gray-600">
+                            ${(payoutsData.summary.previousMonth.total / 1000).toFixed(0)}K
+                          </p>
+                          <p className="text-xs text-gray-500 mt-3">
+                            {payoutsData.summary.previousMonth.commissions} commission{payoutsData.summary.previousMonth.commissions !== 1 ? 's' : ''}
+                          </p>
+                        </div>
+                        <div className="bg-gray-100 p-2 rounded-lg">
+                          <BarChart3 className="w-6 h-6 text-gray-600" />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+
+              {/* Payouts Charts and Breakdown */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Agent Commission Breakdown */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Agent Commission Breakdown</CardTitle>
+                    <CardDescription>Current month commission status by agent</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4 max-h-80 overflow-y-auto">
+                      {payoutsData.agentBreakdown.length === 0 ? (
+                        <div className="text-center py-8 text-gray-500">
+                          <Users className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+                          <p>No commission data available</p>
+                        </div>
+                      ) : (
+                        payoutsData.agentBreakdown.map((agent, index) => (
+                          <div key={index} className="p-3 bg-gray-50 rounded-lg">
+                            <div className="flex items-center justify-between mb-2">
+                              <div>
+                                <div className="font-medium text-gray-900">{agent.agent.name}</div>
+                                <div className="text-sm text-gray-500">{agent.agent.email}</div>
+                              </div>
+                              <div className="text-right">
+                                <div className="font-semibold text-gray-900">
+                                  ${(agent.total / 1000).toFixed(1)}K
+                                </div>
+                                <div className="text-sm text-gray-500">
+                                  {agent.commissionCount} commission{agent.commissionCount !== 1 ? 's' : ''}
+                                </div>
+                              </div>
+                            </div>
+                            <div className="flex gap-4 text-sm">
+                              <div className="flex items-center gap-1">
+                                <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                                <span>Calc: ${(agent.calculated / 1000).toFixed(1)}K</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                                <span>Approved: ${(agent.approved / 1000).toFixed(1)}K</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                                <span>Paid: ${(agent.paid / 1000).toFixed(1)}K</span>
+                              </div>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Payout Status Distribution */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Payout Status Distribution</CardTitle>
+                    <CardDescription>Commission breakdown by status</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg border-l-4 border-yellow-400">
+                        <div className="flex items-center gap-3">
+                          <Clock className="w-5 h-5 text-yellow-600" />
+                          <div>
+                            <div className="font-medium text-yellow-900">Calculated</div>
+                            <div className="text-sm text-yellow-700">Pending approval</div>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-semibold text-yellow-900">
+                            ${(payoutsData.payoutDistribution.calculated / 1000).toFixed(1)}K
+                          </div>
+                          <div className="text-sm text-yellow-700">
+                            {payoutsData.summary.totalPending.amount > 0
+                              ? ((payoutsData.payoutDistribution.calculated / payoutsData.summary.totalPending.amount) * 100).toFixed(1)
+                              : 0}%
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between p-3 bg-orange-50 rounded-lg border-l-4 border-orange-400">
+                        <div className="flex items-center gap-3">
+                          <CheckCircle className="w-5 h-5 text-orange-600" />
+                          <div>
+                            <div className="font-medium text-orange-900">Approved</div>
+                            <div className="text-sm text-orange-700">Ready for payment</div>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-semibold text-orange-900">
+                            ${(payoutsData.payoutDistribution.approved / 1000).toFixed(1)}K
+                          </div>
+                          <div className="text-sm text-orange-700">
+                            {payoutsData.summary.totalPending.amount > 0
+                              ? ((payoutsData.payoutDistribution.approved / payoutsData.summary.totalPending.amount) * 100).toFixed(1)
+                              : 0}%
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg border-l-4 border-green-400">
+                        <div className="flex items-center gap-3">
+                          <CheckCircle className="w-5 h-5 text-green-600" />
+                          <div>
+                            <div className="font-medium text-green-900">Paid</div>
+                            <div className="text-sm text-green-700">Completed payments</div>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-semibold text-green-900">
+                            ${(payoutsData.payoutDistribution.paid / 1000).toFixed(1)}K
+                          </div>
+                          <div className="text-sm text-green-700">Historical</div>
+                        </div>
+                      </div>
+
+                      <div className="mt-6 p-3 bg-blue-50 rounded-lg">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="font-medium text-blue-900">Cash Flow Impact</div>
+                            <div className="text-sm text-blue-700">Revenue - Payouts = Net Position</div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-sm text-blue-700">
+                              ${(payoutsData.summary.netCashPosition.revenue / 1000).toFixed(0)}K - ${(payoutsData.summary.currentMonth.due / 1000).toFixed(0)}K =
+                            </div>
+                            <div className={`font-semibold ${payoutsData.summary.netCashPosition.amount >= 0 ? 'text-green-600' : 'text-red-600'
+                              }`}>
+                              {payoutsData.summary.netCashPosition.amount >= 0 ? '+' : ''}${(payoutsData.summary.netCashPosition.amount / 1000).toFixed(0)}K
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          )}
+
+          {/* Charts - Memoized to prevent unnecessary re-renders */}
+          {activeTab === 'overview' && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Revenue & Deal Trend */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Revenue & Deals Trend</CardTitle>
+                  <CardDescription>Last 6 months performance</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <LineChart data={memoizedChartData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="month" />
+                      <YAxis yAxisId="left" />
+                      <YAxis yAxisId="right" orientation="right" />
+                      <Tooltip />
+                      <Legend />
+                      <Line
+                        yAxisId="right"
+                        type="monotone"
+                        dataKey="deals"
+                        stroke="#3b82f6"
+                        name="Deals Closed"
                       />
-                      <YAxis 
-                        stroke="#888"
-                        fontSize={12}
-                        tickFormatter={(value) => `$${(value / 1000).toFixed(0)}K`}
-                      />
-                      <Tooltip 
-                        formatter={(value: any) => [`$${(value / 1000).toFixed(1)}K`, 'Revenue']}
-                        labelFormatter={(label) => `Date: ${new Date(label).toLocaleDateString()}`}
-                      />
-                      <Line 
-                        type="monotone" 
-                        dataKey="revenue" 
-                        stroke="#10b981" 
-                        strokeWidth={2}
-                        dot={{ fill: '#10b981', strokeWidth: 2, r: 4 }}
-                        activeDot={{ r: 6 }}
+                      <Line
+                        yAxisId="left"
+                        type="monotone"
+                        dataKey="revenue"
+                        stroke="#10b981"
+                        name="Revenue (USD)"
                       />
                     </LineChart>
                   </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Revenue by Payment Type */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Revenue by Payment Type</CardTitle>
-                <CardDescription>Breakdown by transaction type this month</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {revenueData.revenueByType.length === 0 ? (
-                    <div className="text-center py-8 text-gray-500">
-                      <DollarSign className="w-8 h-8 mx-auto mb-2 text-gray-400" />
-                      <p>No revenue data available</p>
-                    </div>
-                  ) : (
-                    revenueData.revenueByType.map((type, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div>
-                          <div className="font-medium text-gray-900">{type.type}</div>
-                          <div className="text-sm text-gray-500">{type.transactions} transactions</div>
-                        </div>
-                        <div className="text-right">
-                          <div className="font-semibold text-gray-900">
-                            ${(type.revenue / 1000).toFixed(0)}K
-                          </div>
-                          <div className="text-sm text-gray-500">{type.percentage}%</div>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      )}
-
-      {/* Payouts Overview Section - Overview Tab */}
-      {activeTab === 'overview' && (
-        <div className="space-y-6">
-          {/* Payouts Summary Cards */}
-          <div>
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold flex items-center gap-2">
-                <DollarSign className="w-5 h-5 text-red-600" />
-                Expected Payouts & Cash Flow
-              </h3>
-              <Button variant="outline" size="sm" onClick={exportPayouts}>
-                <Download className="w-4 h-4 mr-2" />
-                Export Payouts Report
-              </Button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-              <Card>
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600 mb-1">Commissions Due</p>
-                      <p className="text-2xl font-bold text-red-600">
-                        ${(payoutsData.summary.currentMonth.due / 1000).toFixed(0)}K
-                      </p>
-                      <div className="flex items-center gap-1 mt-1">
-                        {payoutsData.summary.currentMonth.trendDirection === 'up' ? (
-                          <TrendingUp className="w-4 h-4 text-red-500" />
-                        ) : (
-                          <TrendingUp className="w-4 h-4 text-green-500 rotate-180" />
-                        )}
-                        <span className={`text-sm font-medium ${
-                          payoutsData.summary.currentMonth.trendDirection === 'up' ? 'text-red-600' : 'text-green-600'
-                        }`}>
-                          {payoutsData.summary.currentMonth.trend >= 0 ? '+' : ''}{payoutsData.summary.currentMonth.trend.toFixed(1)}%
-                        </span>
-                        <span className="text-sm text-gray-500">vs last month</span>
-                      </div>
-                      <p className="text-xs text-gray-500 mt-1">
-                        {payoutsData.summary.currentMonth.agents} agent{payoutsData.summary.currentMonth.agents !== 1 ? 's' : ''}
-                      </p>
-                    </div>
-                    <div className="bg-red-100 p-2 rounded-lg">
-                      <AlertCircle className="w-6 h-6 text-red-600" />
-                    </div>
-                  </div>
                 </CardContent>
               </Card>
 
+              {/* Branch Performance */}
               <Card>
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600 mb-1">Total Pending</p>
-                      <p className="text-2xl font-bold text-orange-600">
-                        ${(payoutsData.summary.totalPending.amount / 1000).toFixed(0)}K
-                      </p>
-                      <p className="text-xs text-gray-500 mt-3">
-                        {payoutsData.summary.totalPending.commissions} commission{payoutsData.summary.totalPending.commissions !== 1 ? 's' : ''}
-                      </p>
-                    </div>
-                    <div className="bg-orange-100 p-2 rounded-lg">
-                      <Clock className="w-6 h-6 text-orange-600" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600 mb-1">Total Paid</p>
-                      <p className="text-2xl font-bold text-green-600">
-                        ${(payoutsData.summary.totalPaid.amount / 1000).toFixed(0)}K
-                      </p>
-                      <p className="text-xs text-gray-500 mt-3">
-                        {payoutsData.summary.totalPaid.commissions} commission{payoutsData.summary.totalPaid.commissions !== 1 ? 's' : ''}
-                      </p>
-                    </div>
-                    <div className="bg-green-100 p-2 rounded-lg">
-                      <CheckCircle className="w-6 h-6 text-green-600" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600 mb-1">Net Cash Position</p>
-                      <p className={`text-2xl font-bold ${
-                        payoutsData.summary.netCashPosition.amount >= 0 ? 'text-green-600' : 'text-red-600'
-                      }`}>
-                        {payoutsData.summary.netCashPosition.amount >= 0 ? '+' : ''}${(payoutsData.summary.netCashPosition.amount / 1000).toFixed(0)}K
-                      </p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        Margin: {payoutsData.summary.netCashPosition.margin}%
-                      </p>
-                    </div>
-                    <div className={`p-2 rounded-lg ${
-                      payoutsData.summary.netCashPosition.amount >= 0 ? 'bg-green-100' : 'bg-red-100'
-                    }`}>
-                      <Target className={`w-6 h-6 ${
-                        payoutsData.summary.netCashPosition.amount >= 0 ? 'text-green-600' : 'text-red-600'
-                      }`} />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600 mb-1">Previous Month</p>
-                      <p className="text-2xl font-bold text-gray-600">
-                        ${(payoutsData.summary.previousMonth.total / 1000).toFixed(0)}K
-                      </p>
-                      <p className="text-xs text-gray-500 mt-3">
-                        {payoutsData.summary.previousMonth.commissions} commission{payoutsData.summary.previousMonth.commissions !== 1 ? 's' : ''}
-                      </p>
-                    </div>
-                    <div className="bg-gray-100 p-2 rounded-lg">
-                      <BarChart3 className="w-6 h-6 text-gray-600" />
-                    </div>
-                  </div>
+                <CardHeader>
+                  <CardTitle>Branch Performance</CardTitle>
+                  <CardDescription>Revenue by branch</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={branchMetrics}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="branch" />
+                      <YAxis />
+                      <Tooltip />
+                      <Legend />
+                      <Bar dataKey="revenue" fill="#3b82f6" name="Revenue (USD)" />
+                      <Bar dataKey="totalDeals" fill="#10b981" name="Deals" />
+                    </BarChart>
+                  </ResponsiveContainer>
                 </CardContent>
               </Card>
             </div>
-          </div>
+          )}
 
-          {/* Payouts Charts and Breakdown */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Agent Commission Breakdown */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Agent Commission Breakdown</CardTitle>
-                <CardDescription>Current month commission status by agent</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4 max-h-80 overflow-y-auto">
-                  {payoutsData.agentBreakdown.length === 0 ? (
-                    <div className="text-center py-8 text-gray-500">
-                      <Users className="w-8 h-8 mx-auto mb-2 text-gray-400" />
-                      <p>No commission data available</p>
-                    </div>
-                  ) : (
-                    payoutsData.agentBreakdown.map((agent, index) => (
-                      <div key={index} className="p-3 bg-gray-50 rounded-lg">
-                        <div className="flex items-center justify-between mb-2">
-                          <div>
-                            <div className="font-medium text-gray-900">{agent.agent.name}</div>
-                            <div className="text-sm text-gray-500">{agent.agent.email}</div>
-                          </div>
-                          <div className="text-right">
-                            <div className="font-semibold text-gray-900">
-                              ${(agent.total / 1000).toFixed(1)}K
-                            </div>
-                            <div className="text-sm text-gray-500">
-                              {agent.commissionCount} commission{agent.commissionCount !== 1 ? 's' : ''}
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex gap-4 text-sm">
-                          <div className="flex items-center gap-1">
-                            <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                            <span>Calc: ${(agent.calculated / 1000).toFixed(1)}K</span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                            <span>Approved: ${(agent.approved / 1000).toFixed(1)}K</span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                            <span>Paid: ${(agent.paid / 1000).toFixed(1)}K</span>
-                          </div>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Payout Status Distribution */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Payout Status Distribution</CardTitle>
-                <CardDescription>Commission breakdown by status</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg border-l-4 border-yellow-400">
-                    <div className="flex items-center gap-3">
-                      <Clock className="w-5 h-5 text-yellow-600" />
-                      <div>
-                        <div className="font-medium text-yellow-900">Calculated</div>
-                        <div className="text-sm text-yellow-700">Pending approval</div>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="font-semibold text-yellow-900">
-                        ${(payoutsData.payoutDistribution.calculated / 1000).toFixed(1)}K
-                      </div>
-                      <div className="text-sm text-yellow-700">
-                        {payoutsData.summary.totalPending.amount > 0 
-                          ? ((payoutsData.payoutDistribution.calculated / payoutsData.summary.totalPending.amount) * 100).toFixed(1)
-                          : 0}%
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between p-3 bg-orange-50 rounded-lg border-l-4 border-orange-400">
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="w-5 h-5 text-orange-600" />
-                      <div>
-                        <div className="font-medium text-orange-900">Approved</div>
-                        <div className="text-sm text-orange-700">Ready for payment</div>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="font-semibold text-orange-900">
-                        ${(payoutsData.payoutDistribution.approved / 1000).toFixed(1)}K
-                      </div>
-                      <div className="text-sm text-orange-700">
-                        {payoutsData.summary.totalPending.amount > 0 
-                          ? ((payoutsData.payoutDistribution.approved / payoutsData.summary.totalPending.amount) * 100).toFixed(1)
-                          : 0}%
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg border-l-4 border-green-400">
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="w-5 h-5 text-green-600" />
-                      <div>
-                        <div className="font-medium text-green-900">Paid</div>
-                        <div className="text-sm text-green-700">Completed payments</div>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="font-semibold text-green-900">
-                        ${(payoutsData.payoutDistribution.paid / 1000).toFixed(1)}K
-                      </div>
-                      <div className="text-sm text-green-700">Historical</div>
-                    </div>
-                  </div>
-
-                  <div className="mt-6 p-3 bg-blue-50 rounded-lg">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="font-medium text-blue-900">Cash Flow Impact</div>
-                        <div className="text-sm text-blue-700">Revenue - Payouts = Net Position</div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-sm text-blue-700">
-                          ${(payoutsData.summary.netCashPosition.revenue / 1000).toFixed(0)}K - ${(payoutsData.summary.currentMonth.due / 1000).toFixed(0)}K = 
-                        </div>
-                        <div className={`font-semibold ${
-                          payoutsData.summary.netCashPosition.amount >= 0 ? 'text-green-600' : 'text-red-600'
-                        }`}>
-                          {payoutsData.summary.netCashPosition.amount >= 0 ? '+' : ''}${(payoutsData.summary.netCashPosition.amount / 1000).toFixed(0)}K
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      )}
-
-      {/* Charts - Memoized to prevent unnecessary re-renders */}
-      {activeTab === 'overview' && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Revenue & Deal Trend */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Revenue & Deals Trend</CardTitle>
-              <CardDescription>Last 6 months performance</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={memoizedChartData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis yAxisId="left" />
-                  <YAxis yAxisId="right" orientation="right" />
-                  <Tooltip />
-                  <Legend />
-                  <Line
-                    yAxisId="right"
-                    type="monotone"
-                    dataKey="deals"
-                    stroke="#3b82f6"
-                    name="Deals Closed"
-                  />
-                  <Line
-                    yAxisId="left"
-                    type="monotone"
-                    dataKey="revenue"
-                    stroke="#10b981"
-                    name="Revenue (USD)"
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-
-          {/* Branch Performance */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Branch Performance</CardTitle>
-              <CardDescription>Revenue by branch</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={branchMetrics}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="branch" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="revenue" fill="#3b82f6" name="Revenue (USD)" />
-                  <Bar dataKey="totalDeals" fill="#10b981" name="Deals" />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </div>
-      )}
-
-      {/* Contracts Tab */}
-      {activeTab === 'contracts' && (
-        <ManagerContractsTab
-          selectedContractId={selectedContractId}
-          setSelectedContractId={setSelectedContractId}
-          contractsData={contractsData}
-          contractsLoading={contractsLoading}
-          contractPage={contractPage}
-          fetchContractsData={fetchContractsData}
-          exportContracts={exportContracts}
-          contractFilters={contractFilters}
-          setContractFilters={setContractFilters}
-        />
-      )}
-
-      {/* Sales Targets Tab */}
-      {activeTab === 'targets' && (
-        <div className="space-y-6">
-          {/* Targets Summary Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-            <KPICard
-              title="Total Targets"
-              value={targetsData.summary.totalTargets}
-              icon={Target}
-              color="blue"
-              subtitle={`Period: ${targetPeriod}`}
+          {/* Contracts Tab */}
+          {activeTab === 'contracts' && (
+            <ManagerContractsTab
+              selectedContractId={selectedContractId}
+              setSelectedContractId={setSelectedContractId}
+              contractsData={contractsData}
+              contractsLoading={contractsLoading}
+              contractPage={contractPage}
+              fetchContractsData={fetchContractsData}
+              exportContracts={exportContracts}
+              contractFilters={contractFilters}
+              setContractFilters={setContractFilters}
             />
-            <KPICard
-              title="Achieved"
-              value={targetsData.summary.targetsAchieved}
-              icon={CheckCircle}
-              color="green"
-              subtitle={`${targetsData.summary.totalTargets > 0 
-                ? ((targetsData.summary.targetsAchieved / targetsData.summary.totalTargets) * 100).toFixed(1)
-                : 0}% success rate`}
-            />
-            <KPICard
-              title="On Track"
-              value={targetsData.summary.targetsOnTrack}
-              icon={TrendingUp}
-              color="amber"
-              subtitle="80%+ progress"
-            />
-            <KPICard
-              title="Behind"
-              value={targetsData.summary.targetsBehind}
-              icon={AlertTriangle}
-              color="red"
-              subtitle="Needs attention"
-            />
-            <KPICard
-              title="Revenue Progress"
-              value={`${targetsData.summary.totalRevenueTarget > 0 
-                ? ((targetsData.summary.totalActualRevenue / targetsData.summary.totalRevenueTarget) * 100).toFixed(1)
-                : 0}%`}
-              icon={DollarSign}
-              color="purple"
-              subtitle={`$${(targetsData.summary.totalActualRevenue / 1000).toFixed(0)}K / $${(targetsData.summary.totalRevenueTarget / 1000).toFixed(0)}K`}
-            />
-          </div>
+          )}
 
-          {/* Targets Management */}
-          <Card>
-            <CardHeader>
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                  <CardTitle>Sales Targets Management</CardTitle>
-                  <CardDescription>Monitor and manage team sales targets and progress</CardDescription>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  <div className="flex items-center gap-2">
-                    <label htmlFor="target-period" className="text-sm font-medium text-gray-700">
-                      Period:
-                    </label>
-                    <input
-                      id="target-period"
-                      type="month"
-                      value={targetPeriod}
-                      onChange={(e) => setTargetPeriod(e.target.value)}
-                      className="px-3 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <Button
-                    variant="outline" 
-                    size="sm"
-                    onClick={fetchTargetsData}
-                    disabled={targetsLoading}
-                  >
-                    <RefreshCw className={`w-4 h-4 mr-2 ${targetsLoading ? 'animate-spin' : ''}`} />
-                    Refresh
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={exportTargets}>
-                    <Download className="w-4 h-4 mr-2" />
-                    Export
-                  </Button>
-                  <Button 
-                    variant="default" 
-                    size="sm" 
-                    onClick={openTargetModal}
-                    className="bg-blue-600 hover:bg-blue-700 text-white"
-                  >
-                    <Target className="w-4 h-4 mr-2" />
-                    Set Target
-                  </Button>
-                </div>
+          {/* Sales Targets Tab */}
+          {activeTab === 'targets' && (
+            <div className="space-y-6">
+              {/* Targets Summary Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                <KPICard
+                  title="Total Targets"
+                  value={targetsData.summary.totalTargets}
+                  icon={Target}
+                  color="blue"
+                  subtitle={`Period: ${targetPeriod}`}
+                />
+                <KPICard
+                  title="Achieved"
+                  value={targetsData.summary.targetsAchieved}
+                  icon={CheckCircle}
+                  color="green"
+                  subtitle={`${targetsData.summary.totalTargets > 0
+                    ? ((targetsData.summary.targetsAchieved / targetsData.summary.totalTargets) * 100).toFixed(1)
+                    : 0}% success rate`}
+                />
+                <KPICard
+                  title="On Track"
+                  value={targetsData.summary.targetsOnTrack}
+                  icon={TrendingUp}
+                  color="amber"
+                  subtitle="80%+ progress"
+                />
+                <KPICard
+                  title="Behind"
+                  value={targetsData.summary.targetsBehind}
+                  icon={AlertTriangle}
+                  color="red"
+                  subtitle="Needs attention"
+                />
+                <KPICard
+                  title="Revenue Progress"
+                  value={`${targetsData.summary.totalRevenueTarget > 0
+                    ? ((targetsData.summary.totalActualRevenue / targetsData.summary.totalRevenueTarget) * 100).toFixed(1)
+                    : 0}%`}
+                  icon={DollarSign}
+                  color="purple"
+                  subtitle={`$${(targetsData.summary.totalActualRevenue / 1000).toFixed(0)}K / $${(targetsData.summary.totalRevenueTarget / 1000).toFixed(0)}K`}
+                />
               </div>
-            </CardHeader>
-            <CardContent>
-              {/* Targets Table */}
-              <div className="overflow-x-auto">
-                {targetsLoading ? (
-                  <div className="text-center py-8">
-                    <RefreshCw className="w-8 h-8 animate-spin text-blue-500 mx-auto mb-2" />
-                    <p className="text-gray-500">Loading targets...</p>
+
+              {/* Targets Management */}
+              <Card>
+                <CardHeader>
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                      <CardTitle>Sales Targets Management</CardTitle>
+                      <CardDescription>Monitor and manage team sales targets and progress</CardDescription>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <div className="flex items-center gap-2">
+                        <label htmlFor="target-period" className="text-sm font-medium text-gray-700">
+                          Period:
+                        </label>
+                        <input
+                          id="target-period"
+                          type="month"
+                          value={targetPeriod}
+                          onChange={(e) => setTargetPeriod(e.target.value)}
+                          className="px-3 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={fetchTargetsData}
+                        disabled={targetsLoading}
+                      >
+                        <RefreshCw className={`w-4 h-4 mr-2 ${targetsLoading ? 'animate-spin' : ''}`} />
+                        Refresh
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={exportTargets}>
+                        <Download className="w-4 h-4 mr-2" />
+                        Export
+                      </Button>
+                      <Button
+                        variant="default"
+                        size="sm"
+                        onClick={openTargetModal}
+                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                      >
+                        <Target className="w-4 h-4 mr-2" />
+                        Set Target
+                      </Button>
+                    </div>
                   </div>
-                ) : targetsData.targets.length === 0 ? (
-                  <div className="text-center py-8">
-                    <Target className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                    <p className="text-gray-500 text-lg">No targets set for this period</p>
-                    <p className="text-gray-400">Create targets to track team performance</p>
+                </CardHeader>
+                <CardContent>
+                  {/* Targets Table */}
+                  <div className="overflow-x-auto">
+                    {targetsLoading ? (
+                      <div className="text-center py-8">
+                        <RefreshCw className="w-8 h-8 animate-spin text-blue-500 mx-auto mb-2" />
+                        <p className="text-gray-500">Loading targets...</p>
+                      </div>
+                    ) : targetsData.targets.length === 0 ? (
+                      <div className="text-center py-8">
+                        <Target className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                        <p className="text-gray-500 text-lg">No targets set for this period</p>
+                        <p className="text-gray-400">Create targets to track team performance</p>
+                      </div>
+                    ) : (
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="border-b bg-gray-50">
+                            <th className="text-left p-3 font-semibold">Agent</th>
+                            <th className="text-left p-3 font-semibold hidden md:table-cell">Development</th>
+                            <th className="text-left p-3 font-semibold hidden lg:table-cell">Revenue Target</th>
+                            <th className="text-left p-3 font-semibold">Revenue Progress</th>
+                            <th className="text-left p-3 font-semibold hidden lg:table-cell">Deals Target</th>
+                            <th className="text-left p-3 font-semibold hidden md:table-cell">Deals Progress</th>
+                            <th className="text-left p-3 font-semibold hidden md:table-cell">Status</th>
+                            <th className="text-left p-3 font-semibold hidden lg:table-cell">Forecast</th>
+                            <th className="text-left p-3 font-semibold">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {targetsData.targets.map((target) => (
+                            <tr key={target.id} className="border-b hover:bg-gray-50">
+                              <td className="p-3">
+                                <div>
+                                  <div className="font-medium text-gray-900">{target.agent.name}</div>
+                                  <div className="text-sm text-gray-500">{target.agent.email}</div>
+                                </div>
+                              </td>
+                              <td className="p-3">
+                                <div className="text-sm">
+                                  {target.development ? (
+                                    <>
+                                      <div className="font-medium">{target.development.name}</div>
+                                      <div className="text-gray-500">{target.development.location}</div>
+                                    </>
+                                  ) : (
+                                    <span className="text-gray-500">All developments</span>
+                                  )}
+                                </div>
+                              </td>
+                              <td className="p-3">
+                                {target.revenueTarget ? (
+                                  <div>
+                                    <div className="font-medium">
+                                      ${(target.revenueTarget / 1000).toFixed(0)}K
+                                    </div>
+                                    <div className="text-sm text-gray-500">
+                                      Actual: ${(target.actualRevenue / 1000).toFixed(0)}K
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <span className="text-gray-400">-</span>
+                                )}
+                              </td>
+                              <td className="p-3">
+                                {target.revenueProgress !== null ? (
+                                  <div>
+                                    <div className="w-full bg-gray-200 rounded-full h-2 mb-1">
+                                      <div
+                                        className={`h-2 rounded-full ${target.revenueProgress >= 100 ? 'bg-green-500' :
+                                            target.revenueProgress >= 80 ? 'bg-yellow-500' :
+                                              target.revenueProgress >= 50 ? 'bg-orange-500' : 'bg-red-500'
+                                          }`}
+                                        style={{ width: `${Math.min(target.revenueProgress, 100)}%` }}
+                                      ></div>
+                                    </div>
+                                    <div className="text-xs text-center font-medium">
+                                      {target.revenueProgress.toFixed(1)}%
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <span className="text-gray-400">-</span>
+                                )}
+                              </td>
+                              <td className="p-3">
+                                {target.dealsTarget ? (
+                                  <div>
+                                    <div className="font-medium">
+                                      {target.dealsTarget} deals
+                                    </div>
+                                    <div className="text-sm text-gray-500">
+                                      Actual: {target.actualDeals}
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <span className="text-gray-400">-</span>
+                                )}
+                              </td>
+                              <td className="p-3">
+                                {target.dealsProgress !== null ? (
+                                  <div>
+                                    <div className="w-full bg-gray-200 rounded-full h-2 mb-1">
+                                      <div
+                                        className={`h-2 rounded-full ${target.dealsProgress >= 100 ? 'bg-green-500' :
+                                            target.dealsProgress >= 80 ? 'bg-yellow-500' :
+                                              target.dealsProgress >= 50 ? 'bg-orange-500' : 'bg-red-500'
+                                          }`}
+                                        style={{ width: `${Math.min(target.dealsProgress, 100)}%` }}
+                                      ></div>
+                                    </div>
+                                    <div className="text-xs text-center font-medium">
+                                      {target.dealsProgress.toFixed(1)}%
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <span className="text-gray-400">-</span>
+                                )}
+                              </td>
+                              <td className="p-3">
+                                <div className="flex flex-col gap-1">
+                                  {target.revenueStatus && (
+                                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${target.revenueStatus === 'achieved' ? 'bg-green-100 text-green-800' :
+                                        target.revenueStatus === 'on-track' ? 'bg-yellow-100 text-yellow-800' :
+                                          target.revenueStatus === 'needs-attention' ? 'bg-orange-100 text-orange-800' :
+                                            'bg-red-100 text-red-800'
+                                      }`}>
+                                      Rev: {target.revenueStatus.replace('-', ' ')}
+                                    </span>
+                                  )}
+                                  {target.dealsStatus && (
+                                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${target.dealsStatus === 'achieved' ? 'bg-green-100 text-green-800' :
+                                        target.dealsStatus === 'on-track' ? 'bg-yellow-100 text-yellow-800' :
+                                          target.dealsStatus === 'needs-attention' ? 'bg-orange-100 text-orange-800' :
+                                            'bg-red-100 text-red-800'
+                                      }`}>
+                                      Deals: {target.dealsStatus.replace('-', ' ')}
+                                    </span>
+                                  )}
+                                </div>
+                              </td>
+                              <td className="p-3">
+                                <div className="text-sm">
+                                  {target.revenueTarget && (
+                                    <div>
+                                      Rev: ${(target.forecastRevenue / 1000).toFixed(0)}K
+                                    </div>
+                                  )}
+                                  {target.dealsTarget && (
+                                    <div>
+                                      Deals: {target.forecastDeals}
+                                    </div>
+                                  )}
+                                </div>
+                              </td>
+                              <td className="p-3">
+                                <div className="flex gap-2">
+                                  <Button variant="outline" size="sm">
+                                    <Eye className="w-4 h-4 mr-1" />
+                                    View
+                                  </Button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    )}
                   </div>
-                ) : (
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b bg-gray-50">
-                        <th className="text-left p-3 font-semibold">Agent</th>
-                        <th className="text-left p-3 font-semibold hidden md:table-cell">Development</th>
-                        <th className="text-left p-3 font-semibold hidden lg:table-cell">Revenue Target</th>
-                        <th className="text-left p-3 font-semibold">Revenue Progress</th>
-                        <th className="text-left p-3 font-semibold hidden lg:table-cell">Deals Target</th>
-                        <th className="text-left p-3 font-semibold hidden md:table-cell">Deals Progress</th>
-                        <th className="text-left p-3 font-semibold hidden md:table-cell">Status</th>
-                        <th className="text-left p-3 font-semibold hidden lg:table-cell">Forecast</th>
-                        <th className="text-left p-3 font-semibold">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {targetsData.targets.map((target) => (
-                        <tr key={target.id} className="border-b hover:bg-gray-50">
-                          <td className="p-3">
-                            <div>
-                              <div className="font-medium text-gray-900">{target.agent.name}</div>
-                              <div className="text-sm text-gray-500">{target.agent.email}</div>
-                            </div>
-                          </td>
-                          <td className="p-3">
-                            <div className="text-sm">
-                              {target.development ? (
-                                <>
-                                  <div className="font-medium">{target.development.name}</div>
-                                  <div className="text-gray-500">{target.development.location}</div>
-                                </>
-                              ) : (
-                                <span className="text-gray-500 italic">All developments</span>
-                              )}
-                            </div>
-                          </td>
-                          <td className="p-3">
-                            {target.revenueTarget ? (
-                              <div>
-                                <div className="font-medium">
-                                  ${(target.revenueTarget / 1000).toFixed(0)}K
-                                </div>
-                                <div className="text-sm text-gray-500">
-                                  Actual: ${(target.actualRevenue / 1000).toFixed(0)}K
-                                </div>
-                              </div>
-                            ) : (
-                              <span className="text-gray-400">-</span>
-                            )}
-                          </td>
-                          <td className="p-3">
-                            {target.revenueProgress !== null ? (
-                              <div>
-                                <div className="w-full bg-gray-200 rounded-full h-2 mb-1">
-                                  <div
-                                    className={`h-2 rounded-full ${
-                                      target.revenueProgress >= 100 ? 'bg-green-500' :
-                                      target.revenueProgress >= 80 ? 'bg-yellow-500' :
-                                      target.revenueProgress >= 50 ? 'bg-orange-500' : 'bg-red-500'
-                                    }`}
-                                    style={{ width: `${Math.min(target.revenueProgress, 100)}%` }}
-                                  ></div>
-                                </div>
-                                <div className="text-xs text-center font-medium">
-                                  {target.revenueProgress.toFixed(1)}%
-                                </div>
-                              </div>
-                            ) : (
-                              <span className="text-gray-400">-</span>
-                            )}
-                          </td>
-                          <td className="p-3">
-                            {target.dealsTarget ? (
-                              <div>
-                                <div className="font-medium">
-                                  {target.dealsTarget} deals
-                                </div>
-                                <div className="text-sm text-gray-500">
-                                  Actual: {target.actualDeals}
-                                </div>
-                              </div>
-                            ) : (
-                              <span className="text-gray-400">-</span>
-                            )}
-                          </td>
-                          <td className="p-3">
-                            {target.dealsProgress !== null ? (
-                              <div>
-                                <div className="w-full bg-gray-200 rounded-full h-2 mb-1">
-                                  <div
-                                    className={`h-2 rounded-full ${
-                                      target.dealsProgress >= 100 ? 'bg-green-500' :
-                                      target.dealsProgress >= 80 ? 'bg-yellow-500' :
-                                      target.dealsProgress >= 50 ? 'bg-orange-500' : 'bg-red-500'
-                                    }`}
-                                    style={{ width: `${Math.min(target.dealsProgress, 100)}%` }}
-                                  ></div>
-                                </div>
-                                <div className="text-xs text-center font-medium">
-                                  {target.dealsProgress.toFixed(1)}%
-                                </div>
-                              </div>
-                            ) : (
-                              <span className="text-gray-400">-</span>
-                            )}
-                          </td>
-                          <td className="p-3">
-                            <div className="flex flex-col gap-1">
-                              {target.revenueStatus && (
-                                <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                                  target.revenueStatus === 'achieved' ? 'bg-green-100 text-green-800' :
-                                  target.revenueStatus === 'on-track' ? 'bg-yellow-100 text-yellow-800' :
-                                  target.revenueStatus === 'needs-attention' ? 'bg-orange-100 text-orange-800' :
-                                  'bg-red-100 text-red-800'
-                                }`}>
-                                  Rev: {target.revenueStatus.replace('-', ' ')}
-                                </span>
-                              )}
-                              {target.dealsStatus && (
-                                <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                                  target.dealsStatus === 'achieved' ? 'bg-green-100 text-green-800' :
-                                  target.dealsStatus === 'on-track' ? 'bg-yellow-100 text-yellow-800' :
-                                  target.dealsStatus === 'needs-attention' ? 'bg-orange-100 text-orange-800' :
-                                  'bg-red-100 text-red-800'
-                                }`}>
-                                  Deals: {target.dealsStatus.replace('-', ' ')}
-                                </span>
-                              )}
-                            </div>
-                          </td>
-                          <td className="p-3">
-                            <div className="text-sm">
-                              {target.revenueTarget && (
-                                <div>
-                                  Rev: ${(target.forecastRevenue / 1000).toFixed(0)}K
-                                </div>
-                              )}
-                              {target.dealsTarget && (
-                                <div>
-                                  Deals: {target.forecastDeals}
-                                </div>
-                              )}
-                            </div>
-                          </td>
-                          <td className="p-3">
-                            <div className="flex gap-2">
-                              <Button variant="outline" size="sm">
-                                <Eye className="w-4 h-4 mr-1" />
-                                View
-                              </Button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+                </CardContent>
+              </Card>
+            </div>
+          )}
 
-      {/* Set Target Modal */}
-      {showTargetModal && (
-        <ManagerSetTargetModal
-          targetError={targetError}
-          agents={agents}
-          developments={developmentsData.developments}
-          selectedTargetAgent={selectedTargetAgent}
-          setSelectedTargetAgent={setSelectedTargetAgent}
-          selectedTargetDevelopment={selectedTargetDevelopment}
-          setSelectedTargetDevelopment={setSelectedTargetDevelopment}
-          targetRevenue={targetRevenue}
-          setTargetRevenue={setTargetRevenue}
-          targetDeals={targetDeals}
-          setTargetDeals={setTargetDeals}
-          targetNotes={targetNotes}
-          setTargetNotes={setTargetNotes}
-          targetSubmitting={targetSubmitting}
-          onClose={() => setShowTargetModal(false)}
-          onSubmit={handleSetTarget}
-        />
-      )}
+          {/* Set Target Modal */}
+          {showTargetModal && (
+            <ManagerSetTargetModal
+              targetError={targetError}
+              agents={agents}
+              developments={developmentsData.developments}
+              selectedTargetAgent={selectedTargetAgent}
+              setSelectedTargetAgent={setSelectedTargetAgent}
+              selectedTargetDevelopment={selectedTargetDevelopment}
+              setSelectedTargetDevelopment={setSelectedTargetDevelopment}
+              targetRevenue={targetRevenue}
+              setTargetRevenue={setTargetRevenue}
+              targetDeals={targetDeals}
+              setTargetDeals={setTargetDeals}
+              targetNotes={targetNotes}
+              setTargetNotes={setTargetNotes}
+              targetSubmitting={targetSubmitting}
+              onClose={() => setShowTargetModal(false)}
+              onSubmit={handleSetTarget}
+            />
+          )}
 
-      {/* Team Members Tab */}
-      {activeTab === 'team' && (
-        <ManagerTeamTab teamMembers={teamMembers} selectedBranch={selectedBranch} />
-      )}
+          {/* Team Members Tab */}
+          {activeTab === 'team' && (
+            <ManagerTeamTab teamMembers={teamMembers} selectedBranch={selectedBranch} />
+          )}
 
-      {/* Branch Metrics Tab */}
-      {activeTab === 'branches' && (
-        <ManagerBranchMetricsTab branchMetrics={branchMetrics} />
-      )}
+          {/* Branch Metrics Tab */}
+          {activeTab === 'branches' && (
+            <ManagerBranchMetricsTab branchMetrics={branchMetrics} />
+          )}
 
-      {/* AI Financial Insights Tab */}
-      {activeTab === 'ai-insights' && aiAnalysisEnabled && (
-        <ManagerAiInsightsTab
-          aiAnalysisLoading={aiAnalysisLoading}
-          aiAnalysis={aiAnalysis}
-          generateAiAnalysis={generateAiAnalysis}
-        />
-      )}
+          {/* AI Financial Insights Tab */}
+          {activeTab === 'ai-insights' && aiAnalysisEnabled && (
+            <ManagerAiInsightsTab
+              aiAnalysisLoading={aiAnalysisLoading}
+              aiAnalysis={aiAnalysis}
+              generateAiAnalysis={generateAiAnalysis}
+            />
+          )}
         </div>
       </main>
     </div>

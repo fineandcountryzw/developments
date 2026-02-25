@@ -257,7 +257,7 @@ export async function POST(request: NextRequest) {
       });
 
       // Generate individual installments
-      const installments = [];
+      const installments: any[] = [];
       for (let i = 1; i <= periodMonths; i++) {
         const dueDate = new Date(planStartDate);
         dueDate.setMonth(dueDate.getMonth() + i);

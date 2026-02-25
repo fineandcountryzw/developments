@@ -165,7 +165,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Handle client/prospect
-    let client = null;
+    let client: any = null;
     let prospectEmail = prospectDetails?.email;
     let prospectName = prospectDetails?.name;
     
@@ -274,7 +274,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get or create user if needed
-    let user = null;
+    let user: any = null;
     if (client.isPortalUser) {
       user = await prisma.user.findFirst({
         where: { email: client.email.toLowerCase() },

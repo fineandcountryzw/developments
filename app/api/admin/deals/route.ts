@@ -81,11 +81,11 @@ export async function GET(request: NextRequest) {
     const collaboratorUserMap = new Map(collaboratorUsers.map(u => [u.id, u]));
 
     // Create lookup maps
-    const stageMap = new Map(stages.map(s => [s.id, s]));
-    const clientMap = new Map(clients.map(c => [c.id, c]));
-    const ownerMap = new Map(owners.map(o => [o.id, o]));
-    const standMap = new Map(stands.map(s => [s.id, { ...s, development: devMap.get(s.developmentId) || null }]));
-    const commentCountMap = new Map(commentCounts.map(c => [c.dealId, c._count.id]));
+    const stageMap = new Map<string, any>(Array.from(stages, (s: any) => [s.id, s] as const));
+    const clientMap = new Map<string, any>(Array.from(clients, (c: any) => [c.id, c] as const));
+    const ownerMap = new Map<string, any>(Array.from(owners, (o: any) => [o.id, o] as const));
+    const standMap = new Map<string, any>(Array.from(stands, (s: any) => [s.id, { ...s, development: devMap.get(s.developmentId) || null }] as const));
+    const commentCountMap = new Map<string, any>(Array.from(commentCounts, (c: any) => [c.dealId, c._count.id] as const));
 
     // Group collaborators by deal
     const dealCollaboratorsMap = new Map<string, { id: string; name: string | null }[]>();

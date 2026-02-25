@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const results = [];
+    const results: { success: boolean; email: string; role: string; message: string; }[] = [];
 
     for (const cred of TEST_CREDENTIALS) {
       try {

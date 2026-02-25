@@ -4,12 +4,12 @@
  * Runs after a successful import to:
  * 1. Refresh dashboard statistics
  * 2. Send notification to manager
- * 3. Queue sync to main platform
- * 4. Flag stands needing clients
- * 5. Generate summary report
+ * 3. Flag stands needing clients
+ * 4. Generate summary report
+ * 
+ * NOTE: This is the MAIN platform - no external sync needed.
  */
 
-import { queueMainPlatformSync } from '@/lib/sync/main-platform-sync';
 import { flagStandsNeedingClients } from './flag-unmatched-stands';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -44,7 +44,6 @@ interface ImportOptions {
 interface PostImportResult {
   dashboardRefreshed: boolean;
   notificationSent: boolean;
-  syncQueued: number;
   clientsNeeded: number;
   errors: string[];
 }
@@ -55,8 +54,6 @@ interface PostImportResult {
 
 async function refreshDashboardStats(): Promise<boolean> {
   try {
-    // This could trigger a background job or update cached stats
-    // For now, we'll just log it - in production this might call an internal API
     console.log('[PostImport] Dashboard stats refresh triggered');
     return true;
   } catch (error) {
@@ -95,27 +92,12 @@ ${results.clientsNeeded > 0 ? `⚠️ ${results.clientsNeeded} stands need clien
 View details: ${process.env.APP_URL}/admin/import/batches/${options.importBatchId}
     `.trim();
 
-    // In production, call your email service here
-    // await sendEmail({ to: options.notifyEmail, subject, body });
-    
     console.log('[PostImport] Notification would be sent to:', options.notifyEmail);
-    console.log('[PostImport] Notification body:', body);
     
     return true;
   } catch (error) {
     console.error('[PostImport] Failed to send notification:', error);
     return false;
-  }
-}
-
-async function queuePlatformSync(standIds: string[]): Promise<number> {
-  try {
-    const queued = await queueMainPlatformSync(standIds);
-    console.log(`[PostImport] Queued ${queued} stands for main platform sync`);
-    return queued;
-  } catch (error) {
-    console.error('[PostImport] Failed to queue sync:', error);
-    return 0;
   }
 }
 
@@ -141,7 +123,6 @@ export async function runPostImportFlow(
   const flowResult: PostImportResult = {
     dashboardRefreshed: false,
     notificationSent: false,
-    syncQueued: 0,
     clientsNeeded: 0,
     errors: [],
   };
@@ -161,12 +142,7 @@ export async function runPostImportFlow(
       flowResult.notificationSent = sent;
     }),
 
-    // 3. Queue sync to main platform
-    queuePlatformSync(results.standIds).then(queued => {
-      flowResult.syncQueued = queued;
-    }),
-
-    // 4. Check for stands needing clients
+    // 3. Check for stands needing clients
     checkClientsNeeded(results.standIds).then(count => {
       flowResult.clientsNeeded = count;
     }),
@@ -175,7 +151,7 @@ export async function runPostImportFlow(
   // Check for any failures
   tasks.forEach((result, index) => {
     if (result.status === 'rejected') {
-      const taskNames = ['dashboard refresh', 'notification', 'platform sync', 'client check'];
+      const taskNames = ['dashboard refresh', 'notification', 'client check'];
       const error = result.reason instanceof Error ? result.reason.message : String(result.reason);
       flowResult.errors.push(`Failed to ${taskNames[index]}: ${error}`);
     }
@@ -191,22 +167,10 @@ export async function runPostImportFlow(
 // ─────────────────────────────────────────────────────────────────────────────
 
 export async function getPostImportStatus(importBatchId: string): Promise<{
-  syncStatus: {
-    pending: number;
-    completed: number;
-    failed: number;
-  };
   clientsNeeded: number;
   allTasksComplete: boolean;
 }> {
-  // This would query the database for the current status
-  // For now, return placeholder
   return {
-    syncStatus: {
-      pending: 0,
-      completed: 0,
-      failed: 0,
-    },
     clientsNeeded: 0,
     allTasksComplete: true,
   };

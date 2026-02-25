@@ -43,7 +43,7 @@ export async function GET(
     }
 
     // Build fee summary
-    const fees = [];
+    const fees: { name: string; type: string; value: number; description: string; mandatory: boolean; }[] = [];
 
     if (development.vatEnabled) {
       fees.push({

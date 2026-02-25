@@ -1,8 +1,15 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { PaymentsService, CreatePaymentInput } from '@/lib/payments/payments.service';
-import { PaymentMethod, Currency, PaymentSource } from '@prisma/client';
 import Papa from 'papaparse';
+
+// Enums defined locally since Prisma 7 doesn't export them the same way
+const Currency = { USD: 'USD', ZAR: 'ZAR', BWP: 'BWP' } as const;
+const PaymentMethod = { BANK: 'BANK', CASH: 'CASH', MOBILE: 'MOBILE', ECOCASH: 'ECOCASH', ZIPIT: 'ZIPIT', TRANSFER: 'TRANSFER' } as const;
+const PaymentSource = { API: 'API', PORTAL: 'PORTAL', IMPORT: 'IMPORT', MANUAL: 'MANUAL' } as const;
+type Currency = typeof Currency[keyof typeof Currency];
+type PaymentMethod = typeof PaymentMethod[keyof typeof PaymentMethod];
+type PaymentSource = typeof PaymentSource[keyof typeof PaymentSource];
 import crypto from 'crypto';
 
 // Helper to hash row for idempotency
@@ -65,13 +72,13 @@ export async function POST(req: NextRequest) {
 
                 const input: CreatePaymentInput = {
                     amount: Number(row.amount),
-                    currency: (row.currency as Currency) || Currency.USD,
-                    method: (row.method as PaymentMethod) || PaymentMethod.BANK,
+                    currency: (row.currency as any) || 'USD',
+                    method: (row.method as any) || 'BANK',
                     reference: row.reference,
                     externalId: row.externalId || `import-${batchId}-${i}`,
                     idempotencyKey: row.idempotencyKey || generateIdempotencyKey(row, batchId, i),
                     clientId: row.clientId,
-                    source: PaymentSource.IMPORT,
+                    source: 'IMPORT' as any,
                     postedAt: row.postedAt ? new Date(row.postedAt) : new Date(),
                     memo: row.memo || `Imported via API batch ${batchId}`
                 };

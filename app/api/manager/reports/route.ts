@@ -171,8 +171,8 @@ async function generateContractsReport(searchParams: URLSearchParams, branch: st
       select: { id: true, name: true }
     }) : []
   ]);
-  const clientMap = new Map(clients.map(c => [c.id, c]));
-  const templateMap = new Map(templates.map(t => [t.id, t]));
+  const clientMap = new Map(clients.map(c => [c.id, c] as [string, typeof c]));
+  const templateMap = new Map(templates.map(t => [t.id, t] as [string, typeof t]));
 
   // Get stand and development information
   const standIds = contracts.map(c => c.standId).filter(Boolean);

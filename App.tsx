@@ -32,6 +32,7 @@ import { CookieConsent } from './components/CookieConsent.tsx';
 import { SkeletonCard } from './components/SkeletonLoader.tsx';
 import { OfflineContractForm } from './app/components/contracts/OfflineContractForm.tsx';
 import { DataImportModule } from './components/admin/DataImportModule.tsx';
+import { ExcelImportWizard } from './components/admin/ExcelImportWizard.tsx';
 import { ClientManagementModule } from './components/ClientManagementModule.tsx';
 
 // Module-specific error fallback component
@@ -409,7 +410,7 @@ const App: React.FC<AppProps> = ({ initialRole = 'Admin' }) => {
           {activeTab === 'import' && (
             <ErrorBoundary fallback={<ModuleErrorFallback module="Import" />}>
               <Suspense fallback={<SkeletonCard />}>
-                <DataImportModule />
+                <ExcelImportWizard />
               </Suspense>
             </ErrorBoundary>
           )}

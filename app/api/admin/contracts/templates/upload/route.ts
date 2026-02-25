@@ -28,7 +28,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Readable } from 'stream';
 import { requireAdmin } from '@/lib/adminAuth';
 import prisma from '@/lib/prisma';
-import { Prisma } from '@prisma/client';
+
 import { logger } from '@/lib/logger';
 import { apiError, apiSuccess } from '@/lib/api-response';
 import { ErrorCodes } from '@/lib/error-codes';

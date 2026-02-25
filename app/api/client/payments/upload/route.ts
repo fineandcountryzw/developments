@@ -6,7 +6,11 @@ import { logger } from '@/lib/logger';
 import { apiError, apiSuccess } from '@/lib/api-response';
 import { ErrorCodes } from '@/lib/error-codes';
 import { PaymentsService, CreatePaymentInput } from '@/lib/payments/payments.service';
-import { Currency, PaymentMethod, PaymentSource, TransactionStatus } from '@prisma/client';
+// Enums defined locally since Prisma 7 doesn't export them the same way
+const Currency = { USD: 'USD', ZAR: 'ZAR', BWP: 'BWP' } as const;
+const PaymentMethod = { BANK: 'BANK', CASH: 'CASH', MOBILE: 'MOBILE' } as const;
+const PaymentSource = { API: 'API', PORTAL: 'PORTAL' } as const;
+const TransactionStatus = { PENDING: 'PENDING', COMPLETED: 'COMPLETED', FAILED: 'FAILED' } as const;
 
 /**
  * POST /api/client/payments/upload
@@ -52,8 +56,8 @@ export async function POST(request: NextRequest) {
     
     const paymentInput: CreatePaymentInput = {
         amount: Number(amount),
-        currency: Currency.USD,
-        method: PaymentMethod.BANK,
+        currency: 'USD',
+        method: 'BANK',
         reference: reference || `POP-${Date.now()}`,
         idempotencyKey,
         memo: notes || `${paymentType} payment`,
@@ -62,9 +66,9 @@ export async function POST(request: NextRequest) {
         invoiceId: undefined,
         developmentId: undefined,
         standId: standId || undefined,
-        source: PaymentSource.API,
+        source: 'API',
         postedAt: new Date(),
-        status: TransactionStatus.PENDING,  // PENDING until verified
+        status: 'PENDING',  // PENDING until verified
     };
 
     const payment = await PaymentsService.createPayment(paymentInput);

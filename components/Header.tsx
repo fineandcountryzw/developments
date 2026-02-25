@@ -90,9 +90,10 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 bg-white transition-all duration-200 ${
-        isScrolled ? "h-16 md:h-20 shadow-md" : "h-16 md:h-20 shadow-sm"
-      } border-b border-gray-100`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled
+          ? "h-16 md:h-20 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-forensic-sm"
+          : "h-20 md:h-24 bg-transparent border-b border-transparent"
+        }`}
     >
       <div className="max-w-7xl mx-auto h-full px-4 md:px-6 lg:px-8">
         <div className="flex items-center justify-between h-full">
@@ -108,7 +109,7 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-10">
             {links.map((link) => {
               const isActive =
                 pathname === link.href ||
@@ -117,25 +118,25 @@ export const Header: React.FC<HeaderProps> = ({
                 <a
                   key={link.href}
                   href={link.href}
-                  className={`text-sm font-medium transition-colors duration-150 ${
-                    isActive ? "text-fcGold" : "text-gray-700 hover:text-fcGold"
-                  }`}
+                  className={`relative text-sm font-medium tracking-wide transition-all duration-300 group ${isActive ? "text-fcGold" : "text-fcSlate hover:text-fcGold"
+                    } ${!isScrolled && "text-fcSlate"}`}
                 >
                   {link.label}
+                  <span className={`absolute -bottom-1 left-0 w-0 h-0.5 bg-fcGold transition-all duration-300 group-hover:w-full ${isActive ? 'w-full' : ''}`} />
                 </a>
               );
             })}
           </nav>
 
           {/* Desktop CTA */}
-          <div className="hidden lg:flex items-center gap-4">
+          <div className="hidden lg:flex items-center gap-6">
             {/* Notification Bell - only show when authenticated */}
             {isSessionActive && <NotificationBell />}
-            
+
             {onPrimaryCTAClick ? (
               <button
                 onClick={onPrimaryCTAClick}
-                className="px-6 py-2.5 bg-fcGold text-white font-semibold text-sm rounded-xl hover:bg-fcGold/90 focus:outline-none focus:ring-2 focus:ring-fcGold focus:ring-offset-2 transition-all duration-150 ease-out shadow-sm hover:shadow-md"
+                className="px-8 py-3 bg-fcGold text-white font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-fcGold/90 hover:shadow-lg hover:shadow-fcGold/20 transition-all duration-300 active:scale-95"
               >
                 {primaryCTA}
               </button>
@@ -148,7 +149,7 @@ export const Header: React.FC<HeaderProps> = ({
                     block: "start",
                   });
                 }}
-                className="px-6 py-2.5 bg-fcGold text-white font-semibold text-sm rounded-xl hover:bg-fcGold/90 focus:outline-none focus:ring-2 focus:ring-fcGold focus:ring-offset-2 transition-all duration-150 ease-out shadow-sm hover:shadow-md"
+                className="px-8 py-3 bg-fcGold text-white font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-fcGold/90 hover:shadow-lg hover:shadow-fcGold/20 transition-all duration-300 active:scale-95"
               >
                 {primaryCTA}
               </button>
@@ -192,9 +193,8 @@ export const Header: React.FC<HeaderProps> = ({
                   key={link.href}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`block text-base font-medium transition-colors duration-150 ${
-                    isActive ? "text-fcGold" : "text-gray-700 hover:text-fcGold"
-                  }`}
+                  className={`block text-base font-medium transition-colors duration-150 ${isActive ? "text-fcGold" : "text-gray-700 hover:text-fcGold"
+                    }`}
                 >
                   {link.label}
                 </a>

@@ -46,10 +46,9 @@ export async function POST(request: NextRequest) {
 
     // Read file buffer
     const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
 
     // Parse the Excel file
-    const parseResult = parseLakeCityExcel(buffer, file.name);
+    const parseResult = parseLakeCityExcel(bytes);
 
     // Convert to import format
     const importFormat = convertToImportFormat(parseResult);
@@ -62,52 +61,41 @@ export async function POST(request: NextRequest) {
       success: true,
       parseId,
       fileName: file.name,
-      summary: parseResult.globalSummary,
+      summary: {
+        totalSheets: parseResult.summary.totalSheets,
+        totalStands: parseResult.summary.totalStands,
+        totalTransactions: parseResult.summary.totalTransactions,
+        totalCollected: parseResult.summary.totalCollected,
+      },
       developers: importFormat.developers,
       developments: importFormat.developments.map(d => ({
         name: d.name,
-        developerName: d.developerName,
-        priceTier: d.priceTier,
-        standCount: d.stands.length,
-        stands: d.stands.map(s => ({
-          standNumber: s.standNumber,
-          clientName: s.clientName,
-          agentCode: s.agentCode,
-          isDuplicate: s.isDuplicate,
-          transactionCount: s.transactions.length,
-          totals: s.totals,
+        standCount: d.standCount,
+      })),
+      stands: importFormat.stands.map(s => ({
+        sheetName: s.sheetName,
+        developer: s.developer,
+        development: s.development,
+        standNumber: s.standNumber,
+        standType: s.standType,
+        sizeSqm: s.sizeSqm,
+        priceUsd: s.priceUsd,
+        agentCode: s.agentCode,
+        transactionCount: s.transactions.length,
+        transactions: s.transactions.map(t => ({
+          date: t.date ? t.date.toISOString() : null,
+          description: t.description,
+          reference: t.reference,
+          amount: t.amount,
+          type: t.type,
+          side: t.side,
         })),
       })),
-      transactions: importFormat.transactions.map(t => ({
-        ...t,
-        date: t.date ? t.date.toISOString() : null,
-      })),
       validationIssues: {
-        invalidDates: parseResult.sheets.flatMap(s => 
-          s.summary.invalidDates.map(d => ({
-            sheet: s.sheetName,
-            row: d.row,
-            value: d.value,
-          }))
-        ),
-        missingAgentCount: parseResult.globalSummary.missingAgentCount,
-        duplicateStands: parseResult.sheets.flatMap(s =>
-          s.stands
-            .filter(st => st.isDuplicate)
-            .map(st => ({
-              sheet: s.sheetName,
-              standNumber: st.standNumber,
-              development: s.developmentName,
-            }))
-        ),
+        warnings: parseResult.warnings,
+        skipped: parseResult.skipped,
       },
-      errors: parseResult.errors,
-      rawSheets: parseResult.sheets.map(s => ({
-        sheetName: s.sheetName,
-        developerName: s.developerName,
-        developmentName: s.developmentName,
-        standCount: s.stands.length,
-      })),
+      errors: [],
     };
 
     return NextResponse.json(response);

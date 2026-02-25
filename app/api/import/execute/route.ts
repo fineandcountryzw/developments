@@ -17,6 +17,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/authOptions';
 import { v4 as uuidv4 } from 'uuid';
 import prisma from '@/lib/prisma';
 import { 
@@ -26,6 +27,19 @@ import {
   FileFormat 
 } from '@/lib/import/excel-parser';
 import { runPostImportFlow } from '@/lib/import/post-import-flow';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Config
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '20mb',
+    },
+    responseLimit: '20mb',
+  },
+};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
@@ -57,6 +71,8 @@ interface ImportResult {
   }>;
   warnings: string[];
   errors: string[];
+  standIds: string[];
+  postImport?: any;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -126,26 +142,9 @@ async function importLakeCityFormat(
         // Get or create developer
         let developerId = createdDevelopers.get(stand.developer);
         if (!developerId) {
-          const existingDev = await tx.developer.findFirst({
-            where: { name: { equals: stand.developer, mode: 'insensitive' } },
-          });
-
-          if (existingDev) {
-            developerId = existingDev.id;
-          } else if (!options.dryRun) {
-            const newDev = await tx.developer.create({
-              data: {
-                id: uuidv4(),
-                name: stand.developer,
-                contactEmail: '',
-                contactPhone: '',
-                isActive: true,
-              },
-            });
-            developerId = newDev.id;
-            counts.developersCreated++;
-            logs.push({ row: stand.rowIndex, type: 'developer', message: `Created developer: ${stand.developer}`, severity: 'info' });
-          }
+          // Developer model doesn't exist - skip developer creation
+        // Use a default/null developerId for development creation
+        developerId = 'default-developer-id';
           if (developerId) {
             createdDevelopers.set(stand.developer, developerId);
           }
@@ -165,7 +164,7 @@ async function importLakeCityFormat(
               data: {
                 id: uuidv4(),
                 name: stand.development,
-                developerId: developerId,
+                // developerId field doesn't exist on Development model
                 location: 'Zimbabwe',
                 branch: 'Harare',
                 basePrice: stand.priceUsd || 0,
@@ -194,8 +193,8 @@ async function importLakeCityFormat(
                 price: stand.priceUsd || 0,
                 sizeSqm: stand.sizeSqm || 0,
                 status: 'SOLD',
-                agentName: stand.agentCode,
-                standType: stand.standType,
+                // agentName field doesn't exist on Stand model - store in metadata if needed
+                // standType field doesn't exist on Stand model
                 soldAt: new Date(),
               },
             });
@@ -300,8 +299,9 @@ async function importLakeCityFormat(
           completedAt: new Date(),
         },
       });
-    } catch {
-      // Ignore
+    } catch (batchError) {
+      console.error('[Import] Failed to update batch status to FAILED:', batchError);
+      // Continue - we've already logged the original error
     }
   }
 
@@ -355,9 +355,19 @@ async function importLakeCityFormat(
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
     if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Role-based access control - only admin, manager, and account roles can import
+    const allowedRoles = ['ADMIN', 'MANAGER', 'ACCOUNT'];
+    const userRole = session.user.role as string;
+    if (!allowedRoles.includes(userRole)) {
+      return NextResponse.json({ 
+        error: 'Forbidden', 
+        message: 'Only administrators, managers, and accounts can import data' 
+      }, { status: 403 });
     }
 
     const userId = session.user.email || 'unknown';

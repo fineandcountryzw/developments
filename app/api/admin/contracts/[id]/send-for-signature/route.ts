@@ -37,7 +37,7 @@ export async function POST(
     }
 
     // Create signature requests
-    const signatures = [];
+    const signatures: any[] = [];
     for (const signer of signers) {
       const sig = await SignatureManager.createSignatureRequest(
         id,

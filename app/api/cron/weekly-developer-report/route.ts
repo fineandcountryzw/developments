@@ -112,16 +112,16 @@ interface CronResult {
 
 function getLastWeekRange(): { start: Date; end: Date } {
   const now = new Date();
-  
+
   // End: Today at 23:59:59
   const end = new Date(now);
   end.setHours(23, 59, 59, 999);
-  
+
   // Start: 7 days ago at 00:00:00
   const start = new Date(now);
   start.setDate(start.getDate() - 7);
   start.setHours(0, 0, 0, 0);
-  
+
   return { start, end };
 }
 
@@ -221,7 +221,7 @@ async function fetchPaymentsForDevelopment(developmentId: string, start: Date, e
       const amount = Number(p.amount) || 0;
       const commission = amount * commissionRate;
       const netPayout = amount - commission - (amount * adminFeeRate);
-      
+
       return {
         clientName: p.client_full_name || p.client_name || 'Unknown',
         standRef: p.stand_id || 'N/A',
@@ -240,14 +240,14 @@ async function fetchPaymentsForDevelopment(developmentId: string, start: Date, e
 
 async function generateDeveloperReports(): Promise<WeeklyReportData[]> {
   const { start, end } = getLastWeekRange();
-  
+
   logger.info('Fetching data for weekly developer report', {
     module: 'CRON',
     action: 'WEEKLY_DEVELOPER_REPORT',
     start: start.toISOString(),
     end: end.toISOString()
   });
-  
+
   // Fetch all developments with developer email from Neon DB
   const developments = await fetchDevelopmentsWithDevEmail();
 
@@ -266,12 +266,12 @@ async function generateDeveloperReports(): Promise<WeeklyReportData[]> {
     // Skip developments with no payments this week (but include them for info reports)
     // We now include ALL developments with developerEmail, even without payments
     const errors: Array<{ type: string; message: string }> = [];
-    
+
     // Check for any flagged payments
-    const flaggedPayments = payments.filter(p => 
+    const flaggedPayments = payments.filter(p =>
       p.status === 'DISCREPANCY' || p.status === 'FLAGGED'
     );
-    
+
     for (const fp of flaggedPayments) {
       errors.push({
         type: 'VERIFICATION_FLAG',
@@ -299,16 +299,16 @@ function generateReportPDF(report: WeeklyReportData): Uint8Array {
   const { start, end } = getLastWeekRange();
   const pulseId = Math.random().toString(36).substr(2, 12).toUpperCase();
   const dev = report.development;
-  
+
   // Header
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(20);
   doc.setTextColor(FC_SLATE[0], FC_SLATE[1], FC_SLATE[2]);
   doc.text('FINE & COUNTRY', 105, 25, { align: 'center' });
-  
+
   doc.setFontSize(12);
   doc.text('WEEKLY DEVELOPMENT REPORT', 105, 35, { align: 'center' });
-  
+
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);
   doc.setTextColor(100, 100, 100);
@@ -322,12 +322,12 @@ function generateReportPDF(report: WeeklyReportData): Uint8Array {
   doc.setDrawColor(FC_GOLD[0], FC_GOLD[1], FC_GOLD[2]);
   doc.setLineWidth(0.5);
   doc.roundedRect(15, currentY, 180, 45, 3, 3, 'D');
-  
+
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(10);
   doc.setTextColor(FC_SLATE[0], FC_SLATE[1], FC_SLATE[2]);
   doc.text('DEVELOPMENT DETAILS', 20, currentY + 10);
-  
+
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8);
   doc.text(`Estate Progress: ${dev.phase || 'N/A'}`, 20, currentY + 20);
@@ -348,15 +348,15 @@ function generateReportPDF(report: WeeklyReportData): Uint8Array {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(9);
   doc.setTextColor(FC_SLATE[0], FC_SLATE[1], FC_SLATE[2]);
-  
+
   doc.text('TOTAL COLLECTED', 35, currentY + 12);
   doc.text('COMMISSIONS', 90, currentY + 12);
   doc.text('NET PAYOUT', 145, currentY + 12);
-  
+
   doc.setFontSize(16);
   doc.text(`$${report.totalAmount.toLocaleString()}`, 35, currentY + 25);
   doc.text(`$${report.totalCommissions.toLocaleString()}`, 90, currentY + 25);
-  
+
   doc.setTextColor(FC_GOLD[0], FC_GOLD[1], FC_GOLD[2]);
   doc.text(`$${report.developerNetPayout.toLocaleString()}`, 145, currentY + 25);
   currentY += 45;
@@ -377,14 +377,14 @@ function generateReportPDF(report: WeeklyReportData): Uint8Array {
         p.status
       ]),
       theme: 'grid',
-      headStyles: { 
-        fillColor: FC_SLATE, 
-        textColor: [255, 255, 255], 
+      headStyles: {
+        fillColor: FC_SLATE,
+        textColor: [255, 255, 255],
         fontSize: 7,
         fontStyle: 'bold'
       },
-      styles: { 
-        fontSize: 7, 
+      styles: {
+        fontSize: 7,
         cellPadding: 2
       },
       columnStyles: {
@@ -394,7 +394,7 @@ function generateReportPDF(report: WeeklyReportData): Uint8Array {
       }
     });
   } else {
-    doc.setFont('helvetica', 'italic');
+    doc.setFont('helvetica', 'normal');
     doc.setFontSize(9);
     doc.setTextColor(100, 100, 100);
     doc.text('No transactions recorded this week.', 105, currentY + 10, { align: 'center' });
@@ -407,7 +407,7 @@ function generateReportPDF(report: WeeklyReportData): Uint8Array {
     doc.setFontSize(10);
     doc.setTextColor(220, 38, 38);
     doc.text('⚠ ITEMS REQUIRING ATTENTION', 15, errorY);
-    
+
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
     report.errors.forEach((err, idx) => {
@@ -422,7 +422,7 @@ function generateReportPDF(report: WeeklyReportData): Uint8Array {
     doc.setFontSize(9);
     doc.setTextColor(FC_SLATE[0], FC_SLATE[1], FC_SLATE[2]);
     doc.text('ATTACHED DOCUMENTS', 15, docsY);
-    
+
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(7);
     doc.setTextColor(0, 0, 238);
@@ -436,7 +436,7 @@ function generateReportPDF(report: WeeklyReportData): Uint8Array {
   const pageHeight = doc.internal.pageSize.getHeight();
   doc.setDrawColor(239, 236, 231);
   doc.line(15, pageHeight - 20, 195, pageHeight - 20);
-  
+
   doc.setFontSize(7);
   doc.setTextColor(148, 163, 184);
   doc.text(`Fine & Country Zimbabwe ERP | Pulse ID: ${pulseId}`, 15, pageHeight - 12);
@@ -448,12 +448,12 @@ function generateReportPDF(report: WeeklyReportData): Uint8Array {
 function generateReportEmailHTML(report: WeeklyReportData): string {
   const { start, end } = getLastWeekRange();
   const dev = report.development;
-  
+
   // Format stand sizes for display
-  const standSizesDisplay = dev.standSizes 
+  const standSizesDisplay = dev.standSizes
     ? Object.entries(dev.standSizes).map(([k, v]) => `${k}: ${v}sqm`).join(', ')
     : 'N/A';
-  
+
   return `
     <!DOCTYPE html>
     <html>
@@ -472,7 +472,7 @@ function generateReportEmailHTML(report: WeeklyReportData): string {
         .info-item span { color: #0f172a; font-weight: 500; }
         .features-list { margin: 15px 0 0 0; padding: 0; }
         .features-list span { display: inline-block; background: #85754e; color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; margin: 2px 4px 2px 0; }
-        .overview { background: #f9f9f9; border-left: 3px solid #85754e; padding: 15px; margin: 20px 0; font-style: italic; color: #555; font-size: 13px; }
+        .overview { background: #f9f9f9; border-left: 3px solid #85754e; padding: 15px; margin: 20px 0; font-style: normal; color: #555; font-size: 13px; }
         .summary { background: #f8f8f8; border-left: 4px solid #85754e; padding: 20px; margin: 20px 0; }
         .summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; text-align: center; }
         .summary-item label { display: block; font-size: 11px; color: #666; text-transform: uppercase; }
@@ -488,7 +488,7 @@ function generateReportEmailHTML(report: WeeklyReportData): string {
         .docs-section h4 { color: #0f172a; font-size: 13px; margin-bottom: 10px; }
         .docs-section a { display: block; color: #2563eb; text-decoration: none; font-size: 12px; padding: 5px 0; }
         .docs-section a:hover { text-decoration: underline; }
-        .no-transactions { text-align: center; padding: 30px; color: #666; font-style: italic; }
+        .no-transactions { text-align: center; padding: 30px; color: #666; font-style: normal; }
       </style>
     </head>
     <body>
@@ -613,9 +613,9 @@ function generateReportEmailHTML(report: WeeklyReportData): string {
           <div class="docs-section">
             <h4>📄 Development Documents</h4>
             ${dev.documentUrls.slice(0, 5).map(url => {
-              const filename = url.split('/').pop() || 'Document';
-              return `<a href="${url}" target="_blank">📎 ${filename}</a>`;
-            }).join('')}
+    const filename = url.split('/').pop() || 'Document';
+    return `<a href="${url}" target="_blank">📎 ${filename}</a>`;
+  }).join('')}
             ${dev.documentUrls.length > 5 ? `<p style="font-size: 11px; color: #666;">+ ${dev.documentUrls.length - 5} more documents (see attached PDF)</p>` : ''}
           </div>
         ` : ''}
@@ -638,12 +638,12 @@ function generateReportEmailHTML(report: WeeklyReportData): string {
  */
 async function sendReportEmail(report: WeeklyReportData, pdfBuffer: Uint8Array): Promise<{ sent: boolean; reason?: string }> {
   const developerEmail = report.development.developerEmail;
-  
+
   // SECURITY: Validate email exists
   if (!developerEmail) {
     return { sent: false, reason: 'No developer email configured' };
   }
-  
+
   // SECURITY: Validate email format
   if (!isValidEmail(developerEmail)) {
     logger.warn('Invalid email format', {
@@ -656,7 +656,7 @@ async function sendReportEmail(report: WeeklyReportData, pdfBuffer: Uint8Array):
 
   const { start, end } = getLastWeekRange();
   const dev = report.development;
-  
+
   try {
     await sendEmail({
       to: developerEmail,
@@ -672,7 +672,7 @@ async function sendReportEmail(report: WeeklyReportData, pdfBuffer: Uint8Array):
         }
       ]
     });
-    
+
     // Log success without exposing full email (privacy)
     logger.info('Email sent for development', {
       module: 'CRON',
@@ -728,7 +728,7 @@ export async function GET(request: NextRequest) {
   // Verify cron authorization
   const authHeader = request.headers.get('authorization');
   const cronHeader = request.headers.get('x-vercel-cron');
-  
+
   // Allow Vercel cron or secret-based auth
   if (!cronHeader && authHeader !== `Bearer ${CRON_SECRET}`) {
     logger.error('Unauthorized access attempt', new Error('Invalid CRON_SECRET'), {
@@ -772,7 +772,7 @@ export async function GET(request: NextRequest) {
     // Process each report
     for (const report of reports) {
       const dev = report.development;
-      
+
       // Check for developer email
       if (!dev.developerEmail) {
         result.skippedNoEmail = (result.skippedNoEmail || 0) + 1;
@@ -783,7 +783,7 @@ export async function GET(request: NextRequest) {
         });
         continue;
       }
-      
+
       // Validate email format
       if (!isValidEmail(dev.developerEmail)) {
         result.skippedInvalidEmail = (result.skippedInvalidEmail || 0) + 1;
@@ -798,10 +798,10 @@ export async function GET(request: NextRequest) {
       try {
         // Generate PDF with development info
         const pdfBuffer = generateReportPDF(report);
-        
+
         // Send email with PDF attachment
         const sendResult = await sendReportEmail(report, pdfBuffer);
-        
+
         if (sendResult.sent) {
           result.emailsSent++;
           result.details.push({
@@ -882,9 +882,9 @@ export async function GET(request: NextRequest) {
       module: 'CRON',
       action: 'WEEKLY_DEVELOPER_REPORT'
     });
-    
+
     result.success = false;
-    
+
     // Notify admins of critical failure
     await notifyAdminsOfFailures([{
       development: 'SYSTEM',
@@ -892,9 +892,9 @@ export async function GET(request: NextRequest) {
     }]);
 
     return NextResponse.json(
-      { 
-        ...result, 
-        error: error instanceof Error ? error.message : 'Unknown error' 
+      {
+        ...result,
+        error: error instanceof Error ? error.message : 'Unknown error'
       },
       { status: 500 }
     );
@@ -905,7 +905,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   // For manual triggers, check for admin auth or cron secret
   const authHeader = request.headers.get('authorization');
-  
+
   if (authHeader !== `Bearer ${CRON_SECRET}`) {
     return NextResponse.json(
       { success: false, error: 'Unauthorized - Use CRON_SECRET for manual triggers' },

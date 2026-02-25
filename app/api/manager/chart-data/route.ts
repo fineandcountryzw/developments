@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     const branch = searchParams.get('branch') || user.branch || 'all';
     const months = parseInt(searchParams.get('months') || '6');
 
-    const chartData = [];
+    const chartData: { month: string; deals: number; revenue: number; target: number; }[] = [];
     const now = new Date();
 
     for (let i = months - 1; i >= 0; i--) {

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Prisma } from '@prisma/client';
+// Note: Prisma namespace types not available in Prisma 7 with driver adapters
 import prisma from '@/lib/prisma';
 import { requireAuth } from '@/lib/access-control';
 import { apiSuccess, apiError } from '@/lib/api-response';
@@ -84,7 +84,7 @@ export async function PATCH(
       metadata 
     } = body;
 
-    const updateData: Prisma.TaskUpdateInput = {};
+    const updateData: any = {};
 
     if (title !== undefined) updateData.title = title.trim();
     if (description !== undefined) updateData.description = description?.trim() || null;
@@ -93,7 +93,7 @@ export async function PATCH(
     if (priority !== undefined) updateData.priority = priority.toUpperCase();
     if (dueDate !== undefined) updateData.dueDate = dueDate ? new Date(dueDate) : null;
     if (tags !== undefined) updateData.tags = tags;
-    if (metadata !== undefined) updateData.metadata = metadata ?? Prisma.JsonNull;
+    if (metadata !== undefined) updateData.metadata = metadata ?? null;
 
     // If status is being set to COMPLETED, set completedAt
     if (status === 'COMPLETED' && existingTask.status !== 'COMPLETED') {

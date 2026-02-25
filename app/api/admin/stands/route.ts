@@ -10,7 +10,7 @@ import {
   standUpdateSchema,
 } from "@/lib/validation/schemas";
 import { z } from "zod";
-import { Prisma } from "@prisma/client";
+// Note: Prisma namespace types are not available in Prisma 7 with driver adapters
 
 /**
  * Stands/Inventory API
@@ -124,7 +124,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Build where clause using Prisma's StandWhereInput
-    const where: Prisma.StandWhereInput = {};
+    const where: any = {};
     // Branch filter (optional for cross-branch admin access)
     if (branch && branch !== "ALL") {
       where.branch = branch;

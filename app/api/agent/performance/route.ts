@@ -103,7 +103,7 @@ export async function GET(_request: NextRequest) {
 
     // Performance trends (last 6 months)
     const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 5, 1);
-    const monthlyTrends = [];
+    const monthlyTrends: { month: string; revenue: number; deals: number; closed: number; }[] = [];
     for (let i = 5; i >= 0; i--) {
       const monthStart = new Date(now.getFullYear(), now.getMonth() - i, 1);
       const monthEnd = new Date(now.getFullYear(), now.getMonth() - i + 1, 0, 23, 59, 59, 999);

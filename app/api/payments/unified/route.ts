@@ -19,20 +19,8 @@ import prisma from '@/lib/prisma';
 import { logger } from '@/lib/logger';
 import { apiError, apiSuccess } from '@/lib/api-response';
 import { ErrorCodes } from '@/lib/error-codes';
-import { PrismaClient } from '@prisma/client';
-import { PrismaNeon } from '@prisma/adapter-neon';
 
 export const dynamic = 'force-dynamic';
-
-// Create a Prisma client that works in this context
-function getPrisma() {
-    const connectionString = process.env.DATABASE_URL;
-    if (!connectionString) {
-        throw new Error('DATABASE_URL is not set');
-    }
-    const adapter = new PrismaNeon({ connectionString });
-    return new PrismaClient({ adapter });
-}
 
 /**
  * Unified payment type that works for both Payment and PaymentTransaction
@@ -106,8 +94,6 @@ async function getUnifiedPayments(options: {
         startDate, endDate, limit = 100, offset = 0, source = 'ALL'
     } = options;
 
-    const prismaClient = getPrisma();
-
     try {
         // Build where clauses
         const pWhere: any = {}; // Payment table where
@@ -164,7 +150,7 @@ async function getUnifiedPayments(options: {
         ];
 
         if (source === 'ALL' || source === 'PAYMENT') {
-            promises[0] = (prismaClient as any).payment.findMany({
+            promises[0] = (prisma as any).payment.findMany({
                 where: pWhere,
                 include: {
                     client: { select: { name: true, email: true } },
@@ -189,7 +175,7 @@ async function getUnifiedPayments(options: {
         }
 
         if (source === 'ALL' || source === 'PAYMENT_TRANSACTION') {
-            promises[1] = (prismaClient as any).paymentTransaction.findMany({
+            promises[1] = (prisma as any).paymentTransaction.findMany({
                 where: ptWhere,
                 include: {
                     client: { select: { name: true, email: true } },
@@ -318,8 +304,12 @@ async function getUnifiedPayments(options: {
 
         // Apply limit after combining
         return combined.slice(0, limit);
-    } finally {
-        await prismaClient.$disconnect();
+    } catch (error) {
+        logger.error('Failed to fetch unified payments', error as Error, {
+            module: 'UnifiedPayments',
+            action: 'GET_UNIFIED_PAYMENTS_ERROR'
+        });
+        throw error;
     }
 }
 

@@ -23,11 +23,11 @@ interface FeeSummary {
   paymentTerms: PaymentTerms;
 }
 
-export function DevelopmentFeeSummary({ 
-  developmentId, 
-  standPrice = 100000 
-}: { 
-  developmentId: string; 
+export function DevelopmentFeeSummary({
+  developmentId,
+  standPrice = 100000
+}: {
+  developmentId: string;
   standPrice?: number;
 }) {
   const [summary, setSummary] = useState<FeeSummary | null>(null);
@@ -86,11 +86,11 @@ export function DevelopmentFeeSummary({
   }
 
   // Calculate example total
-  const exampleSubtotal = standPrice + 
+  const exampleSubtotal = standPrice +
     summary.fees
       .filter(f => f.mandatory && f.type === 'fixed')
       .reduce((sum, f) => sum + f.value, 0);
-  
+
   const vatFee = summary.fees.find(f => f.type === 'percentage');
   const exampleVat = vatFee ? exampleSubtotal * (vatFee.value / 100) : 0;
   const exampleTotal = exampleSubtotal + exampleVat;
@@ -167,7 +167,7 @@ export function DevelopmentFeeSummary({
             <li>• Minimum Deposit: {summary.paymentTerms.minimumDeposit}%</li>
             <li>• Installment Plans: {summary.paymentTerms.installmentOptions.join(', ')} months</li>
           </ul>
-          <p className="text-xs text-blue-700 mt-3 italic">
+          <p className="text-xs text-blue-700 mt-3">
             Contact us for a personalized quote based on your specific requirements.
           </p>
         </div>

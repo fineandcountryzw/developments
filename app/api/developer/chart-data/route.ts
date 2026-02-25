@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
     }
 
     const pool = new Pool({ connectionString: databaseUrl });
-    const chartData = [];
+    const chartData: { month: string; revenue: number; standsSold: number; }[] = [];
     const now = new Date();
 
     for (let i = months - 1; i >= 0; i--) {

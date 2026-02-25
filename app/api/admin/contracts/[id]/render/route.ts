@@ -5,24 +5,33 @@ import { logger } from '@/lib/logger';
 import { apiError, apiSuccess } from '@/lib/api-response';
 import { ErrorCodes } from '@/lib/error-codes';
 import { canAccessContract, type ContractScopeUser } from '@/lib/contract-access-control';
-import { Prisma } from '@prisma/client';
 import { generatePDF } from '@/lib/pdf-generator';
 
 export const runtime = 'nodejs';  // Required for Puppeteer
 
-// Type for contract with relations
-type GeneratedContractWithRelations = Prisma.GeneratedContractGetPayload<{
-  include: {
-    template: true;
-    client: true;
-    stand: {
-      include: {
-        development: true;
-      };
-    };
-  };
-}> & {
+// Type for contract with relations - defined inline since Prisma namespace is not available in v7
+type GeneratedContractWithRelations = {
+  id: string;
+  template?: {
+    id: string;
+    name: string;
+    content: string;
+  } | null;
+  client?: {
+    id: string;
+    name: string | null;
+    email: string | null;
+  } | null;
+  stand?: {
+    id: string;
+    standNumber: string;
+    development?: {
+      id: string;
+      name: string;
+    } | null;
+  } | null;
   templateSnapshot?: unknown;
+  [key: string]: unknown;
 };
 
 /**
@@ -226,7 +235,7 @@ export async function POST(
               <p><strong>Contract ID:</strong> ${contract.id}</p>
               <p><strong>Client:</strong> ${contract.client?.name || 'Not specified'}</p>
               <p><strong>Generated:</strong> ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</p>
-              <p><span class="status-badge status-${contract.status}">${contract.status.toUpperCase()}</span></p>
+              <p><span class="status-badge status-${String(contract.status)}">${String(contract.status).toUpperCase()}</span></p>
             </div>
           </div>
 
@@ -238,7 +247,7 @@ export async function POST(
           <!-- Signature Page -->
           <div class="signature-page">
             <h2>Signature Page</h2>
-            ${contract.status === 'SIGNED'
+            ${String(contract.status) === 'SIGNED'
         ? `
                 <div class="signature-block">
                   <div class="signer-info">
@@ -249,7 +258,7 @@ export async function POST(
                         SIGNED
                       </span>
                     </p>
-                    ${contract.signedAt ? `<p><span class="label">Signed:</span> ${new Date(contract.signedAt).toLocaleDateString()} at ${new Date(contract.signedAt).toLocaleTimeString()}</p>` : ''}
+                    ${contract.signedAt && (typeof contract.signedAt === 'string' || typeof contract.signedAt === 'number') ? `<p><span class="label">Signed:</span> ${new Date(contract.signedAt).toLocaleDateString()} at ${new Date(contract.signedAt).toLocaleTimeString()}</p>` : ''}
                   </div>
                   <div class="signature-line"></div>
                   <div class="signature-label">Signature</div>
@@ -261,8 +270,8 @@ export async function POST(
                     <p><strong>Client:</strong></p>
                     <p>${contract.client?.name || 'Not assigned'}</p>
                     <p><span class="label">Status:</span>
-                      <span class="status-badge status-${contract.status.toLowerCase()}">
-                        ${contract.status}
+                      <span class="status-badge status-${String(contract.status).toLowerCase()}">
+                        ${String(contract.status)}
                       </span>
                     </p>
                   </div>
@@ -284,18 +293,38 @@ export async function POST(
       </html>
     `;
 
+    // Helper function to safely convert to string
+    const toString = (val: unknown): string => {
+      if (typeof val === 'string') return val;
+      if (typeof val === 'number') return String(val);
+      return '';
+    };
+
+    // Helper function to safely convert to date string
+    const toDateISO = (val: unknown): string | undefined => {
+      if (!val) return undefined;
+      if (typeof val === 'string' || typeof val === 'number') {
+        try {
+          return new Date(val).toISOString();
+        } catch {
+          return undefined;
+        }
+      }
+      return undefined;
+    };
+
     // Generate PDF from HTML using Puppeteer
     const pdfBuffer = await generatePDF('contract', {
       id: contract.id,
       templateName: contract.template?.name || 'Contract',
       clientName: contract.client?.name || 'Not specified',
-      standNumber: contract.stand?.standNumber || contract.standId,
-      developmentName: contract.stand?.development?.name || contract.developerName || 'Development',
-      htmlContent: html,  // The HTML we generated above
-      status: contract.status,
-      createdAt: contract.createdAt.toISOString(),
-      signedAt: contract.signedAt?.toISOString(),
-      signedBy: contract.signedBy ?? undefined
+      standNumber: toString(contract.stand?.standNumber || contract.standId),
+      developmentName: toString(contract.stand?.development?.name || contract.developerName || 'Development'),
+      htmlContent: html,
+      status: String(contract.status),
+      createdAt: toDateISO(contract.createdAt) || new Date().toISOString(),
+      signedAt: toDateISO(contract.signedAt),
+      signedBy: toString(contract.signedBy) || undefined
     });
 
     logger.info('Contract rendered as PDF', {

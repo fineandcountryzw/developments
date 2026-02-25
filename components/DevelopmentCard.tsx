@@ -3,7 +3,7 @@
 import React, { useState, useCallback, useMemo, memo, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { 
+import {
   Droplets, Route, Zap, Wifi, MapPin, Home, TrendingUp, Heart,
   Share2, Info, Clock, CheckCircle2, AlertCircle, Building2, Truck, Waves, ShieldCheck
 } from 'lucide-react';
@@ -54,39 +54,39 @@ function safeString(value: any, fallback: string = ''): string {
  */
 function getEstateProgressSummary(estateProgress: any): { status: string; color: string; icon: React.ReactNode } | null {
   if (!estateProgress || typeof estateProgress !== 'object') return null;
-  
+
   const infraItems = ['roads', 'water', 'sewer', 'electricity'];
   const statuses = infraItems.map(key => estateProgress[key]).filter(Boolean);
-  
+
   if (statuses.length === 0) return null;
-  
+
   const completed = statuses.filter(s => s === 'completed').length;
   const inProgress = statuses.filter(s => s === 'in_progress').length;
   const planned = statuses.filter(s => s === 'planned').length;
-  
+
   if (completed === statuses.length) {
-    return { 
-      status: 'Complete', 
+    return {
+      status: 'Complete',
       color: 'text-green-600 bg-green-50 border-green-200',
       icon: <CheckCircle2 size={12} className="text-green-600" />
     };
   }
   if (completed > 0 || inProgress > 0) {
-    return { 
-      status: 'In Progress', 
+    return {
+      status: 'In Progress',
       color: 'text-amber-600 bg-amber-50 border-amber-200',
       icon: <Clock size={12} className="text-amber-600" />
     };
   }
   if (planned > 0) {
-    return { 
-      status: 'Planned', 
+    return {
+      status: 'Planned',
       color: 'text-blue-600 bg-blue-50 border-blue-200',
       icon: <Truck size={12} className="text-blue-600" />
     };
   }
-  return { 
-    status: 'Not Started', 
+  return {
+    status: 'Not Started',
     color: 'text-gray-500 bg-gray-50 border-gray-200',
     icon: <AlertCircle size={12} className="text-gray-500" />
   };
@@ -113,8 +113,8 @@ const DevLogo = ({ url, name }: { url?: string; name: string }) => {
   }
 
   return (
-    <Image 
-      src={url} 
+    <Image
+      src={url}
       alt={`${name} logo`}
       width={32}
       height={32}
@@ -124,19 +124,19 @@ const DevLogo = ({ url, name }: { url?: string; name: string }) => {
   );
 };
 
-const InfrastructureIcon = ({ 
-  type, 
-  present, 
-  label 
-}: { 
-  type: string; 
-  present: boolean; 
-  label: string 
+const InfrastructureIcon = ({
+  type,
+  present,
+  label
+}: {
+  type: string;
+  present: boolean;
+  label: string
 }) => {
   if (!present) return null;
 
-  const iconClass = "text-fcGold transition-all duration-300 group-hover:scale-125 group-hover:text-fcGold/80";
-  
+  const iconClass = "text-fcGold transition-all duration-500 group-hover:scale-125 group-hover:drop-shadow-[0_0_8px_rgba(197,160,89,0.3)]";
+
   const icons = {
     water: <Droplets size={14} className={iconClass} />,
     roads: <Route size={14} className={iconClass} />,
@@ -153,23 +153,21 @@ const InfrastructureIcon = ({
 
 const StatusBadge = ({ phase, servicing_progress }: { phase: string; servicing_progress: number | string }) => {
   const progress = safeNumber(servicing_progress, 0);
-  
+
   const isReady = phase === 'READY_TO_BUILD';
   const servicingComplete = progress >= 90;
 
   return (
-    <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium ${
-      isReady 
-        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
-        : servicingComplete
+    <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium ${isReady
+      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+      : servicingComplete
         ? 'bg-amber-50 text-amber-700 border border-amber-200'
         : 'bg-gray-100 text-gray-700 border border-gray-200'
-    }`}>
-      <span className={`w-1.5 h-1.5 rounded-full ${
-        isReady ? 'bg-emerald-500' : servicingComplete ? 'bg-amber-500' : 'bg-gray-500'
-      }`}></span>
+      }`}>
+      <span className={`w-1.5 h-1.5 rounded-full ${isReady ? 'bg-emerald-500' : servicingComplete ? 'bg-amber-500' : 'bg-gray-500'
+        }`}></span>
       {isReady ? 'Ready to Build' : servicingComplete ? 'Nearly Ready' : 'Servicing'}
-    </motion.div>
+    </div>
   );
 };
 
@@ -234,11 +232,11 @@ const DevelopmentCardComponent: React.FC<DevelopmentCardProps> = ({
   const [imageError, setImageError] = useState(false);
   const [showTooltip, setShowTooltip] = useState<string | null>(null);
   const [isHovered, setIsHovered] = useState(false);
-  
+
   // 3D Tilt effect refs
   const cardRef = useRef<HTMLDivElement>(null);
   const [tiltStyle, setTiltStyle] = useState({ transform: '' });
-  
+
   // Handle 3D tilt on mouse move
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
@@ -248,18 +246,18 @@ const DevelopmentCardComponent: React.FC<DevelopmentCardProps> = ({
     const y = e.clientY - rect.top;
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
-    const rotateX = (y - centerY) / 20;
-    const rotateY = (centerX - x) / 20;
+    const rotateX = (y - centerY) / 25;
+    const rotateY = (centerX - x) / 25;
     setTiltStyle({
-      transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`,
+      transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.01, 1.01, 1.01)`,
     });
   }, []);
-  
+
   const handleMouseLeave = useCallback(() => {
     setIsHovered(false);
     setTiltStyle({ transform: '' });
   }, []);
-  
+
   const handleMouseEnter = useCallback(() => {
     setIsHovered(true);
   }, []);
@@ -273,13 +271,13 @@ const DevelopmentCardComponent: React.FC<DevelopmentCardProps> = ({
   const servicingProgress = useMemo(() => safeNumber(dev.servicing_progress, 0), [dev.servicing_progress]);
   const standTypes = useMemo(() => safeArray<string>(dev.stand_types), [dev.stand_types]);
   const features = useMemo(() => safeArray<string>(dev.features), [dev.features]); // features/amenities
-  
+
   // Parse stand_sizes from JSON (stored as JSONB in database)
   const standSizes = useMemo(() => {
     try {
       if (!dev.stand_sizes) return null;
-      const sizes = typeof dev.stand_sizes === 'string' 
-        ? JSON.parse(dev.stand_sizes) 
+      const sizes = typeof dev.stand_sizes === 'string'
+        ? JSON.parse(dev.stand_sizes)
         : dev.stand_sizes;
       if (typeof sizes === 'object' && sizes !== null) {
         return {
@@ -329,7 +327,7 @@ const DevelopmentCardComponent: React.FC<DevelopmentCardProps> = ({
   return (
     <motion.div
       ref={cardRef}
-      className="group h-full flex flex-col bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden hover:shadow-2xl hover:border-gray-300 cursor-pointer"
+      className="group h-full flex flex-col bg-white rounded-2xl border border-gray-100 shadow-forensic overflow-hidden hover:shadow-forensic-lg cursor-pointer transition-shadow duration-500"
       onClick={handleCardClick}
       role="button"
       tabIndex={0}
@@ -358,11 +356,11 @@ const DevelopmentCardComponent: React.FC<DevelopmentCardProps> = ({
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent"
                   animate={{ x: ['-100%', '100%'] }}
-                  transition={{ 
-                    repeat: Infinity, 
-                    duration: 1.5, 
+                  transition={{
+                    repeat: Infinity,
+                    duration: 1.5,
                     ease: 'linear',
-                    repeatDelay: 0.5 
+                    repeatDelay: 0.5
                   }}
                   style={{ width: '50%' }}
                 />
@@ -371,9 +369,8 @@ const DevelopmentCardComponent: React.FC<DevelopmentCardProps> = ({
             <img
               src={imageUrl}
               alt={dev.name}
-              className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${
-                isImageLoading ? 'opacity-0' : 'opacity-100'
-              }`}
+              className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${isImageLoading ? 'opacity-0' : 'opacity-100'
+                }`}
               onLoad={() => setIsImageLoading(false)}
               onError={() => {
                 setImageError(true);
@@ -399,13 +396,13 @@ const DevelopmentCardComponent: React.FC<DevelopmentCardProps> = ({
           <div className="absolute -top-px -left-px z-20">
             <div className="relative">
               <div className="bg-gradient-to-br from-red-500 to-red-600 text-white text-xs font-bold uppercase tracking-wider py-1.5 px-8 shadow-lg"
-                   style={{ 
-                     clipPath: 'polygon(0 0, 100% 0, 85% 100%, 0% 100%)',
-                     transform: 'rotate(-45deg) translate(-22px, -8px)',
-                     transformOrigin: 'top left',
-                     width: '120px',
-                     textAlign: 'center'
-                   }}>
+                style={{
+                  clipPath: 'polygon(0 0, 100% 0, 85% 100%, 0% 100%)',
+                  transform: 'rotate(-45deg) translate(-22px, -8px)',
+                  transformOrigin: 'top left',
+                  width: '120px',
+                  textAlign: 'center'
+                }}>
                 🔥 Hot
               </div>
             </div>
@@ -415,13 +412,13 @@ const DevelopmentCardComponent: React.FC<DevelopmentCardProps> = ({
           <div className="absolute -top-px -left-px z-20">
             <div className="relative">
               <div className="bg-gradient-to-br from-fcGold to-amber-500 text-white text-xs font-bold uppercase tracking-wider py-1.5 px-8 shadow-lg"
-                   style={{ 
-                     clipPath: 'polygon(0 0, 100% 0, 85% 100%, 0% 100%)',
-                     transform: 'rotate(-45deg) translate(-22px, -8px)',
-                     transformOrigin: 'top left',
-                     width: '120px',
-                     textAlign: 'center'
-                   }}>
+                style={{
+                  clipPath: 'polygon(0 0, 100% 0, 85% 100%, 0% 100%)',
+                  transform: 'rotate(-45deg) translate(-22px, -8px)',
+                  transformOrigin: 'top left',
+                  width: '120px',
+                  textAlign: 'center'
+                }}>
                 ⚡ Promo
               </div>
             </div>
@@ -431,13 +428,13 @@ const DevelopmentCardComponent: React.FC<DevelopmentCardProps> = ({
           <div className="absolute -top-px -left-px z-20">
             <div className="relative">
               <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white text-xs font-bold uppercase tracking-wider py-1.5 px-8 shadow-lg"
-                   style={{ 
-                     clipPath: 'polygon(0 0, 100% 0, 85% 100%, 0% 100%)',
-                     transform: 'rotate(-45deg) translate(-22px, -8px)',
-                     transformOrigin: 'top left',
-                     width: '120px',
-                     textAlign: 'center'
-                   }}>
+                style={{
+                  clipPath: 'polygon(0 0, 100% 0, 85% 100%, 0% 100%)',
+                  transform: 'rotate(-45deg) translate(-22px, -8px)',
+                  transformOrigin: 'top left',
+                  width: '120px',
+                  textAlign: 'center'
+                }}>
                 ✨ New
               </div>
             </div>
@@ -448,11 +445,10 @@ const DevelopmentCardComponent: React.FC<DevelopmentCardProps> = ({
         <div className="absolute top-4 right-4 flex gap-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <button
             onClick={handleFavoriteClick}
-            className={`p-2 rounded-lg backdrop-blur-md transition-all duration-300 ${
-              isFavorited
-                ? 'bg-red-500 text-white'
-                : 'bg-white/90 text-gray-600 hover:text-red-500'
-            }`}
+            className={`p-2 rounded-lg backdrop-blur-md transition-all duration-300 ${isFavorited
+              ? 'bg-red-500 text-white'
+              : 'bg-white/90 text-gray-600 hover:text-red-500'
+              }`}
             title="Add to favorites"
           >
             <Heart size={16} fill={isFavorited ? 'currentColor' : 'none'} />
@@ -467,13 +463,14 @@ const DevelopmentCardComponent: React.FC<DevelopmentCardProps> = ({
         </div>
 
         {/* Bottom overlay with title */}
-        <div className="absolute bottom-0 left-0 right-0 p-4">
-          <h3 className="text-xl font-bold text-white drop-shadow-lg line-clamp-2">{dev.name}</h3>
+        <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/80 via-black/20 to-transparent">
+          <h3 className="text-xl md:text-2xl font-semibold text-white tracking-tight drop-shadow-md line-clamp-2">{dev.name}</h3>
         </div>
       </div>
 
-      {/* Content Section */}
-      <div className="flex-1 p-5 space-y-4 flex flex-col">
+      {/* Features & Price Section */}
+      <div className="flex-1 p-6 space-y-6 flex flex-col bg-white/50 backdrop-blur-sm">
+        {/* Features Row */}
         {/* Status and Logo Row */}
         <div className="flex items-center justify-between">
           <StatusBadge phase={dev.phase} servicing_progress={servicingProgress} />
@@ -580,13 +577,13 @@ const DevelopmentCardComponent: React.FC<DevelopmentCardProps> = ({
         {/* View Details Button */}
         <button
           onClick={handleCardClick}
-          className="w-full mt-4 px-6 py-3 bg-fcGold text-white text-sm font-semibold rounded-xl hover:bg-fcGold/90 transition-colors flex items-center justify-center gap-2"
+          className="w-full mt-6 px-6 py-4 bg-fcGold text-white text-sm font-bold uppercase tracking-widest rounded-xl hover:bg-fcGold/90 transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-fcGold/10 hover:shadow-fcGold/20 active:scale-[0.98]"
         >
-          <span>View Details</span>
-          <TrendingUp size={16} />
+          <span>Explore Development</span>
+          <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
