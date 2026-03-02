@@ -164,7 +164,22 @@ export async function POST(request: NextRequest) {
       return apiError('standId and developmentId are required', 400, ErrorCodes.VALIDATION_ERROR);
     }
 
-    // Handle client/prospect
+    // Fetch stand with development details first to get the branch
+    const stand = await prisma.stand.findUnique({
+      where: { id: standId },
+      include: {
+        development: true,
+      },
+    });
+
+    if (!stand) {
+      return apiError('Stand not found', 404, ErrorCodes.NOT_FOUND);
+    }
+
+    // Get the branch from the development
+    const developmentBranch = stand.development?.branch || 'Harare';
+
+    // Handle client/prospect - use development's branch
     let client: any = null;
     let prospectEmail = prospectDetails?.email;
     let prospectName = prospectDetails?.name;
@@ -180,7 +195,7 @@ export async function POST(request: NextRequest) {
         prospectName = client.name;
       }
     } else if (prospectDetails) {
-      // Find or create prospect/client record
+      // Find or create prospect/client record using the development's branch
       const normalizedEmail = prospectDetails.email.toLowerCase().trim();
       prospectEmail = normalizedEmail;
       prospectName = prospectDetails.name;
@@ -188,18 +203,18 @@ export async function POST(request: NextRequest) {
       client = await prisma.client.findFirst({
         where: {
           email: normalizedEmail,
-          branch: 'Harare',
+          branch: developmentBranch,
         },
       });
 
       if (!client) {
-        // Create new client/prospect record
+        // Create new client/prospect record using the development's branch
         client = await prisma.client.create({
           data: {
             name: prospectDetails.name.trim(),
             email: normalizedEmail,
             phone: prospectDetails.phone?.trim() || null,
-            branch: 'Harare',
+            branch: developmentBranch,
             isPortalUser: false,
           },
         });
@@ -255,18 +270,8 @@ export async function POST(request: NextRequest) {
       }, 200);
     }
 
-    // Fetch stand with development details
-    const stand = await prisma.stand.findUnique({
-      where: { id: standId },
-      include: {
-        development: true,
-      },
-    });
-
-    if (!stand) {
-      return apiError('Stand not found', 404, ErrorCodes.NOT_FOUND);
-    }
-
+    // Stand is already fetched earlier to get the branch for client creation
+    // Check if stand is available for reservation
     if (stand.status !== 'AVAILABLE') {
       return apiError('Stand is not available for reservation', 400, ErrorCodes.CONFLICT, {
         currentStatus: stand.status,
@@ -333,9 +338,13 @@ export async function POST(request: NextRequest) {
     });
 
     // Fire-and-forget email sending (don't block response)
+    // Use email queue for failed emails
     const baseUrl = process.env.NEXTAUTH_URL || 'https://www.fineandcountryerp.com';
     const dashboardUrl = `${baseUrl}/dashboards/client`;
     const setupPasswordUrl = `${baseUrl}/set-password?email=${encodeURIComponent(prospectEmail || client.email)}`;
+
+    // Import email queue for retry mechanism
+    const { queueEmailForRetry } = await import('@/lib/email-queue');
 
     // Send confirmation email
     sendEmail({
@@ -350,7 +359,22 @@ export async function POST(request: NextRequest) {
         dashboardUrl,
       }),
     }).catch((emailError) => {
-      logger.error('Failed to send reservation confirmation email', emailError as Error, {
+      // Queue failed email for retry
+      queueEmailForRetry({
+        to: prospectEmail || client.email,
+        subject: `✓ Reservation Confirmed - Stand ${reservation.stand.standNumber}`,
+        html: generateReservationConfirmationHTML({
+          name: prospectName || client.name,
+          standNumber: reservation.stand.standNumber,
+          developmentName: reservation.stand.development?.name || 'Development',
+          expiresAt: reservation.expiresAt,
+          reservationId: reservation.id,
+          dashboardUrl,
+        }),
+        context: 'reservation_confirmation',
+        metadata: { reservationId: reservation.id, standId }
+      });
+      logger.error('Failed to send reservation confirmation email, queued for retry', emailError as Error, {
         module: 'API',
         action: 'SEND_RESERVATION_EMAIL',
         reservationId: reservation.id,
@@ -372,7 +396,22 @@ export async function POST(request: NextRequest) {
         reservationId: reservation.id,
       }),
     }).catch((emailError) => {
-      logger.error('Failed to send admin notification email', emailError as Error, {
+      // Queue failed email for retry
+      queueEmailForRetry({
+        to: adminEmail,
+        subject: `📍 New Reservation - Stand ${reservation.stand.standNumber}`,
+        html: generateAdminNotificationHTML({
+          standNumber: reservation.stand.standNumber,
+          developmentName: reservation.stand.development?.name || 'Development',
+          clientName: client.name,
+          clientEmail: client.email,
+          agentName: reservation.agent?.name || undefined,
+          reservationId: reservation.id,
+        }),
+        context: 'admin_notification',
+        metadata: { reservationId: reservation.id, standId }
+      });
+      logger.error('Failed to send admin notification email, queued for retry', emailError as Error, {
         module: 'API',
         action: 'SEND_ADMIN_NOTIFICATION_EMAIL',
         reservationId: reservation.id,

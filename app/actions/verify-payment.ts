@@ -25,6 +25,7 @@ import { getCurrentUser, requireRole } from '@/lib/auth';
 interface VerifyPaymentInput {
   reservationId: string;
   agentNotes?: string; // Optional notes from agent about verification
+  amount?: number; // Amount on the proof of payment for validation
 }
 
 interface VerifyPaymentResult {
@@ -469,6 +470,46 @@ export async function verifyPayment(
         success: false,
         error: 'No proof of payment attached to this reservation',
       };
+    }
+
+    // ───────────────────────────────────────────────────────────────────────
+    // STEP 3b: Validate payment amount if provided
+    // ───────────────────────────────────────────────────────────────────────
+
+    if (input.amount !== undefined) {
+      // Get the expected amount from the reservation (price at time of reservation)
+      const expectedAmount = reservation.basePriceAtReservation
+        ? Number(reservation.basePriceAtReservation)
+        : Number(reservation.stand.price);
+
+      const submittedAmount = Number(input.amount);
+
+      // Allow 5% tolerance for rounding differences
+      const tolerance = expectedAmount * 0.05;
+      const difference = Math.abs(submittedAmount - expectedAmount);
+
+      if (difference > tolerance) {
+        console.warn('[VERIFY_PAYMENT][AMOUNT_MISMATCH]', {
+          reservation_id: input.reservationId,
+          expected_amount: expectedAmount,
+          submitted_amount: submittedAmount,
+          difference: difference,
+          tolerance: tolerance,
+          timestamp: new Date().toISOString(),
+        });
+        return {
+          success: false,
+          error: `Payment amount mismatch. Expected: ${expectedAmount.toLocaleString()}, Submitted: ${submittedAmount.toLocaleString()}. Please verify the proof of payment.`,
+        };
+      }
+
+      console.log('[VERIFY_PAYMENT][AMOUNT_VALIDATED]', {
+        reservation_id: input.reservationId,
+        expected_amount: expectedAmount,
+        submitted_amount: submittedAmount,
+        difference: difference,
+        timestamp: new Date().toISOString(),
+      });
     }
     
     // ───────────────────────────────────────────────────────────────────────

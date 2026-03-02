@@ -1026,6 +1026,8 @@ export async function GET(request: NextRequest) {
          COALESCE(admin_fee_enabled, false) as admin_fee_enabled,
          COALESCE(admin_fee, 0) as admin_fee,
          COALESCE(disable_map_view, false) as disable_map_view,
+         COALESCE(featured_tag, 'none') as featured_tag,
+         COALESCE(is_public, true) as is_public,
          last_updated_by_id, created_at, updated_at
       FROM developments 
       WHERE 1=1

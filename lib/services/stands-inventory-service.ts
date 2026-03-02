@@ -311,6 +311,7 @@ export async function getStandsInventory(
     include: {
       development: {
         select: {
+          id: true,
           name: true,
           branch: true,
         },
