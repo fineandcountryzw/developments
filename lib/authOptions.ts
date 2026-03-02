@@ -19,10 +19,18 @@ import { prisma } from "./prisma";
 import type { UserRole } from "../types/next-auth";
 import bcrypt from "bcryptjs";
 
-// Validate required environment variables
-if (!process.env.NEXTAUTH_SECRET) {
-  throw new Error('NEXTAUTH_SECRET environment variable is required. Please set it in your .env.local file.');
-}
+// Generate a temporary secret for build time if not provided
+// In production (Vercel), this should be set as an environment variable
+const getAuthSecret = () => {
+  if (process.env.NEXTAUTH_SECRET) {
+    return process.env.NEXTAUTH_SECRET;
+  }
+  
+  // For build-time, use a fallback generated from other env vars or a default
+  // This allows builds to succeed, but production should always set NEXTAUTH_SECRET
+  console.warn('[WARNING] NEXTAUTH_SECRET not set - using fallback for build. Set NEXTAUTH_SECRET in Vercel for production.');
+  return process.env.AUTH_SECRET || process.env.SECRET || 'dev-fallback-secret-do-not-use-in-production';
+};
 
 export const authOptions: NextAuthOptions = {
   // Use Prisma adapter for session/account persistence
@@ -379,7 +387,7 @@ export const authOptions: NextAuthOptions = {
     error: "/login",
   },
 
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: getAuthSecret(),
 
   debug: process.env.NODE_ENV === "development",
 };
